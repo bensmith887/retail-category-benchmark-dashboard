@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
 import MetricsCard from '@/components/MetricsCard';
@@ -13,6 +14,7 @@ import PricingView from '@/components/PricingView';
 import ProductPerformanceView from '@/components/ProductPerformanceView';
 import CustomerSentimentView from '@/components/CustomerSentimentView';
 import PromotionEffectivenessView from '@/components/PromotionEffectivenessView';
+import PriceElasticityView from '@/components/PriceElasticityView';
 import { metricsData, insightData } from '@/utils/data';
 
 const Index = () => {
@@ -83,31 +85,31 @@ const Index = () => {
         return <CustomerSentimentView />;
       case 'promotion-effectiveness':
         return <PromotionEffectivenessView />;
+      case 'price-elasticity':
+        return <PriceElasticityView />;
       default:
         return null;
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-dashboard-bg">
-      <Header />
-      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-      
-      <main className="flex-grow py-6">
-        <div className="container mx-auto px-6">
-          {mounted && renderTabContent()}
-        </div>
-      </main>
-      
-      <footer className="bg-white border-t border-dashboard-border py-4">
-        <div className="container mx-auto px-6">
-          <div className="flex justify-between items-center text-sm text-dashboard-secondaryText">
-            <span>© 2023 CategoryBench</span>
-            <span>Last updated: September 30, 2023</span>
+    <SidebarProvider defaultOpen={true}>
+      <div className="min-h-screen flex w-full bg-dashboard-bg">
+        <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+        <SidebarInset className="flex flex-col">
+          <Header />
+          <div className="flex-grow py-6 px-6">
+            {mounted && renderTabContent()}
           </div>
-        </div>
-      </footer>
-    </div>
+          <footer className="bg-white border-t border-dashboard-border py-4 px-6">
+            <div className="flex justify-between items-center text-sm text-dashboard-secondaryText">
+              <span>© 2023 CategoryBench</span>
+              <span>Last updated: September 30, 2023</span>
+            </div>
+          </footer>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 };
 
