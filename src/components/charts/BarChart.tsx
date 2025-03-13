@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { pricingData } from '@/utils/data';
 
 interface BarChartProps {
@@ -49,8 +49,15 @@ const BarChart: React.FC<BarChartProps> = ({ title }) => {
             <Bar 
               dataKey="price" 
               radius={[4, 4, 0, 0]}
-              fill={(data) => data.isYourBrand ? '#5840bb' : '#6892e6'} 
-            />
+              fill="#6892e6"
+            >
+              {formattedData.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={entry.isYourBrand ? '#5840bb' : '#6892e6'} 
+                />
+              ))}
+            </Bar>
           </RechartsBarChart>
         </ResponsiveContainer>
       </div>
