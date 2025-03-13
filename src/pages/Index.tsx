@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -8,6 +7,7 @@ import LineChart from '@/components/charts/LineChart';
 import BarChart from '@/components/charts/BarChart';
 import CompetitorTable from '@/components/CompetitorTable';
 import InsightCard from '@/components/InsightCard';
+import MarketShareView from '@/components/MarketShareView';
 import { metricsData, insightData } from '@/utils/data';
 
 const Index = () => {
@@ -55,19 +55,14 @@ const Index = () => {
                   key={index}
                   title={insight.title}
                   description={insight.description}
-                  type={insight.type}
+                  type={insight.type as "opportunity" | "threat" | "positive" | "recommendation"}
                 />
               ))}
             </div>
           </div>
         );
       case 'market-share':
-        return (
-          <div className="py-12 text-center animate-fade-in">
-            <h2 className="text-2xl font-medium text-dashboard-text mb-4">Market Share Analysis</h2>
-            <p className="text-dashboard-secondaryText">This section is coming soon</p>
-          </div>
-        );
+        return <MarketShareView />;
       case 'pricing':
         return (
           <div className="py-12 text-center animate-fade-in">

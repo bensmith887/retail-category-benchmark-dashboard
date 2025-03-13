@@ -6,8 +6,11 @@ import { cn } from '@/lib/utils';
 interface MetricsCardProps {
   label: string;
   value: string;
-  change: string;
-  isPositive: boolean;
+  change?: string;
+  secondaryChange?: string;
+  secondaryLabel?: string;
+  isPositive?: boolean;
+  isSecondaryPositive?: boolean;
   className?: string;
 }
 
@@ -15,7 +18,10 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
   label,
   value,
   change,
-  isPositive,
+  secondaryChange,
+  secondaryLabel,
+  isPositive = true,
+  isSecondaryPositive = true,
   className
 }) => {
   return (
@@ -23,14 +29,31 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
       <div className="flex flex-col gap-1">
         <span className="metrics-label">{label}</span>
         <span className="metrics-value">{value}</span>
-        <div className={`metrics-change ${isPositive ? 'positive' : 'negative'}`}>
-          {isPositive ? (
-            <ArrowUp size={14} />
-          ) : (
-            <ArrowDown size={14} />
-          )}
-          <span>{change}</span>
-        </div>
+        
+        {change && (
+          <div className={`metrics-change ${isPositive ? 'positive' : 'negative'}`}>
+            {isPositive ? (
+              <ArrowUp size={14} />
+            ) : (
+              <ArrowDown size={14} />
+            )}
+            <span>{change}</span>
+          </div>
+        )}
+        
+        {secondaryChange && secondaryLabel && (
+          <div className={`metrics-secondary ${isSecondaryPositive ? 'positive' : 'negative'} mt-1`}>
+            <span className="text-xs font-medium text-dashboard-secondaryText">{secondaryLabel}:</span>
+            <div className="flex items-center ml-1">
+              {isSecondaryPositive ? (
+                <ArrowUp size={12} />
+              ) : (
+                <ArrowDown size={12} />
+              )}
+              <span className="text-xs">{secondaryChange}</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
