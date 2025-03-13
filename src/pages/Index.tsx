@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
 import MetricsCard from '@/components/MetricsCard';
@@ -70,7 +69,6 @@ const Index = () => {
               ))}
             </div>
             
-            {/* Subfooter */}
             <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-4 border-t border-dashboard-border">
               <p>Source: SimilarWeb • Metrics: Traffic Share, Pricing, User Engagement</p>
             </div>
@@ -86,7 +84,6 @@ const Index = () => {
             <h2 className="text-2xl font-medium text-dashboard-text mb-4">Traffic Sources Analysis</h2>
             <p className="text-dashboard-secondaryText">This section is coming soon</p>
             
-            {/* Subfooter */}
             <div className="text-xs text-center text-dashboard-secondaryText mt-20 pt-4 border-t border-dashboard-border">
               <p>Source: SimilarWeb • Metrics: Traffic Sources, Referrals, Campaign Attribution</p>
             </div>

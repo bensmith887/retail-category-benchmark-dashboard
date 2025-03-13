@@ -1,3 +1,4 @@
+
 import React from 'react';
 import MetricsCard from '@/components/MetricsCard';
 import { pricingData, competitorData, insightData } from '@/utils/data';
@@ -49,6 +50,46 @@ const productBenchmarkData = [
       { name: "Competitor B", price: 79.99, views: 29700, monthChange: 6.5, yearChange: 22.1 },
       { name: "Competitor C", price: 94.99, views: 24300, monthChange: 5.2, yearChange: 19.8 }
     ]
+  }
+];
+
+// Define price range data that was missing
+const priceRangeData = [
+  {
+    name: 'Your Brand',
+    ranges: [
+      { views: 24500, percentage: 28 },
+      { views: 42300, percentage: 48 },
+      { views: 21200, percentage: 24 }
+    ],
+    totalViews: 88000
+  },
+  {
+    name: 'Competitor A',
+    ranges: [
+      { views: 32100, percentage: 42 },
+      { views: 28400, percentage: 37 },
+      { views: 16000, percentage: 21 }
+    ],
+    totalViews: 76500
+  },
+  {
+    name: 'Competitor B',
+    ranges: [
+      { views: 18300, percentage: 31 },
+      { views: 29500, percentage: 50 },
+      { views: 11200, percentage: 19 }
+    ],
+    totalViews: 59000
+  },
+  {
+    name: 'Competitor C',
+    ranges: [
+      { views: 21700, percentage: 35 },
+      { views: 26800, percentage: 43 },
+      { views: 13500, percentage: 22 }
+    ],
+    totalViews: 62000
   }
 ];
 
