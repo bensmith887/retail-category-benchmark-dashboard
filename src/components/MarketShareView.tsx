@@ -30,7 +30,7 @@ const MarketShareView: React.FC = () => {
       {/* Top Summary Widgets */}
       <div className="mb-6">
         <div className="dashboard-card">
-          <h3 className="text-lg font-medium text-dashboard-text mb-4">Market Overview</h3>
+          <h3 className="text-lg font-medium text-dashboard-text mb-4">Traffic Overview</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {/* Your Share */}
             <div className="col-span-1 md:col-span-2">

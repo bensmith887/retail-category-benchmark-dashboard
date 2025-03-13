@@ -5,7 +5,6 @@ import { pricingData, competitorData, insightData } from '@/utils/data';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
 import { DollarSign, TrendingUp, TrendingDown, BarChart3, LineChart } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import BarChart from './charts/BarChart';
 import InsightCard from './InsightCard';
 
 // Calculate average price for all competitors
@@ -102,9 +101,9 @@ const PricingView: React.FC = () => {
           value={`$${yourPrice}`}
           change={`${priceDiff}%`}
           isPositive={Number(priceDiff) >= 0}
-          secondaryLabel="YoY"
-          secondaryChange="+3.5%"
-          isSecondaryPositive={true}
+          secondaryLabel="vs Category Avg"
+          secondaryChange={`${Number(priceDiff) >= 0 ? '+' : ''}${priceDiff}%`}
+          isSecondaryPositive={Number(priceDiff) >= 0}
           className="flex-1"
           icon={<DollarSign className="text-dashboard-primary" />}
         />
@@ -113,8 +112,8 @@ const PricingView: React.FC = () => {
           value={`$${avgPrice.toFixed(2)}`}
           change="+2.3%"
           isPositive={true}
-          secondaryLabel="YoY"
-          secondaryChange="+4.8%"
+          secondaryLabel="vs Category Avg"
+          secondaryChange="0%"
           isSecondaryPositive={true}
           className="flex-1"
           icon={<BarChart3 className="text-dashboard-secondary" />}
@@ -124,8 +123,8 @@ const PricingView: React.FC = () => {
           value="0.83"
           change="-0.05"
           isPositive={false}
-          secondaryLabel="YoY"
-          secondaryChange="-0.12"
+          secondaryLabel="vs Category Avg"
+          secondaryChange="-12%"
           isSecondaryPositive={false}
           className="flex-1"
           icon={<LineChart className="text-dashboard-secondary" />}
@@ -133,7 +132,7 @@ const PricingView: React.FC = () => {
         <MetricsCard
           label="Price Competitiveness"
           value="Medium"
-          secondaryLabel="MoM"
+          secondaryLabel="vs Category Avg"
           secondaryChange="+5%"
           isSecondaryPositive={true}
           className="flex-1"
@@ -141,71 +140,7 @@ const PricingView: React.FC = () => {
         />
       </div>
 
-      {/* Product Pricing Benchmark */}
-      <div className="dashboard-card mb-6">
-        <h3 className="text-lg font-medium text-dashboard-text mb-4">Product Pricing Benchmark</h3>
-        
-        {productBenchmarkData.map((benchmark, index) => (
-          <div key={benchmark.product} className={cn("p-4 rounded-lg", index !== productBenchmarkData.length - 1 ? "mb-4 border-b border-dashboard-border" : "")}>
-            <h4 className="font-medium text-dashboard-text mb-3">{benchmark.product}</h4>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-dashboard-border">
-                    <th className="text-left py-2 font-medium text-dashboard-secondaryText">Company</th>
-                    <th className="text-right py-2 font-medium text-dashboard-secondaryText">Price</th>
-                    <th className="text-right py-2 font-medium text-dashboard-secondaryText">Page Views</th>
-                    <th className="text-right py-2 font-medium text-dashboard-secondaryText">MoM Change</th>
-                    <th className="text-right py-2 font-medium text-dashboard-secondaryText">YoY Change</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-dashboard-border bg-dashboard-highlight">
-                    <td className="py-2 font-medium text-dashboard-primary">Your Brand</td>
-                    <td className="py-2 text-right font-medium">${benchmark.yourPrice}</td>
-                    <td className="py-2 text-right">{benchmark.yourViews.toLocaleString()}</td>
-                    <td className="py-2 text-right">
-                      <div className={`inline-flex items-center ${benchmark.yourMonthChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                        {benchmark.yourMonthChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                        {benchmark.yourMonthChange > 0 ? '+' : ''}{benchmark.yourMonthChange}%
-                      </div>
-                    </td>
-                    <td className="py-2 text-right">
-                      <div className={`inline-flex items-center ${benchmark.yourYearChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                        {benchmark.yourYearChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                        {benchmark.yourYearChange > 0 ? '+' : ''}{benchmark.yourYearChange}%
-                      </div>
-                    </td>
-                  </tr>
-                  
-                  {benchmark.competitors.map((competitor) => (
-                    <tr key={competitor.name} className="border-b border-dashboard-border">
-                      <td className="py-2">{competitor.name}</td>
-                      <td className="py-2 text-right">${competitor.price}</td>
-                      <td className="py-2 text-right">{competitor.views.toLocaleString()}</td>
-                      <td className="py-2 text-right">
-                        <div className={`inline-flex items-center ${competitor.monthChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                          {competitor.monthChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                          {competitor.monthChange > 0 ? '+' : ''}{competitor.monthChange}%
-                        </div>
-                      </td>
-                      <td className="py-2 text-right">
-                        <div className={`inline-flex items-center ${competitor.yearChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                          {competitor.yearChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                          {competitor.yearChange > 0 ? '+' : ''}{competitor.yearChange}%
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Price Range Distribution */}
+      {/* Price Range Distribution - Moved above Product Pricing Benchmark */}
       <div className="dashboard-card mb-6">
         <h3 className="text-lg font-medium text-dashboard-text mb-4">Price Range Distribution</h3>
         <div className="overflow-x-auto">
@@ -274,9 +209,68 @@ const PricingView: React.FC = () => {
         </div>
       </div>
 
-      {/* Pricing Benchmark Chart */}
-      <div className="mb-6">
-        <BarChart title="Pricing Benchmark" />
+      {/* Product Pricing Benchmark */}
+      <div className="dashboard-card mb-6">
+        <h3 className="text-lg font-medium text-dashboard-text mb-4">Product Pricing Benchmark</h3>
+        
+        {productBenchmarkData.map((benchmark, index) => (
+          <div key={benchmark.product} className={cn("p-4 rounded-lg", index !== productBenchmarkData.length - 1 ? "mb-4 border-b border-dashboard-border" : "")}>
+            <h4 className="font-medium text-dashboard-text mb-3">{benchmark.product}</h4>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-dashboard-border">
+                    <th className="text-left py-2 font-medium text-dashboard-secondaryText">Company</th>
+                    <th className="text-right py-2 font-medium text-dashboard-secondaryText">Price</th>
+                    <th className="text-right py-2 font-medium text-dashboard-secondaryText">Page Views</th>
+                    <th className="text-right py-2 font-medium text-dashboard-secondaryText">MoM Change</th>
+                    <th className="text-right py-2 font-medium text-dashboard-secondaryText">YoY Change</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-dashboard-border bg-dashboard-highlight">
+                    <td className="py-2 font-medium text-dashboard-primary">Your Brand</td>
+                    <td className="py-2 text-right font-medium">${benchmark.yourPrice}</td>
+                    <td className="py-2 text-right">{benchmark.yourViews.toLocaleString()}</td>
+                    <td className="py-2 text-right">
+                      <div className={`inline-flex items-center ${benchmark.yourMonthChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                        {benchmark.yourMonthChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
+                        {benchmark.yourMonthChange > 0 ? '+' : ''}{benchmark.yourMonthChange}%
+                      </div>
+                    </td>
+                    <td className="py-2 text-right">
+                      <div className={`inline-flex items-center ${benchmark.yourYearChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                        {benchmark.yourYearChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
+                        {benchmark.yourYearChange > 0 ? '+' : ''}{benchmark.yourYearChange}%
+                      </div>
+                    </td>
+                  </tr>
+                  
+                  {benchmark.competitors.map((competitor) => (
+                    <tr key={competitor.name} className="border-b border-dashboard-border">
+                      <td className="py-2">{competitor.name}</td>
+                      <td className="py-2 text-right">${competitor.price}</td>
+                      <td className="py-2 text-right">{competitor.views.toLocaleString()}</td>
+                      <td className="py-2 text-right">
+                        <div className={`inline-flex items-center ${competitor.monthChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                          {competitor.monthChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
+                          {competitor.monthChange > 0 ? '+' : ''}{competitor.monthChange}%
+                        </div>
+                      </td>
+                      <td className="py-2 text-right">
+                        <div className={`inline-flex items-center ${competitor.yearChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                          {competitor.yearChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
+                          {competitor.yearChange > 0 ? '+' : ''}{competitor.yearChange}%
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Insights */}

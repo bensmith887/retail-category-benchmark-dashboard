@@ -4,11 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { dailyTrafficData, conversionRateBenchmarkData, competitorCampaignAds, insightData } from '@/utils/data';
-import { BarChart3, TrendingUp, Target } from 'lucide-react';
+import { BarChart3, TrendingUp, Target, CalendarIcon } from 'lucide-react';
 import InsightCard from './InsightCard';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 const PromotionEffectivenessView = () => {
   const [timeframeFilter, setTimeframeFilter] = useState('daily');
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [dateType, setDateType] = useState<'start' | 'end'>('start');
   
   // Format date to display only day and month
   const formatDate = (dateStr: string) => {
@@ -26,15 +34,75 @@ const PromotionEffectivenessView = () => {
     <div className="animate-fade-in">
       <h2 className="text-2xl font-semibold text-dashboard-text mb-4">Promotion Effectiveness</h2>
       
-      {/* Sub-filter for time period */}
+      {/* Sub-filter for time period with date picker */}
       <div className="mb-6">
-        <Tabs defaultValue={timeframeFilter} onValueChange={setTimeframeFilter} className="w-full">
-          <TabsList className="mb-2 bg-white">
-            <TabsTrigger value="daily">Daily</TabsTrigger>
-            <TabsTrigger value="weekly">Weekly</TabsTrigger>
-            <TabsTrigger value="monthly">Monthly</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex justify-between items-center">
+          <Tabs defaultValue={timeframeFilter} onValueChange={setTimeframeFilter} className="w-auto">
+            <TabsList className="mb-2 bg-white">
+              <TabsTrigger value="daily">Daily</TabsTrigger>
+              <TabsTrigger value="weekly">Weekly</TabsTrigger>
+              <TabsTrigger value="monthly">Monthly</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          
+          <div className="flex items-center space-x-2">
+            <div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-[180px] justify-start text-left text-sm font-normal",
+                      !startDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {startDate ? format(startDate, "MMM dd, yyyy") : <span>Start date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={(date) => setStartDate(date || new Date())}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            
+            <span className="text-sm">to</span>
+            
+            <div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-[180px] justify-start text-left text-sm font-normal",
+                      !endDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {endDate ? format(endDate, "MMM dd, yyyy") : <span>End date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={endDate}
+                    onSelect={(date) => setEndDate(date || new Date())}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            
+            <Button variant="secondary" size="sm">Apply</Button>
+          </div>
+        </div>
       </div>
       
       {/* Summary Metrics */}
@@ -47,7 +115,7 @@ const PromotionEffectivenessView = () => {
           <CardContent>
             <div className="text-2xl font-bold">11,350</div>
             <p className="text-xs text-muted-foreground mt-1">MoM: +18.2%</p>
-            <p className="text-xs text-muted-foreground">YoY: +42.5%</p>
+            <p className="text-xs text-muted-foreground">vs Category Avg: +12.5%</p>
           </CardContent>
         </Card>
         <Card>
@@ -58,7 +126,7 @@ const PromotionEffectivenessView = () => {
           <CardContent>
             <div className="text-2xl font-bold">52.8%</div>
             <p className="text-xs text-muted-foreground mt-1">MoM: +4.3%</p>
-            <p className="text-xs text-muted-foreground">YoY: +10.8%</p>
+            <p className="text-xs text-muted-foreground">vs Category Avg: +8.4%</p>
           </CardContent>
         </Card>
         <Card>
@@ -69,7 +137,7 @@ const PromotionEffectivenessView = () => {
           <CardContent>
             <div className="text-2xl font-bold">3.8%</div>
             <p className="text-xs text-muted-foreground mt-1">MoM: +0.4%</p>
-            <p className="text-xs text-muted-foreground">YoY: +1.2%</p>
+            <p className="text-xs text-muted-foreground">vs Category Avg: +0.7%</p>
           </CardContent>
         </Card>
       </div>
