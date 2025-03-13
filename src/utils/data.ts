@@ -57,8 +57,9 @@ export const tabsData = [
   { id: 'overview', name: 'Overview' },
   { id: 'market-share', name: 'Market Share' },
   { id: 'pricing', name: 'Pricing' },
+  { id: 'product-performance', name: 'Product Performance' },
+  { id: 'customer-sentiment', name: 'Customer Sentiment' },
   { id: 'traffic-sources', name: 'Traffic Sources' },
-  { id: 'product-performance', name: 'Product Performance' }
 ];
 
 // Metrics data

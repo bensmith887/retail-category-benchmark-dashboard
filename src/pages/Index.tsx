@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -10,6 +11,7 @@ import InsightCard from '@/components/InsightCard';
 import MarketShareView from '@/components/MarketShareView';
 import PricingView from '@/components/PricingView';
 import ProductPerformanceView from '@/components/ProductPerformanceView';
+import CustomerSentimentView from '@/components/CustomerSentimentView';
 import { metricsData, insightData } from '@/utils/data';
 
 const Index = () => {
@@ -76,6 +78,8 @@ const Index = () => {
         );
       case 'product-performance':
         return <ProductPerformanceView />;
+      case 'customer-sentiment':
+        return <CustomerSentimentView />;
       default:
         return null;
     }
