@@ -52,15 +52,18 @@ export const insightData = [
   }
 ];
 
+import { BarChart3, LineChart, PieChart, DollarSign, Activity, TrendingUp, ShoppingBag } from 'lucide-react';
+
 // Tab data
 export const tabsData = [
-  { id: 'overview', name: 'Overview' },
-  { id: 'market-share', name: 'Market Share' },
-  { id: 'pricing', name: 'Pricing' },
-  { id: 'product-performance', name: 'Product Performance' },
-  { id: 'customer-sentiment', name: 'Customer Sentiment' },
-  { id: 'promotion-effectiveness', name: 'Promotion Effectiveness' },
-  { id: 'traffic-sources', name: 'Traffic Sources' },
+  { id: 'overview', name: 'Overview', icon: PieChart },
+  { id: 'market-share', name: 'Market Share', icon: LineChart },
+  { id: 'pricing', name: 'Pricing', icon: DollarSign },
+  { id: 'product-performance', name: 'Product Performance', icon: ShoppingBag },
+  { id: 'customer-sentiment', name: 'Customer Sentiment', icon: Activity },
+  { id: 'promotion-effectiveness', name: 'Promotion Effectiveness', icon: BarChart3 },
+  { id: 'traffic-sources', name: 'Traffic Sources', icon: TrendingUp },
+  { id: 'price-elasticity', name: 'Price Elasticity', icon: TrendingUp },
 ];
 
 // Metrics data
@@ -339,4 +342,3 @@ export const competitorCampaignAds = [
     endDate: '2023-10-05'
   }
 ];
-
