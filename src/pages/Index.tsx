@@ -9,6 +9,7 @@ import CompetitorTable from '@/components/CompetitorTable';
 import InsightCard from '@/components/InsightCard';
 import MarketShareView from '@/components/MarketShareView';
 import PricingView from '@/components/PricingView';
+import ProductPerformanceView from '@/components/ProductPerformanceView';
 import { metricsData, insightData } from '@/utils/data';
 
 const Index = () => {
@@ -74,12 +75,7 @@ const Index = () => {
           </div>
         );
       case 'product-performance':
-        return (
-          <div className="py-12 text-center animate-fade-in">
-            <h2 className="text-2xl font-medium text-dashboard-text mb-4">Product Performance Analysis</h2>
-            <p className="text-dashboard-secondaryText">This section is coming soon</p>
-          </div>
-        );
+        return <ProductPerformanceView />;
       default:
         return null;
     }
