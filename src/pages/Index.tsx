@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
 import MetricsCard from '@/components/MetricsCard';
@@ -119,7 +118,6 @@ const Index = () => {
             </div>
           </footer>
         </SidebarInset>
-        <SidebarTrigger className="fixed left-3 bottom-3 z-50 md:hidden" />
       </div>
     </SidebarProvider>
   );

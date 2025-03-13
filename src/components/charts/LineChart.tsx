@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { marketShareData } from '@/utils/data';
+import { InfoIcon } from 'lucide-react';
 
 interface LineChartProps {
   title: string;
@@ -10,7 +11,20 @@ interface LineChartProps {
 const LineChart: React.FC<LineChartProps> = ({ title }) => {
   return (
     <div className="dashboard-card h-full flex flex-col">
-      <h3 className="text-lg font-medium text-dashboard-text mb-4">{title}</h3>
+      <div className="flex justify-between items-start mb-4">
+        <h3 className="text-lg font-medium text-dashboard-text">{title}</h3>
+        <div className="group relative">
+          <InfoIcon size={16} className="text-dashboard-secondaryText cursor-help" />
+          <div className="absolute right-0 w-64 p-2 bg-white border border-dashboard-border rounded-md shadow-sm text-xs text-dashboard-secondaryText invisible group-hover:visible z-10">
+            <p className="font-medium text-dashboard-text mb-1">Suggested actions:</p>
+            <ul className="list-disc pl-4 space-y-1">
+              <li>Analyze traffic trends during competitor promotions</li>
+              <li>Identify seasonal traffic patterns to plan campaigns</li>
+              <li>Monitor impact of marketing efforts on traffic share</li>
+            </ul>
+          </div>
+        </div>
+      </div>
       
       <div className="flex-grow" style={{ minHeight: '240px' }}>
         <ResponsiveContainer width="100%" height="100%">
