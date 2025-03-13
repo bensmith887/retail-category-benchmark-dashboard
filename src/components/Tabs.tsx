@@ -2,6 +2,7 @@
 import React from 'react';
 import { tabsData } from '@/utils/data';
 import { cn } from '@/lib/utils';
+import { Tabs as UITabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface TabsProps {
   activeTab: string;

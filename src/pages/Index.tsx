@@ -12,6 +12,7 @@ import MarketShareView from '@/components/MarketShareView';
 import PricingView from '@/components/PricingView';
 import ProductPerformanceView from '@/components/ProductPerformanceView';
 import CustomerSentimentView from '@/components/CustomerSentimentView';
+import PromotionEffectivenessView from '@/components/PromotionEffectivenessView';
 import { metricsData, insightData } from '@/utils/data';
 
 const Index = () => {
@@ -80,6 +81,8 @@ const Index = () => {
         return <ProductPerformanceView />;
       case 'customer-sentiment':
         return <CustomerSentimentView />;
+      case 'promotion-effectiveness':
+        return <PromotionEffectivenessView />;
       default:
         return null;
     }

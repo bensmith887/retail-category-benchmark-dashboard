@@ -59,6 +59,7 @@ export const tabsData = [
   { id: 'pricing', name: 'Pricing' },
   { id: 'product-performance', name: 'Product Performance' },
   { id: 'customer-sentiment', name: 'Customer Sentiment' },
+  { id: 'promotion-effectiveness', name: 'Promotion Effectiveness' },
   { id: 'traffic-sources', name: 'Traffic Sources' },
 ];
 
@@ -252,3 +253,90 @@ export const productPerformanceData = [
   { id: 19, name: 'Recycled Plastic Backpack', category: 'Sustainable Fashion', pageViews: 62940, description: 'Durable backpack made from recycled materials', monthChange: 9.8, yearChange: 28.3 },
   { id: 20, name: 'Anti-Aging Skincare Set', category: 'Beauty', pageViews: 60120, description: 'Complete skincare routine with natural ingredients', monthChange: 6.4, yearChange: 17.9 }
 ];
+
+// Daily traffic data for Promotion Effectiveness tab
+export const dailyTrafficData = [
+  { date: '2023-09-01', yourTraffic: 8250, competitorTraffic: 9100, yourShare: 47.5, competitorShare: 52.5 },
+  { date: '2023-09-02', yourTraffic: 7890, competitorTraffic: 8950, yourShare: 46.8, competitorShare: 53.2 },
+  { date: '2023-09-03', yourTraffic: 6540, competitorTraffic: 7200, yourShare: 47.6, competitorShare: 52.4 },
+  { date: '2023-09-04', yourTraffic: 8760, competitorTraffic: 9300, yourShare: 48.5, competitorShare: 51.5 },
+  { date: '2023-09-05', yourTraffic: 9450, competitorTraffic: 9800, yourShare: 49.1, competitorShare: 50.9 },
+  { date: '2023-09-06', yourTraffic: 10200, competitorTraffic: 10100, yourShare: 50.2, competitorShare: 49.8 },
+  { date: '2023-09-07', yourTraffic: 11350, competitorTraffic: 10400, yourShare: 52.2, competitorShare: 47.8 },
+  { date: '2023-09-08', yourTraffic: 12100, competitorTraffic: 10800, yourShare: 52.8, competitorShare: 47.2 },
+  { date: '2023-09-09', yourTraffic: 11800, competitorTraffic: 10700, yourShare: 52.4, competitorShare: 47.6 },
+  { date: '2023-09-10', yourTraffic: 9950, competitorTraffic: 9500, yourShare: 51.1, competitorShare: 48.9 },
+  { date: '2023-09-11', yourTraffic: 10400, competitorTraffic: 9800, yourShare: 51.5, competitorShare: 48.5 },
+  { date: '2023-09-12', yourTraffic: 11200, competitorTraffic: 10300, yourShare: 52.1, competitorShare: 47.9 },
+  { date: '2023-09-13', yourTraffic: 12300, competitorTraffic: 10900, yourShare: 53.0, competitorShare: 47.0 },
+  { date: '2023-09-14', yourTraffic: 13100, competitorTraffic: 11200, yourShare: 53.9, competitorShare: 46.1 }
+];
+
+// Conversion rate benchmark data
+export const conversionRateBenchmarkData = [
+  { name: 'Your Brand', rate: 3.8 },
+  { name: 'Industry Average', rate: 2.9 },
+  { name: 'Competitor A', rate: 4.2 },
+  { name: 'Competitor B', rate: 3.1 },
+  { name: 'Competitor C', rate: 2.7 }
+];
+
+// Competitor campaign display ads
+export const competitorCampaignAds = [
+  {
+    id: 1,
+    competitor: 'Competitor A',
+    headline: 'Summer Sale - Up to 50% Off',
+    description: 'Limited time offer on our premium collection',
+    impressions: 125000,
+    clicks: 7250,
+    ctr: 5.8,
+    startDate: '2023-08-15',
+    endDate: '2023-09-15'
+  },
+  {
+    id: 2,
+    competitor: 'Competitor B',
+    headline: 'Free Shipping on All Orders',
+    description: 'No minimum purchase required, shop now',
+    impressions: 98500,
+    clicks: 5320,
+    ctr: 5.4,
+    startDate: '2023-08-20',
+    endDate: '2023-09-20'
+  },
+  {
+    id: 3,
+    competitor: 'Competitor A',
+    headline: 'New Fall Collection',
+    description: 'Discover the latest trends for the season',
+    impressions: 112700,
+    clicks: 6840,
+    ctr: 6.1,
+    startDate: '2023-09-01',
+    endDate: '2023-10-01'
+  },
+  {
+    id: 4,
+    competitor: 'Competitor C',
+    headline: 'Buy One Get One Free',
+    description: 'Special offer on selected items',
+    impressions: 87600,
+    clicks: 4950,
+    ctr: 5.6,
+    startDate: '2023-08-25',
+    endDate: '2023-09-25'
+  },
+  {
+    id: 5,
+    competitor: 'Competitor B',
+    headline: 'Exclusive Member Deals',
+    description: 'Join now and get 15% off your first purchase',
+    impressions: 76300,
+    clicks: 4280,
+    ctr: 5.6,
+    startDate: '2023-09-05',
+    endDate: '2023-10-05'
+  }
+];
+
