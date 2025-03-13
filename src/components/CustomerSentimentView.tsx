@@ -272,12 +272,13 @@ const CustomerSentimentView = () => {
                   <Tooltip
                     content={({ active, payload, label }) => {
                       if (active && payload && payload.length) {
+                        const value = payload[0].value as number;
                         return (
                           <div className="bg-white p-2 border rounded shadow-md">
                             <p className="font-medium">{label}</p>
-                            <p>Score: {payload[0].value}</p>
+                            <p>Score: {value}</p>
                             <p>{label === 'Your Brand' ? 'Your brand leads by ' + 
-                              (payload[0].value - 6.9).toFixed(1) + ' points' : ''}</p>
+                              (value - 6.9).toFixed(1) + ' points' : ''}</p>
                           </div>
                         );
                       }
