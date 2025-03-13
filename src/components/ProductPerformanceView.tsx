@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ArrowDown, ArrowUp, Package } from 'lucide-react';
-import { productPerformanceData } from '@/utils/data';
+import { productPerformanceData, insightData } from '@/utils/data';
 import { cn } from '@/lib/utils';
 import MetricsCard from './MetricsCard';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
@@ -35,6 +35,9 @@ const ProductPerformanceView = () => {
           value={`${(totalPageViews / 1000).toFixed(1)}K`}
           change={`${avgMonthChange.toFixed(1)}%`}
           isPositive={avgMonthChange > 0}
+          secondaryLabel="YoY"
+          secondaryChange={`${avgYearChange.toFixed(1)}%`}
+          isSecondaryPositive={avgYearChange > 0}
           icon={<Package className="text-dashboard-primary" size={20} />}
         />
         <MetricsCard
@@ -42,8 +45,8 @@ const ProductPerformanceView = () => {
           value={`${avgMonthChange.toFixed(1)}%`}
           change={`${(avgMonthChange - 2.5).toFixed(1)}%`}
           isPositive={avgMonthChange > 2.5}
-          secondaryLabel="vs Prev Period"
-          secondaryChange="+1.2%"
+          secondaryLabel="YoY"
+          secondaryChange="+8.5%"
           isSecondaryPositive={true}
         />
         <MetricsCard
@@ -58,8 +61,11 @@ const ProductPerformanceView = () => {
         <MetricsCard
           label="Top Categories"
           value={topCategories}
-          change="3 of 8 categories"
+          change="MoM: +4.8%"
           isPositive={true}
+          secondaryLabel="YoY"
+          secondaryChange="+12.3%"
+          isSecondaryPositive={true}
         />
       </div>
       
@@ -119,27 +125,20 @@ const ProductPerformanceView = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 stagger-animate">
-        <InsightCard
-          title="Top Performing Category"
-          description="Electronics products show 15% higher page views than the category average, with strong growth trends."
-          type="positive"
-        />
-        <InsightCard
-          title="Growth Opportunity"
-          description="Sustainable Fashion products show 28% year-over-year growth, indicating rising consumer interest in eco-friendly items."
-          type="opportunity"
-        />
-        <InsightCard
-          title="Competitive Threat"
-          description="Beauty category facing increased competition with 2 products showing negative month-on-month growth."
-          type="threat"
-        />
-        <InsightCard
-          title="Recommendation"
-          description="Increase product range in Activewear category which shows both high page views and strong growth metrics."
-          type="recommendation"
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        {insightData.map((insight, index) => (
+          <InsightCard
+            key={index}
+            title={insight.title}
+            description={insight.description}
+            type={insight.type as "opportunity" | "threat" | "positive" | "recommendation"}
+          />
+        ))}
+      </div>
+      
+      {/* Subfooter */}
+      <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-4 border-t border-dashboard-border">
+        <p>Source: SimilarWeb • Metrics: Product Page Views, User Engagement, Category Performance</p>
       </div>
     </div>
   );

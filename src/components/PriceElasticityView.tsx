@@ -2,6 +2,9 @@
 import React from 'react';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, ScatterChart, Scatter, ZAxis, Cell } from 'recharts';
+import MetricsCard from './MetricsCard';
+import InsightCard from './InsightCard';
+import { Target, TrendingDown, Zap, Calculator } from 'lucide-react';
 
 // Sample data for elasticity charts
 const elasticityTrendData = [
@@ -51,77 +54,154 @@ const simulationData = [
   { priceChange: 15, revenueImpact: -10, marketShareImpact: -3.5, profitImpact: -5 },
 ];
 
+// Insights for Price Elasticity
+const priceElasticityInsights = [
+  {
+    title: 'Price Opportunity',
+    description: 'Electronics category shows elasticity of -1.5, suggesting room for 3-5% price increase with minimal impact.',
+    type: 'opportunity' as const
+  },
+  {
+    title: 'Competitive Threat',
+    description: 'Competitor B is lowering prices in key product categories where elasticity is high (-2.1).',
+    type: 'threat' as const
+  },
+  {
+    title: 'Positive Indicator',
+    description: 'Beauty products show low elasticity (-0.8), indicating strong brand loyalty and price insensitivity.',
+    type: 'positive' as const
+  },
+  {
+    title: 'Recommendation',
+    description: 'Consider 5% price increases in Beauty category while keeping Apparel prices stable due to high elasticity.',
+    type: 'recommendation' as const
+  }
+];
+
 const PriceElasticityView: React.FC = () => {
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold text-dashboard-text mb-4">Price Elasticity Analysis</h1>
-        <p className="text-dashboard-secondaryText mb-6">
-          Understand how price changes impact demand, revenue, and market share.
-        </p>
+    <div className="animate-fade-in">
+      {/* Top Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <MetricsCard
+          label="Avg. Elasticity"
+          value="-1.2"
+          change="-0.2"
+          isPositive={false}
+          secondaryLabel="YoY"
+          secondaryChange="-0.3"
+          isSecondaryPositive={false}
+          icon={<TrendingDown className="text-dashboard-primary" size={20} />}
+        />
+        <MetricsCard
+          label="Revenue Impact"
+          value="+$15.2K"
+          change="+2.8%"
+          isPositive={true}
+          secondaryLabel="YoY"
+          secondaryChange="+5.4%"
+          isSecondaryPositive={true}
+          icon={<Calculator className="text-dashboard-secondary" size={20} />}
+        />
+        <MetricsCard
+          label="Price Sensitivity"
+          value="Medium"
+          change="Decreasing"
+          isPositive={true}
+          secondaryLabel="vs. Industry"
+          secondaryChange="Better"
+          isSecondaryPositive={true}
+          icon={<Target className="text-dashboard-primary" size={20} />}
+        />
+        <MetricsCard
+          label="Optimization Score"
+          value="72"
+          change="+5"
+          isPositive={true}
+          secondaryLabel="YoY"
+          secondaryChange="+12"
+          isSecondaryPositive={true}
+          icon={<Zap className="text-dashboard-secondary" size={20} />}
+        />
       </div>
 
       {/* Price Sensitivity Analysis Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-dashboard-border p-6">
-        <h2 className="text-xl font-semibold text-dashboard-text mb-4">Price Sensitivity Analysis</h2>
+      <div className="dashboard-card mb-6">
+        <h3 className="text-lg font-medium text-dashboard-text mb-4">Price Sensitivity Analysis</h3>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Elasticity Trend Chart */}
           <div className="bg-white rounded-lg p-4 border border-dashboard-border">
             <h3 className="text-sm font-medium text-dashboard-secondaryText mb-2">Elasticity Coefficients Over Time</h3>
-            <div className="h-64">
-              <ChartContainer
-                config={{
-                  yourBrand: { label: "Your Brand", color: "#8B5CF6" },
-                  competitor1: { label: "Competitor A", color: "#3B82F6" },
-                  competitor2: { label: "Competitor B", color: "#10B981" },
-                  competitor3: { label: "Competitor C", color: "#F59E0B" },
-                }}
-              >
+            <div style={{ height: "280px" }}>
+              <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={elasticityTrendData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis domain={[-2, 0]} tickFormatter={(value) => value.toFixed(1)} />
-                  <Tooltip content={<ChartTooltipContent />} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} />
+                  <YAxis 
+                    domain={[-2.5, 0]} 
+                    tickFormatter={(value) => value.toFixed(1)} 
+                    axisLine={false} 
+                    tickLine={false} 
+                  />
+                  <Tooltip 
+                    formatter={(value: number) => [`${value.toFixed(2)}`, 'Elasticity Coefficient']}
+                    contentStyle={{ 
+                      borderRadius: '6px', 
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                      border: '1px solid #e5e7eb'
+                    }}
+                  />
                   <Legend />
-                  <Line type="monotone" dataKey="coefficient" stroke="var(--color-yourBrand)" name="Your Brand" strokeWidth={2} />
-                  <Line type="monotone" dataKey="competitor1" stroke="var(--color-competitor1)" name="Competitor A" />
-                  <Line type="monotone" dataKey="competitor2" stroke="var(--color-competitor2)" name="Competitor B" />
-                  <Line type="monotone" dataKey="competitor3" stroke="var(--color-competitor3)" name="Competitor C" />
+                  <Line type="monotone" dataKey="coefficient" name="Your Brand" stroke="#5840bb" strokeWidth={2} dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="competitor1" name="Competitor A" stroke="#6892e6" strokeWidth={1} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="competitor2" name="Competitor B" stroke="#fa9f42" strokeWidth={1} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="competitor3" name="Competitor C" stroke="#00bc8c" strokeWidth={1} dot={{ r: 3 }} />
                 </LineChart>
-              </ChartContainer>
+              </ResponsiveContainer>
             </div>
             <p className="text-xs text-dashboard-secondaryText mt-2">
-              Note: More negative values indicate higher price sensitivity.
+              More negative values indicate higher price sensitivity.
             </p>
           </div>
 
           {/* Correlation Chart */}
           <div className="bg-white rounded-lg p-4 border border-dashboard-border">
             <h3 className="text-sm font-medium text-dashboard-secondaryText mb-2">Price vs. Conversion Rate</h3>
-            <div className="h-64">
-              <ChartContainer
-                config={{
-                  correlation: { label: "Products", color: "#8B5CF6" },
-                }}
-              >
+            <div style={{ height: "280px" }}>
+              <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
                   <XAxis 
                     dataKey="price" 
                     name="Price" 
+                    axisLine={false} 
+                    tickLine={false}
                     label={{ value: 'Price ($)', position: 'insideBottom', offset: -5 }}
                   />
                   <YAxis 
                     dataKey="conversionRate" 
                     name="Conversion Rate" 
+                    axisLine={false} 
+                    tickLine={false}
                     label={{ value: 'Conversion Rate (%)', angle: -90, position: 'insideLeft' }}
                   />
                   <ZAxis dataKey="sales" range={[60, 400]} />
-                  <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<ChartTooltipContent />} />
-                  <Scatter name="Products" data={correlationData} fill="var(--color-correlation)" />
+                  <Tooltip 
+                    cursor={{ strokeDasharray: '3 3' }} 
+                    formatter={(value: number, name: string) => [
+                      `${name === 'Price' ? '$' + value : value + '%'}`, 
+                      name
+                    ]}
+                    contentStyle={{ 
+                      borderRadius: '6px', 
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                      border: '1px solid #e5e7eb'
+                    }}
+                  />
+                  <Scatter name="Products" data={correlationData} fill="#5840bb" />
                 </ScatterChart>
-              </ChartContainer>
+              </ResponsiveContainer>
             </div>
             <p className="text-xs text-dashboard-secondaryText mt-2">
               Bubble size indicates sales volume. A steeper slope indicates higher elasticity.
@@ -132,24 +212,32 @@ const PriceElasticityView: React.FC = () => {
         {/* Category Elasticity Chart */}
         <div className="bg-white rounded-lg p-4 border border-dashboard-border">
           <h3 className="text-sm font-medium text-dashboard-secondaryText mb-2">Elasticity by Category</h3>
-          <div className="h-64">
-            <ChartContainer
-              config={{
-                elasticity: { label: "Elasticity", color: "#8B5CF6" },
-              }}
-            >
+          <div style={{ height: "280px" }}>
+            <ResponsiveContainer width="100%" height="100%">
               <BarChart data={categoryElasticityData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="category" />
-                <YAxis domain={[-2.5, 0]} tickFormatter={(value) => value.toFixed(1)} />
-                <Tooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="elasticity" fill="var(--color-elasticity)" name="Elasticity Coefficient">
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
+                <XAxis dataKey="category" axisLine={false} tickLine={false} />
+                <YAxis 
+                  domain={[-2.5, 0]} 
+                  tickFormatter={(value) => value.toFixed(1)} 
+                  axisLine={false} 
+                  tickLine={false}
+                />
+                <Tooltip 
+                  formatter={(value: number) => [`${value.toFixed(2)}`, 'Elasticity Coefficient']}
+                  contentStyle={{ 
+                    borderRadius: '6px', 
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    border: '1px solid #e5e7eb'
+                  }}
+                />
+                <Bar dataKey="elasticity" name="Elasticity Coefficient" radius={[4, 4, 0, 0]}>
                   {categoryElasticityData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.elasticity < -1.5 ? '#EF4444' : '#8B5CF6'} />
+                    <Cell key={`cell-${index}`} fill={entry.elasticity < -1.5 ? '#ef4444' : '#5840bb'} />
                   ))}
                 </Bar>
               </BarChart>
-            </ChartContainer>
+            </ResponsiveContainer>
           </div>
           <p className="text-xs text-dashboard-secondaryText mt-2">
             Categories with elasticity below -1.5 (red) are highly sensitive to price changes.
@@ -158,38 +246,49 @@ const PriceElasticityView: React.FC = () => {
       </div>
 
       {/* Optimal Price Points Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-dashboard-border p-6">
-        <h2 className="text-xl font-semibold text-dashboard-text mb-4">Optimal Price Points</h2>
+      <div className="dashboard-card mb-6">
+        <h3 className="text-lg font-medium text-dashboard-text mb-4">Optimal Price Points</h3>
         
         {/* Price Positioning Chart */}
         <div className="bg-white rounded-lg p-4 border border-dashboard-border mb-6">
           <h3 className="text-sm font-medium text-dashboard-secondaryText mb-2">Price Positioning Map</h3>
-          <div className="h-64">
-            <ChartContainer
-              config={{
-                positioning: { label: "Companies", color: "#8B5CF6" },
-              }}
-            >
+          <div style={{ height: "280px" }}>
+            <ResponsiveContainer width="100%" height="100%">
               <ScatterChart>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
                 <XAxis 
                   dataKey="price" 
                   name="Price" 
+                  axisLine={false} 
+                  tickLine={false}
                   label={{ value: 'Price ($)', position: 'insideBottom', offset: -5 }}
                 />
                 <YAxis 
                   dataKey="marketShare" 
                   name="Market Share" 
+                  axisLine={false} 
+                  tickLine={false}
                   label={{ value: 'Market Share (%)', angle: -90, position: 'insideLeft' }}
                 />
-                <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<ChartTooltipContent />} />
-                <Scatter name="Companies" data={pricePositioningData} fill="var(--color-positioning)">
+                <Tooltip 
+                  cursor={{ strokeDasharray: '3 3' }} 
+                  formatter={(value: number, name: string) => [
+                    `${name === 'Price' ? '$' + value : value + '%'}`, 
+                    name
+                  ]}
+                  contentStyle={{ 
+                    borderRadius: '6px', 
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    border: '1px solid #e5e7eb'
+                  }}
+                />
+                <Scatter name="Companies" data={pricePositioningData}>
                   {pricePositioningData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.name === 'Your Brand' ? '#8B5CF6' : '#94A3B8'} />
+                    <Cell key={`cell-${index}`} fill={entry.name === 'Your Brand' ? '#5840bb' : '#94a3b8'} />
                   ))}
                 </Scatter>
               </ScatterChart>
-            </ChartContainer>
+            </ResponsiveContainer>
           </div>
           <p className="text-xs text-dashboard-secondaryText mt-2">
             Shows your price positioning relative to competitors. Your brand is highlighted in purple.
@@ -199,30 +298,58 @@ const PriceElasticityView: React.FC = () => {
         {/* Revenue Optimization Curve */}
         <div className="bg-white rounded-lg p-4 border border-dashboard-border">
           <h3 className="text-sm font-medium text-dashboard-secondaryText mb-2">Price Change Impact Simulation</h3>
-          <div className="h-64">
-            <ChartContainer
-              config={{
-                revenue: { label: "Revenue Impact", color: "#3B82F6" },
-                marketShare: { label: "Market Share Impact", color: "#10B981" },
-                profit: { label: "Profit Impact", color: "#F59E0B" },
-              }}
-            >
+          <div style={{ height: "280px" }}>
+            <ResponsiveContainer width="100%" height="100%">
               <LineChart data={simulationData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="priceChange" label={{ value: 'Price Change (%)', position: 'insideBottom', offset: -5 }} />
-                <YAxis domain={[-15, 15]} label={{ value: 'Impact (%)', angle: -90, position: 'insideLeft' }} />
-                <Tooltip content={<ChartTooltipContent />} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
+                <XAxis 
+                  dataKey="priceChange" 
+                  label={{ value: 'Price Change (%)', position: 'insideBottom', offset: -5 }} 
+                  axisLine={false} 
+                  tickLine={false}
+                />
+                <YAxis 
+                  domain={[-15, 15]} 
+                  label={{ value: 'Impact (%)', angle: -90, position: 'insideLeft' }} 
+                  axisLine={false} 
+                  tickLine={false}
+                />
+                <Tooltip 
+                  formatter={(value: number) => [`${value}%`, undefined]}
+                  contentStyle={{ 
+                    borderRadius: '6px', 
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    border: '1px solid #e5e7eb'
+                  }}
+                />
                 <Legend />
-                <Line type="monotone" dataKey="revenueImpact" stroke="var(--color-revenue)" name="Revenue Impact" strokeWidth={2} />
-                <Line type="monotone" dataKey="marketShareImpact" stroke="var(--color-marketShare)" name="Market Share Impact" />
-                <Line type="monotone" dataKey="profitImpact" stroke="var(--color-profit)" name="Profit Impact" />
+                <Line type="monotone" dataKey="revenueImpact" name="Revenue Impact" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4 }} />
+                <Line type="monotone" dataKey="marketShareImpact" name="Market Share Impact" stroke="#10b981" strokeWidth={1} dot={{ r: 3 }} />
+                <Line type="monotone" dataKey="profitImpact" name="Profit Impact" stroke="#f59e0b" strokeWidth={1} dot={{ r: 3 }} />
               </LineChart>
-            </ChartContainer>
+            </ResponsiveContainer>
           </div>
           <p className="text-xs text-dashboard-secondaryText mt-2">
             Simulates the impact of price changes on key metrics. Optimal price point maximizes profit.
           </p>
         </div>
+      </div>
+      
+      {/* Insights */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        {priceElasticityInsights.map((insight, index) => (
+          <InsightCard
+            key={index}
+            title={insight.title}
+            description={insight.description}
+            type={insight.type}
+          />
+        ))}
+      </div>
+      
+      {/* Subfooter */}
+      <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-4 border-t border-dashboard-border">
+        <p>Source: SimilarWeb • Metrics: Price Elasticity, Conversion Rate, Revenue Impact</p>
       </div>
     </div>
   );

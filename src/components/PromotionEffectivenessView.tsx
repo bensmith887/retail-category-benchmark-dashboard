@@ -1,11 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { dailyTrafficData, conversionRateBenchmarkData, competitorCampaignAds } from '@/utils/data';
+import { dailyTrafficData, conversionRateBenchmarkData, competitorCampaignAds, insightData } from '@/utils/data';
 import { BarChart3, TrendingUp, Target } from 'lucide-react';
+import InsightCard from './InsightCard';
 
 const PromotionEffectivenessView = () => {
+  const [timeframeFilter, setTimeframeFilter] = useState('daily');
+  
   // Format date to display only day and month
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -20,7 +24,18 @@ const PromotionEffectivenessView = () => {
 
   return (
     <div className="animate-fade-in">
-      <h2 className="text-2xl font-semibold text-dashboard-text mb-6">Promotion Effectiveness</h2>
+      <h2 className="text-2xl font-semibold text-dashboard-text mb-4">Promotion Effectiveness</h2>
+      
+      {/* Sub-filter for time period */}
+      <div className="mb-6">
+        <Tabs defaultValue={timeframeFilter} onValueChange={setTimeframeFilter} className="w-full">
+          <TabsList className="mb-2 bg-white">
+            <TabsTrigger value="daily">Daily</TabsTrigger>
+            <TabsTrigger value="weekly">Weekly</TabsTrigger>
+            <TabsTrigger value="monthly">Monthly</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
       
       {/* Summary Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -31,7 +46,8 @@ const PromotionEffectivenessView = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">11,350</div>
-            <p className="text-xs text-muted-foreground">+18.2% from last week</p>
+            <p className="text-xs text-muted-foreground mt-1">MoM: +18.2%</p>
+            <p className="text-xs text-muted-foreground">YoY: +42.5%</p>
           </CardContent>
         </Card>
         <Card>
@@ -41,7 +57,8 @@ const PromotionEffectivenessView = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">52.8%</div>
-            <p className="text-xs text-muted-foreground">+4.3% from last month</p>
+            <p className="text-xs text-muted-foreground mt-1">MoM: +4.3%</p>
+            <p className="text-xs text-muted-foreground">YoY: +10.8%</p>
           </CardContent>
         </Card>
         <Card>
@@ -51,7 +68,8 @@ const PromotionEffectivenessView = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">3.8%</div>
-            <p className="text-xs text-muted-foreground">+0.6% above industry average</p>
+            <p className="text-xs text-muted-foreground mt-1">MoM: +0.4%</p>
+            <p className="text-xs text-muted-foreground">YoY: +1.2%</p>
           </CardContent>
         </Card>
       </div>
@@ -202,7 +220,7 @@ const PromotionEffectivenessView = () => {
                     <Bar 
                       key={`cell-${index}`} 
                       dataKey="rate" 
-                      fill={entry.name === 'Your Brand' ? '#5840bb' : '#6892e6'} 
+                      fill={entry.name === 'Your Brand' ? '#5840bb' : entry.name === 'Industry Average' ? '#22c55e' : '#6892e6'} 
                     />
                   ))
                 }
@@ -245,6 +263,23 @@ const PromotionEffectivenessView = () => {
             </tbody>
           </table>
         </div>
+      </div>
+      
+      {/* Insights */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        {insightData.map((insight, index) => (
+          <InsightCard
+            key={index}
+            title={insight.title}
+            description={insight.description}
+            type={insight.type as "opportunity" | "threat" | "positive" | "recommendation"}
+          />
+        ))}
+      </div>
+      
+      {/* Subfooter */}
+      <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-4 border-t border-dashboard-border">
+        <p>Source: SimilarWeb • Metrics: Traffic, Conversion Rate, Campaign Performance</p>
       </div>
     </div>
   );

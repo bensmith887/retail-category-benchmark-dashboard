@@ -39,6 +39,9 @@ const Index = () => {
                   value={metric.value}
                   change={metric.change}
                   isPositive={metric.isPositive}
+                  secondaryLabel="YoY"
+                  secondaryChange={`${metric.isPositive ? '+5.2' : '-3.1'}%`}
+                  isSecondaryPositive={metric.isPositive}
                 />
               ))}
             </div>
@@ -48,7 +51,7 @@ const Index = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-              <LineChart title="Market Share Trend" />
+              <LineChart title="Traffic Share Trend" />
               <BarChart title="Pricing Benchmark" />
             </div>
 
@@ -56,7 +59,7 @@ const Index = () => {
               <CompetitorTable />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 stagger-animate" style={{ animationDelay: "0.6s" }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 stagger-animate" style={{ animationDelay: "0.6s" }}>
               {insightData.map((insight, index) => (
                 <InsightCard
                   key={index}
@@ -65,6 +68,11 @@ const Index = () => {
                   type={insight.type as "opportunity" | "threat" | "positive" | "recommendation"}
                 />
               ))}
+            </div>
+            
+            {/* Subfooter */}
+            <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-4 border-t border-dashboard-border">
+              <p>Source: SimilarWeb • Metrics: Traffic Share, Pricing, User Engagement</p>
             </div>
           </div>
         );
@@ -77,6 +85,11 @@ const Index = () => {
           <div className="py-12 text-center animate-fade-in">
             <h2 className="text-2xl font-medium text-dashboard-text mb-4">Traffic Sources Analysis</h2>
             <p className="text-dashboard-secondaryText">This section is coming soon</p>
+            
+            {/* Subfooter */}
+            <div className="text-xs text-center text-dashboard-secondaryText mt-20 pt-4 border-t border-dashboard-border">
+              <p>Source: SimilarWeb • Metrics: Traffic Sources, Referrals, Campaign Attribution</p>
+            </div>
           </div>
         );
       case 'product-performance':
