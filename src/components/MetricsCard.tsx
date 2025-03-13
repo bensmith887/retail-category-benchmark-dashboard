@@ -12,6 +12,7 @@ interface MetricsCardProps {
   isPositive?: boolean;
   isSecondaryPositive?: boolean;
   className?: string;
+  icon?: React.ReactNode;
 }
 
 const MetricsCard: React.FC<MetricsCardProps> = ({
@@ -22,38 +23,42 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
   secondaryLabel,
   isPositive = true,
   isSecondaryPositive = true,
-  className
+  className,
+  icon
 }) => {
   return (
     <div className={cn("dashboard-card", className)}>
-      <div className="flex flex-col gap-1">
-        <span className="metrics-label">{label}</span>
-        <span className="metrics-value">{value}</span>
-        
-        {change && (
-          <div className={`metrics-change ${isPositive ? 'positive' : 'negative'}`}>
-            {isPositive ? (
-              <ArrowUp size={14} />
-            ) : (
-              <ArrowDown size={14} />
-            )}
-            <span>{change}</span>
-          </div>
-        )}
-        
-        {secondaryChange && secondaryLabel && (
-          <div className={`metrics-secondary ${isSecondaryPositive ? 'positive' : 'negative'} mt-1`}>
-            <span className="text-xs font-medium text-dashboard-secondaryText">{secondaryLabel}:</span>
-            <div className="flex items-center ml-1">
-              {isSecondaryPositive ? (
-                <ArrowUp size={12} />
+      <div className="flex items-start">
+        {icon && <div className="mr-3 pt-1">{icon}</div>}
+        <div className="flex flex-col gap-1">
+          <span className="metrics-label">{label}</span>
+          <span className="metrics-value">{value}</span>
+          
+          {change && (
+            <div className={`metrics-change ${isPositive ? 'positive' : 'negative'}`}>
+              {isPositive ? (
+                <ArrowUp size={14} />
               ) : (
-                <ArrowDown size={12} />
+                <ArrowDown size={14} />
               )}
-              <span className="text-xs">{secondaryChange}</span>
+              <span>{change}</span>
             </div>
-          </div>
-        )}
+          )}
+          
+          {secondaryChange && secondaryLabel && (
+            <div className={`metrics-secondary ${isSecondaryPositive ? 'positive' : 'negative'} mt-1`}>
+              <span className="text-xs font-medium text-dashboard-secondaryText">{secondaryLabel}:</span>
+              <div className="flex items-center ml-1">
+                {isSecondaryPositive ? (
+                  <ArrowUp size={12} />
+                ) : (
+                  <ArrowDown size={12} />
+                )}
+                <span className="text-xs">{secondaryChange}</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
