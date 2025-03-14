@@ -29,12 +29,12 @@ const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
         variant="ghost" 
         size="sm" 
         onClick={toggleSidebar} 
-        className={`fixed top-4 left-4 z-20 h-8 w-8 p-0 bg-white/80 hover:bg-white shadow-sm rounded-full border ${state === 'collapsed' ? 'left-4' : 'left-[220px]'} transition-all duration-300`}
+        className="fixed top-4 left-4 z-20 h-8 w-8 p-0 bg-white/80 hover:bg-white shadow-sm rounded-full border transition-all duration-300"
       >
         {state === 'expanded' ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
       </Button>
 
-      <Sidebar side="left" variant="sidebar" className="w-[220px] group-data-[collapsible=icon]:w-[60px]">
+      <Sidebar side="left" variant="sidebar" className="w-[180px] group-data-[collapsible=icon]:w-[60px]">
         <SidebarContent>
           <div className="p-2 flex justify-end">
             {/* This is the in-sidebar toggle button (can be kept for consistency) */}

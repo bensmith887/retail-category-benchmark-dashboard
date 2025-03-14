@@ -14,6 +14,7 @@ import ProductPerformanceView from '@/components/ProductPerformanceView';
 import CustomerSentimentView from '@/components/CustomerSentimentView';
 import PromotionEffectivenessView from '@/components/PromotionEffectivenessView';
 import PriceElasticityView from '@/components/PriceElasticityView';
+import KeywordCategoryShareView from '@/components/KeywordCategoryShareView';
 import { metricsData, insightData } from '@/utils/data';
 
 const Index = () => {
@@ -74,7 +75,7 @@ const Index = () => {
             </div>
           </div>
         );
-      case 'market-share':
+      case 'traffic-share':
         return <MarketShareView />;
       case 'pricing':
         return <PricingView />;
@@ -97,6 +98,8 @@ const Index = () => {
         return <PromotionEffectivenessView />;
       case 'price-elasticity':
         return <PriceElasticityView />;
+      case 'keyword-category':
+        return <KeywordCategoryShareView />;
       default:
         return null;
     }

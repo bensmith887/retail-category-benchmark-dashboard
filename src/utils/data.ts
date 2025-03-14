@@ -52,18 +52,19 @@ export const insightData = [
   }
 ];
 
-import { BarChart3, LineChart, PieChart, DollarSign, Activity, TrendingUp, ShoppingBag } from 'lucide-react';
+import { BarChart3, LineChart, PieChart, DollarSign, Activity, TrendingUp, ShoppingBag, Search } from 'lucide-react';
 
 // Tab data
 export const tabsData = [
   { id: 'overview', name: 'Overview', icon: PieChart },
-  { id: 'market-share', name: 'Market Share', icon: LineChart },
+  { id: 'traffic-share', name: 'Traffic Share', icon: LineChart },
   { id: 'pricing', name: 'Pricing', icon: DollarSign },
   { id: 'product-performance', name: 'Product Performance', icon: ShoppingBag },
   { id: 'customer-sentiment', name: 'Customer Sentiment', icon: Activity },
   { id: 'promotion-effectiveness', name: 'Promotion Effectiveness', icon: BarChart3 },
   { id: 'traffic-sources', name: 'Traffic Sources', icon: TrendingUp },
   { id: 'price-elasticity', name: 'Price Elasticity', icon: TrendingUp },
+  { id: 'keyword-category', name: 'Keyword Category Share', icon: Search },
 ];
 
 // Metrics data
@@ -341,4 +342,25 @@ export const competitorCampaignAds = [
     startDate: '2023-09-05',
     endDate: '2023-10-05'
   }
+];
+
+// Keyword category groups for the Keyword Category Share tab
+export const keywordGroups = [
+  { id: '1de03338-1fda-4a88-a4b9-a96177e42f37', name: 'General Electronics' },
+  { id: '31b96160-6342-4972-9a7a-2231c8efba8b', name: 'Smart Home Products' },
+  { id: '797c6dec-5ae0-4569-8993-2debf68b167d', name: 'Audio Equipment' }
+];
+
+// Sample data for keyword share (will be replaced by API data)
+export const sampleKeywordShareData = [
+  { domain: 'amazon.com', share: 28.5 },
+  { domain: 'bestbuy.com', share: 15.7 },
+  { domain: 'walmart.com', share: 12.3 },
+  { domain: 'target.com', share: 9.8 },
+  { domain: 'ebay.com', share: 7.5 },
+  { domain: 'newegg.com', share: 6.2 },
+  { domain: 'apple.com', share: 5.4 },
+  { domain: 'samsung.com', share: 4.9 },
+  { domain: 'costco.com', share: 3.8 },
+  { domain: 'bhphotovideo.com', share: 2.9 }
 ];

@@ -26,6 +26,7 @@ const BarChart: React.FC<BarChartProps> = ({ title }) => {
               <li>Identify price gaps compared to competitors</li>
               <li>Optimize pricing strategy based on benchmarks</li>
               <li>Evaluate potential for price adjustments in key segments</li>
+              <li>Analyze price positioning relative to category average</li>
             </ul>
           </div>
         </div>
