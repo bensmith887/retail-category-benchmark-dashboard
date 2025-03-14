@@ -52,19 +52,63 @@ export const insightData = [
   }
 ];
 
-import { BarChart3, LineChart, PieChart, DollarSign, Activity, TrendingUp, ShoppingBag, Search } from 'lucide-react';
+import { 
+  BarChart3, PieChart, TrendingUp, Activity, LineChart, MessageSquare, 
+  DollarSign, Percent, Tag, ShoppingCart, Users, Search, Share2
+} from 'lucide-react';
 
 // Tab data
 export const tabsData = [
-  { id: 'overview', name: 'Overview', icon: PieChart },
-  { id: 'traffic-share', name: 'Traffic Share', icon: LineChart },
-  { id: 'pricing', name: 'Pricing', icon: DollarSign },
-  { id: 'product-performance', name: 'Product Performance', icon: ShoppingBag },
-  { id: 'customer-sentiment', name: 'Customer Sentiment', icon: Activity },
-  { id: 'promotion-effectiveness', name: 'Promotion Effectiveness', icon: BarChart3 },
-  { id: 'traffic-sources', name: 'Traffic Sources', icon: TrendingUp },
-  { id: 'price-elasticity', name: 'Price Elasticity', icon: TrendingUp },
-  { id: 'keyword-category', name: 'Keyword Category Share', icon: Search },
+  {
+    id: 'overview',
+    name: 'Overview',
+    icon: BarChart3
+  },
+  {
+    id: 'traffic-share',
+    name: 'Market Share',
+    icon: PieChart
+  },
+  {
+    id: 'pricing',
+    name: 'Pricing',
+    icon: DollarSign
+  },
+  {
+    id: 'product-performance',
+    name: 'Product Performance',
+    icon: Activity
+  },
+  {
+    id: 'traffic-sources',
+    name: 'Traffic Sources',
+    icon: Share2
+  },
+  {
+    id: 'customer-sentiment',
+    name: 'Customer Sentiment',
+    icon: MessageSquare
+  },
+  {
+    id: 'promotion-effectiveness',
+    name: 'Promotion Effectiveness',
+    icon: TrendingUp
+  },
+  {
+    id: 'price-elasticity',
+    name: 'Price Elasticity',
+    icon: Percent
+  },
+  {
+    id: 'keyword-category',
+    name: 'Keyword Categories',
+    icon: Tag
+  },
+  {
+    id: 'retail-media',
+    name: 'Retail Media',
+    icon: ShoppingCart
+  }
 ];
 
 // Metrics data
@@ -499,4 +543,192 @@ export const competitorSourceBenchmarks = {
     'Competitor C': { share: 9.8, indexToAvg: 1.02, yearChange: 3.2 },
     'Competitor D': { share: 12.1, indexToAvg: 1.26, yearChange: 4.5 }
   }
+};
+
+// Retail Media Benchmarking Data
+export const retailMediaData = {
+  metrics: [
+    { name: 'Total Traffic', value: '24.5M', change: 5.2 },
+    { name: 'Engagement Rate', value: '3.8%', change: 0.7 },
+    { name: 'Avg. Order Value', value: '$67.32', change: 2.1 }
+  ],
+  marketShare: [
+    { retailer: 'Amazon', share: 32, isOurRetailer: false },
+    { retailer: 'Walmart', share: 18, isOurRetailer: true },
+    { retailer: 'Target', share: 12, isOurRetailer: false },
+    { retailer: 'Kroger', share: 8, isOurRetailer: false },
+    { retailer: 'Instacart', share: 6, isOurRetailer: false },
+    { retailer: 'Best Buy', share: 5, isOurRetailer: false },
+    { retailer: 'Home Depot', share: 4, isOurRetailer: false },
+    { retailer: 'Other', share: 15, isOurRetailer: false }
+  ],
+  trafficTrends: [
+    { month: 'Jan', thisYear: 22, lastYear: 18 },
+    { month: 'Feb', thisYear: 24, lastYear: 19 },
+    { month: 'Mar', thisYear: 26, lastYear: 21 },
+    { month: 'Apr', thisYear: 28, lastYear: 22 },
+    { month: 'May', thisYear: 30, lastYear: 24 },
+    { month: 'Jun', thisYear: 28, lastYear: 23 },
+    { month: 'Jul', thisYear: 26, lastYear: 21 },
+    { month: 'Aug', thisYear: 29, lastYear: 23 },
+    { month: 'Sep', thisYear: 31, lastYear: 25 }
+  ],
+  channelPerformance: [
+    { channel: 'Sponsored Products', ourBrand: 85, competitor: 78 },
+    { channel: 'Display Ads', ourBrand: 65, competitor: 72 },
+    { channel: 'Search', ourBrand: 80, competitor: 75 },
+    { channel: 'Offsite Media', ourBrand: 42, competitor: 68 },
+    { channel: 'Video', ourBrand: 55, competitor: 63 }
+  ],
+  adSpendByCategory: [
+    { category: 'Electronics', ourBrand: 4.2, competitor: 3.8 },
+    { category: 'Grocery', ourBrand: 2.7, competitor: 3.1 },
+    { category: 'Apparel', ourBrand: 1.9, competitor: 2.5 },
+    { category: 'Home & Garden', ourBrand: 1.5, competitor: 1.2 },
+    { category: 'Beauty', ourBrand: 1.1, competitor: 1.8 }
+  ],
+  demographics: [
+    { ageGroup: '18-24', ourBrand: 12, competitor: 18 },
+    { ageGroup: '25-34', ourBrand: 28, competitor: 24 },
+    { ageGroup: '35-44', ourBrand: 32, competitor: 26 },
+    { ageGroup: '45-54', ourBrand: 18, competitor: 20 },
+    { ageGroup: '55-64', ourBrand: 7, competitor: 8 },
+    { ageGroup: '65+', ourBrand: 3, competitor: 4 }
+  ],
+  shoppingBehavior: [
+    { behavior: 'Price Sensitive', ourBrand: 78, industryAvg: 65 },
+    { behavior: 'Brand Loyal', ourBrand: 45, industryAvg: 52 },
+    { behavior: 'Deal Seekers', ourBrand: 82, industryAvg: 73 },
+    { behavior: 'Early Adopters', ourBrand: 36, industryAvg: 42 },
+    { behavior: 'Frequent Buyers', ourBrand: 58, industryAvg: 49 }
+  ],
+  crossShopping: [
+    { retailer: 'Amazon', overlap: 68 },
+    { retailer: 'Target', overlap: 42 },
+    { retailer: 'Kroger', overlap: 38 },
+    { retailer: 'Instacart', overlap: 35 },
+    { retailer: 'Best Buy', overlap: 28 },
+    { retailer: 'Home Depot', overlap: 22 },
+    { retailer: 'Costco', overlap: 32 }
+  ],
+  loyaltySegments: [
+    { name: 'Loyal', value: 32, color: '#5840bb' },
+    { name: 'Regular', value: 28, color: '#6892e6' },
+    { name: 'Occasional', value: 25, color: '#94a3b8' },
+    { name: 'New', value: 15, color: '#cbd5e1' }
+  ],
+  customerAcquisition: [
+    { month: 'Jan', new: 15, returning: 85 },
+    { month: 'Feb', new: 18, returning: 82 },
+    { month: 'Mar', new: 22, returning: 78 },
+    { month: 'Apr', new: 25, returning: 75 },
+    { month: 'May', new: 20, returning: 80 },
+    { month: 'Jun', new: 18, returning: 82 },
+    { month: 'Jul', new: 15, returning: 85 },
+    { month: 'Aug', new: 22, returning: 78 },
+    { month: 'Sep', new: 24, returning: 76 }
+  ],
+  campaignMetrics: [
+    { name: 'Avg. ROAS', value: '4.2x', change: 0.5 },
+    { name: 'CTR', value: '2.8%', change: 0.3 },
+    { name: 'Conversion Rate', value: '3.2%', change: 0.2 },
+    { name: 'CPA', value: '$12.48', change: -1.5 }
+  ],
+  roasByRetailer: [
+    { retailer: 'Walmart', roas: 4.8, isOurRetailer: true },
+    { retailer: 'Amazon', roas: 3.2, isOurRetailer: false },
+    { retailer: 'Target', roas: 3.9, isOurRetailer: false },
+    { retailer: 'Kroger', roas: 4.5, isOurRetailer: false },
+    { retailer: 'Instacart', roas: 3.7, isOurRetailer: false },
+    { retailer: 'Best Buy', roas: 2.9, isOurRetailer: false }
+  ],
+  ctrByFormat: [
+    { format: 'Sponsored Products', ourBrand: 3.2, industryAvg: 2.4 },
+    { format: 'Banner Ads', ourBrand: 1.8, industryAvg: 1.5 },
+    { format: 'Video Ads', ourBrand: 2.6, industryAvg: 2.2 },
+    { format: 'Native Ads', ourBrand: 2.1, industryAvg: 1.9 },
+    { format: 'Offsite Display', ourBrand: 1.2, industryAvg: 1.3 }
+  ],
+  conversionRates: [
+    { placement: 'Product Detail Pages', ourBrand: 5.2, industryAvg: 4.5 },
+    { placement: 'Search Results', ourBrand: 4.1, industryAvg: 3.8 },
+    { placement: 'Category Pages', ourBrand: 3.2, industryAvg: 2.9 },
+    { placement: 'Homepage', ourBrand: 1.8, industryAvg: 1.5 },
+    { placement: 'Shopping Cart', ourBrand: 8.5, industryAvg: 7.8 }
+  ],
+  shareOfVoice: [
+    { competitor: 'Our Brand', share: 22, isOurBrand: true },
+    { competitor: 'Competitor A', share: 28, isOurBrand: false },
+    { competitor: 'Competitor B', share: 18, isOurBrand: false },
+    { competitor: 'Competitor C', share: 15, isOurBrand: false },
+    { competitor: 'Competitor D', share: 12, isOurBrand: false },
+    { competitor: 'Others', share: 5, isOurBrand: false }
+  ],
+  mediaMix: [
+    { channel: 'Sponsored Products', ourBrand: 45, competitorAvg: 38 },
+    { channel: 'Display', ourBrand: 25, competitorAvg: 32 },
+    { channel: 'Search', ourBrand: 15, competitorAvg: 12 },
+    { channel: 'Social', ourBrand: 8, competitorAvg: 12 },
+    { channel: 'Video', ourBrand: 7, competitorAvg: 6 }
+  ],
+  keywordPerformance: [
+    { term: 'organic groceries', volume: '12,500', ourRank: 3, topCompetitorRank: 1 },
+    { term: 'healthy snacks', volume: '8,200', ourRank: 5, topCompetitorRank: 2 },
+    { term: 'natural foods', volume: '15,000', ourRank: 2, topCompetitorRank: 4 },
+    { term: 'dairy free', volume: '6,800', ourRank: 7, topCompetitorRank: 3 },
+    { term: 'gluten free pasta', volume: '4,500', ourRank: 1, topCompetitorRank: 6 }
+  ],
+  competitiveSpend: [
+    { month: 'Jan', ourBrand: 180, competitor1: 210, competitor2: 160 },
+    { month: 'Feb', ourBrand: 200, competitor1: 205, competitor2: 165 },
+    { month: 'Mar', ourBrand: 220, competitor1: 215, competitor2: 170 },
+    { month: 'Apr', ourBrand: 240, competitor1: 225, competitor2: 180 },
+    { month: 'May', ourBrand: 260, competitor1: 235, competitor2: 190 },
+    { month: 'Jun', ourBrand: 250, competitor1: 245, competitor2: 195 },
+    { month: 'Jul', ourBrand: 240, competitor1: 260, competitor2: 200 },
+    { month: 'Aug', ourBrand: 250, competitor1: 270, competitor2: 210 },
+    { month: 'Sep', ourBrand: 270, competitor1: 280, competitor2: 220 }
+  ],
+  untappedAudiences: [
+    { segment: 'Health Conscious Millennials', score: 82 },
+    { segment: 'Urban Parents', score: 75 },
+    { segment: 'Fitness Enthusiasts', score: 68 },
+    { segment: 'Eco-Friendly Shoppers', score: 65 },
+    { segment: 'Budget-Conscious Families', score: 58 }
+  ],
+  channelRecommendations: [
+    { channel: 'Social Media Retargeting', potential: 8.5 },
+    { channel: 'Influencer Partnerships', potential: 7.2 },
+    { channel: 'Mobile App Ads', potential: 6.8 },
+    { channel: 'Email Marketing', potential: 6.5 },
+    { channel: 'Content Marketing', potential: 5.9 }
+  ],
+  optimizationSuggestions: [
+    { area: 'Product Detail Page CTR', current: '2.1%', benchmark: '3.5%', opportunity: 'Improve creative assets', impact: 'High' },
+    { area: 'Mobile Conversion Rate', current: '1.8%', benchmark: '2.7%', opportunity: 'Optimize mobile experience', impact: 'High' },
+    { area: 'Keyword Coverage', current: '65%', benchmark: '85%', opportunity: 'Expand keyword targeting', impact: 'Medium' },
+    { area: 'Ad Spend Efficiency', current: '3.2 ROAS', benchmark: '4.5 ROAS', opportunity: 'Reallocate budget to top performers', impact: 'High' },
+    { area: 'Category Presence', current: '3 of 5', benchmark: '5 of 5', opportunity: 'Expand to new categories', impact: 'Medium' }
+  ],
+  trendForecasting: [
+    { month: 'Jan', historical: 100, forecast: null },
+    { month: 'Feb', historical: 110, forecast: null },
+    { month: 'Mar', historical: 120, forecast: null },
+    { month: 'Apr', historical: 115, forecast: null },
+    { month: 'May', historical: 125, forecast: null },
+    { month: 'Jun', historical: 135, forecast: null },
+    { month: 'Jul', historical: 140, forecast: 140 },
+    { month: 'Aug', historical: 145, forecast: 145 },
+    { month: 'Sep', historical: null, forecast: 150 },
+    { month: 'Oct', historical: null, forecast: 160 },
+    { month: 'Nov', historical: null, forecast: 180 },
+    { month: 'Dec', historical: null, forecast: 190 }
+  ],
+  budgetAllocation: [
+    { channel: 'Sponsored Products', current: 45, recommended: 40 },
+    { channel: 'Display Ads', current: 25, recommended: 20 },
+    { channel: 'Search', current: 15, recommended: 15 },
+    { channel: 'Social', current: 10, recommended: 15 },
+    { channel: 'Video', current: 5, recommended: 10 }
+  ]
 };

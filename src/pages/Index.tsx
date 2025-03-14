@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import Header from '@/components/Header';
@@ -16,6 +17,7 @@ import PromotionEffectivenessView from '@/components/PromotionEffectivenessView'
 import PriceElasticityView from '@/components/PriceElasticityView';
 import KeywordCategoryShareView from '@/components/KeywordCategoryShareView';
 import TrafficSourcesView from '@/components/TrafficSourcesView';
+import RetailMediaBenchmarkingView from '@/components/RetailMediaBenchmarkingView';
 import { metricsData, insightData } from '@/utils/data';
 
 const Index = () => {
@@ -92,6 +94,8 @@ const Index = () => {
         return <PriceElasticityView />;
       case 'keyword-category':
         return <KeywordCategoryShareView />;
+      case 'retail-media':
+        return <RetailMediaBenchmarkingView />;
       default:
         return null;
     }
