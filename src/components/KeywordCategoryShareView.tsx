@@ -8,13 +8,16 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
-import { keywordGroups, sampleKeywordShareData } from '@/utils/data';
 import { InfoIcon, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { 
+  fetchKeywordShareData, 
+  getKeywordGroupName,
+  keywordGroupMap 
+} from '@/utils/api/similarweb';
 
 interface KeywordShareData {
   domain: string;
@@ -22,49 +25,50 @@ interface KeywordShareData {
 }
 
 const KeywordCategoryShareView = () => {
+  const keywordGroups = Object.keys(keywordGroupMap).map(id => ({
+    id,
+    name: getKeywordGroupName(id)
+  }));
+
   const [selectedGroup, setSelectedGroup] = useState<string>(keywordGroups[0].id);
   const [groupName, setGroupName] = useState<string>(keywordGroups[0].name);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [keywordShareData, setKeywordShareData] = useState<KeywordShareData[]>(sampleKeywordShareData);
+  const [keywordShareData, setKeywordShareData] = useState<KeywordShareData[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
-    const fetchKeywordShareData = async () => {
+    const loadKeywordShareData = async () => {
       setIsLoading(true);
       setError(null);
       
       try {
-        // In a real implementation, we would make an API call to SimilarWeb here
-        // For now, simulate an API call with a timeout
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Using sample data for now - in a real implementation, this would come from the API
-        setKeywordShareData(sampleKeywordShareData);
+        const data = await fetchKeywordShareData(selectedGroup);
+        setKeywordShareData(data);
         
         // Set the group name based on the selected group
-        const group = keywordGroups.find(g => g.id === selectedGroup);
-        if (group) {
-          setGroupName(group.name);
-        }
+        const groupNameValue = getKeywordGroupName(selectedGroup);
+        setGroupName(groupNameValue);
         
         toast({
           title: "Data loaded successfully",
-          description: `Loaded keyword share data for ${group?.name}`,
+          description: `Loaded keyword share data for ${groupNameValue}`,
         });
       } catch (err) {
-        setError("Failed to fetch keyword share data. Please try again later.");
+        console.error('Error in component:', err);
+        setKeywordShareData([]); // Clear data on error
+        setError("Failed to fetch keyword share data. Please verify your API key and try again.");
         toast({
           variant: "destructive",
           title: "Error loading data",
-          description: "Could not load keyword share data. Please try again.",
+          description: "Could not load keyword share data. Please check the console for details.",
         });
       } finally {
         setIsLoading(false);
       }
     };
     
-    fetchKeywordShareData();
+    loadKeywordShareData();
   }, [selectedGroup, toast]);
 
   const getProgressColor = (share: number): string => {
@@ -121,6 +125,10 @@ const KeywordCategoryShareView = () => {
                 <AlertCircle size={32} className="mb-2" />
                 <p>{error}</p>
               </div>
+            ) : keywordShareData.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-64 text-dashboard-secondaryText">
+                <p>No data available for this keyword group</p>
+              </div>
             ) : (
               <Table>
                 <TableHeader>
@@ -132,7 +140,7 @@ const KeywordCategoryShareView = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {keywordShareData.map((item, index) => (
+                  {keywordShareData.slice(0, 10).map((item, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">{index + 1}</TableCell>
                       <TableCell>{item.domain}</TableCell>
@@ -141,7 +149,7 @@ const KeywordCategoryShareView = () => {
                         <div className="flex items-center gap-2">
                           <Progress 
                             value={item.share} 
-                            max={30} 
+                            max={Math.max(...keywordShareData.map(d => d.share))} 
                             className={`h-2 ${getProgressColor(item.share)}`} 
                           />
                         </div>
