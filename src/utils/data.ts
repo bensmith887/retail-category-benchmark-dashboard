@@ -364,3 +364,139 @@ export const sampleKeywordShareData = [
   { domain: 'costco.com', share: 3.8 },
   { domain: 'bhphotovideo.com', share: 2.9 }
 ];
+
+// Traffic Sources benchmarking data
+export const trafficSourcesData = {
+  categories: [
+    'Search', 'Direct', 'Referral', 'Social', 'Email', 'Display', 'Affiliates'
+  ],
+  competitors: [
+    'Your Brand', 'Competitor A', 'Competitor B', 'Competitor C', 'Competitor D'
+  ],
+  // Data showing percentage of traffic from each source for each competitor
+  data: [
+    // Search
+    { source: 'Search', 'Your Brand': 42.5, 'Competitor A': 38.2, 'Competitor B': 45.7, 'Competitor C': 51.3, 'Competitor D': 36.8 },
+    // Direct
+    { source: 'Direct', 'Your Brand': 28.3, 'Competitor A': 32.5, 'Competitor B': 24.8, 'Competitor C': 19.7, 'Competitor D': 26.4 },
+    // Referral
+    { source: 'Referral', 'Your Brand': 12.6, 'Competitor A': 10.8, 'Competitor B': 13.5, 'Competitor C': 11.2, 'Competitor D': 15.3 },
+    // Social
+    { source: 'Social', 'Your Brand': 8.4, 'Competitor A': 10.6, 'Competitor B': 7.2, 'Competitor C': 9.8, 'Competitor D': 12.1 },
+    // Email
+    { source: 'Email', 'Your Brand': 5.3, 'Competitor A': 4.7, 'Competitor B': 6.1, 'Competitor C': 3.8, 'Competitor D': 4.9 },
+    // Display
+    { source: 'Display', 'Your Brand': 2.1, 'Competitor A': 2.6, 'Competitor B': 1.5, 'Competitor C': 3.4, 'Competitor D': 2.8 },
+    // Affiliates
+    { source: 'Affiliates', 'Your Brand': 0.8, 'Competitor A': 0.6, 'Competitor B': 1.2, 'Competitor C': 0.8, 'Competitor D': 1.7 }
+  ]
+};
+
+// Traffic source trend data
+export const trafficSourceTrendData = [
+  { month: 'Oct', 'Search': 39.8, 'Direct': 26.2, 'Referral': 14.5, 'Social': 7.3, 'Email': 4.9, 'Display': 1.8, 'Affiliates': 0.9 },
+  { month: 'Nov', 'Search': 40.3, 'Direct': 26.5, 'Referral': 14.2, 'Social': 7.8, 'Email': 5.0, 'Display': 1.9, 'Affiliates': 0.8 },
+  { month: 'Dec', 'Search': 41.2, 'Direct': 27.4, 'Referral': 13.8, 'Social': 7.9, 'Email': 5.1, 'Display': 2.0, 'Affiliates': 0.8 },
+  { month: 'Jan', 'Search': 41.8, 'Direct': 27.8, 'Referral': 13.2, 'Social': 8.0, 'Email': 5.2, 'Display': 2.0, 'Affiliates': 0.8 },
+  { month: 'Feb', 'Search': 42.1, 'Direct': 28.0, 'Referral': 12.7, 'Social': 8.2, 'Email': 5.3, 'Display': 2.0, 'Affiliates': 0.8 },
+  { month: 'Mar', 'Search': 42.5, 'Direct': 28.3, 'Referral': 12.6, 'Social': 8.4, 'Email': 5.3, 'Display': 2.1, 'Affiliates': 0.8 }
+];
+
+// Category traffic distribution by source
+export const categoryTrafficData = [
+  { 
+    category: "Women's Apparel",
+    search: 45.2,
+    direct: 25.6,
+    referral: 13.8,
+    social: 10.5,
+    email: 3.2,
+    display: 1.2,
+    affiliates: 0.5
+  },
+  { 
+    category: "Men's Apparel",
+    search: 40.8,
+    direct: 30.2,
+    referral: 15.3,
+    social: 8.2,
+    email: 3.8,
+    display: 1.1,
+    affiliates: 0.6
+  },
+  { 
+    category: "Footwear",
+    search: 48.5,
+    direct: 22.3,
+    referral: 12.4,
+    social: 9.8,
+    email: 4.5,
+    display: 1.8,
+    affiliates: 0.7
+  },
+  { 
+    category: "Accessories",
+    search: 38.6,
+    direct: 24.5,
+    referral: 14.7,
+    social: 15.3,
+    email: 4.2,
+    display: 2.0,
+    affiliates: 0.7
+  },
+  { 
+    category: "Activewear",
+    search: 44.3,
+    direct: 26.7,
+    referral: 11.5,
+    social: 11.8,
+    email: 3.5,
+    display: 1.5,
+    affiliates: 0.7
+  },
+  { 
+    category: "Luxury",
+    search: 35.8,
+    direct: 32.4,
+    referral: 18.5,
+    social: 7.2,
+    email: 3.8,
+    display: 1.5,
+    affiliates: 0.8
+  },
+  { 
+    category: "Casual Wear",
+    search: 42.6,
+    direct: 28.9,
+    referral: 12.8,
+    social: 9.5,
+    email: 4.0,
+    display: 1.6,
+    affiliates: 0.6
+  }
+];
+
+// Traffic source benchmarks by competitor
+export const competitorSourceBenchmarks = {
+  search: {
+    'Your Brand': { share: 42.5, indexToAvg: 1.05, yearChange: 2.7 },
+    'Competitor A': { share: 38.2, indexToAvg: 0.94, yearChange: 1.5 },
+    'Competitor B': { share: 45.7, indexToAvg: 1.13, yearChange: 3.8 },
+    'Competitor C': { share: 51.3, indexToAvg: 1.27, yearChange: 5.2 },
+    'Competitor D': { share: 36.8, indexToAvg: 0.91, yearChange: -0.8 }
+  },
+  direct: {
+    'Your Brand': { share: 28.3, indexToAvg: 1.02, yearChange: 2.1 },
+    'Competitor A': { share: 32.5, indexToAvg: 1.18, yearChange: 3.7 },
+    'Competitor B': { share: 24.8, indexToAvg: 0.90, yearChange: 1.5 },
+    'Competitor C': { share: 19.7, indexToAvg: 0.71, yearChange: -1.2 },
+    'Competitor D': { share: 26.4, indexToAvg: 0.96, yearChange: 0.8 }
+  },
+  social: {
+    'Your Brand': { share: 8.4, indexToAvg: 0.87, yearChange: 1.1 },
+    'Competitor A': { share: 10.6, indexToAvg: 1.10, yearChange: 2.3 },
+    'Competitor B': { share: 7.2, indexToAvg: 0.75, yearChange: 0.5 },
+    'Competitor C': { share: 9.8, indexToAvg: 1.02, yearChange: 3.2 },
+    'Competitor D': { share: 12.1, indexToAvg: 1.26, yearChange: 4.5 }
+  }
+};

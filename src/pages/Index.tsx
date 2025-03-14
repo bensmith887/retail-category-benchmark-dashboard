@@ -15,6 +15,7 @@ import CustomerSentimentView from '@/components/CustomerSentimentView';
 import PromotionEffectivenessView from '@/components/PromotionEffectivenessView';
 import PriceElasticityView from '@/components/PriceElasticityView';
 import KeywordCategoryShareView from '@/components/KeywordCategoryShareView';
+import TrafficSourcesView from '@/components/TrafficSourcesView';
 import { metricsData, insightData } from '@/utils/data';
 
 const Index = () => {
@@ -80,16 +81,7 @@ const Index = () => {
       case 'pricing':
         return <PricingView />;
       case 'traffic-sources':
-        return (
-          <div className="py-12 text-center animate-fade-in">
-            <h2 className="text-2xl font-medium text-dashboard-text mb-4">Traffic Sources Analysis</h2>
-            <p className="text-dashboard-secondaryText">This section is coming soon</p>
-            
-            <div className="text-xs text-center text-dashboard-secondaryText mt-20 pt-4 border-t border-dashboard-border">
-              <p>Source: SimilarWeb • Metrics: Traffic Sources, Referrals, Campaign Attribution</p>
-            </div>
-          </div>
-        );
+        return <TrafficSourcesView />;
       case 'product-performance':
         return <ProductPerformanceView />;
       case 'customer-sentiment':
