@@ -15,7 +15,8 @@ import {
   Bar, 
   Legend,
   ReferenceLine,
-  LabelList
+  LabelList,
+  Cell
 } from 'recharts';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
@@ -101,10 +102,16 @@ export const DomainWaterfallChart: React.FC<DomainWaterfallChartProps> = ({ sele
         <ReferenceLine x={0} stroke="#888" />
         <Bar 
           dataKey="change" 
-          fill={(entry) => entry.isPositive ? '#22c55e' : '#ef4444'}
+          fill="#888" // Set a default fill color
           minPointSize={2}
           barSize={30}
         >
+          {data.map((entry, index) => (
+            <Cell 
+              key={`cell-${index}`} 
+              fill={entry.isPositive ? '#22c55e' : '#ef4444'} 
+            />
+          ))}
           <LabelList 
             dataKey="label" 
             position="right" 
