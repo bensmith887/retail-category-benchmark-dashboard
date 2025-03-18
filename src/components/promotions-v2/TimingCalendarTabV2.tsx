@@ -83,8 +83,12 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
                 data={heatmapData} 
                 fill="#5840bb"
                 shape={(props: any) => {
-                  const { cx, cy, width, height, value } = props;
-                  const opacity = Math.min(value * 0.8, 0.9);
+                  const { cx, cy, r } = props;
+                  const width = 45;  // Adjusted width
+                  const height = 35; // Adjusted height
+                  const value = props.payload.value;
+                  const opacity = Math.min(Math.max(0.2, value * 0.8), 0.9);
+                  
                   return (
                     <Rectangle
                       x={cx - width / 2}
@@ -92,11 +96,46 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
                       width={width}
                       height={height}
                       fill={`rgba(88, 64, 187, ${opacity})`}
-                      strokeWidth={0}
+                      stroke="rgba(88, 64, 187, 0.1)"
+                      strokeWidth={1}
                     />
                   );
                 }}
               />
+              
+              {/* Month labels */}
+              {monthlyElasticityData.map((entry, index) => (
+                <text 
+                  key={`month-${index}`} 
+                  x={(index * 50) + 40} // Adjusted positioning
+                  y={320} 
+                  textAnchor="middle" 
+                  dominantBaseline="middle"
+                  className="fill-slate-600 text-xs font-medium"
+                >
+                  {entry.month}
+                </text>
+              ))}
+              
+              {/* Category labels */}
+              <text 
+                x={20} 
+                y={115} 
+                textAnchor="start" 
+                dominantBaseline="middle"
+                className="fill-slate-600 text-xs font-medium"
+              >
+                Baby
+              </text>
+              <text 
+                x={20} 
+                y={185} 
+                textAnchor="start" 
+                dominantBaseline="middle"
+                className="fill-slate-600 text-xs font-medium"
+              >
+                Books
+              </text>
             </ScatterChart>
           </ResponsiveContainer>
         </div>

@@ -266,11 +266,11 @@ const PromotionsV2Dashboard = () => {
             </div>
 
             <UITabs defaultValue="timing" className="mb-6">
-              <TabsList className="grid grid-cols-4 mb-4">
-                <TabsTrigger value="timing">Timing & Calendar</TabsTrigger>
-                <TabsTrigger value="category">Category Analysis</TabsTrigger>
-                <TabsTrigger value="optimization">Promotion Optimizer</TabsTrigger>
-                <TabsTrigger value="strategy">Seasonal Strategy</TabsTrigger>
+              <TabsList className="grid grid-cols-4 mb-4 bg-gray-100 p-1.5 rounded-lg shadow-sm border border-gray-200">
+                <TabsTrigger value="timing" className="font-semibold">Timing & Calendar</TabsTrigger>
+                <TabsTrigger value="category" className="font-semibold">Category Analysis</TabsTrigger>
+                <TabsTrigger value="optimization" className="font-semibold">Promotion Optimizer</TabsTrigger>
+                <TabsTrigger value="strategy" className="font-semibold">Seasonal Strategy</TabsTrigger>
               </TabsList>
               
               <TabsContent value="timing">
