@@ -31,10 +31,14 @@ const Index = () => {
     return () => setMounted(false);
   }, []);
 
-  // Handle tab changes, redirecting to the price elasticity page when selected
+  // Handle tab changes, redirecting to the specific page when selected
   const handleTabChange = (tabId: string) => {
     if (tabId === 'price-elasticity') {
       navigate('/price-elasticity');
+    } else if (tabId === 'promotions') {
+      navigate('/promotions');
+    } else if (tabId === 'promotions-v2') {
+      navigate('/promotions-v2');
     } else {
       setActiveTab(tabId);
     }

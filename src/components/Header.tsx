@@ -1,11 +1,14 @@
 
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Calendar, Filter, X, ChevronDown } from 'lucide-react';
 import { filtersData } from '@/utils/data';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from '@/lib/utils';
+import DashboardSelector from './DashboardSelector';
 
 const Header = () => {
+  const location = useLocation();
   const [filters, setFilters] = useState([
     { id: 'category', label: 'Categories: Electronics' },
     { id: 'timeframe', label: 'Last 6 Months' },
@@ -29,6 +32,8 @@ const Header = () => {
           </div>
           
           <div className="flex flex-col md:flex-row items-start md:items-center gap-3 w-full md:w-auto">
+            <DashboardSelector currentPath={location.pathname} />
+            
             <Popover>
               <PopoverTrigger asChild>
                 <button className="flex items-center gap-2 px-3 py-1.5 border border-dashboard-border rounded-md text-dashboard-secondaryText hover:border-dashboard-primary hover:text-dashboard-primary transition-all duration-200">

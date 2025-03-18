@@ -27,7 +27,9 @@ const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
                   ? '/price-elasticity' 
                   : tab.id === 'promotions'
                     ? '/promotions'
-                    : '/'
+                    : tab.id === 'promotions-v2'
+                      ? '/promotions-v2'
+                      : '/'
               }
               className={cn(
                 "flex items-center py-2 px-4 text-dashboard-secondaryText hover:bg-dashboard-hover rounded-md transition-colors",
