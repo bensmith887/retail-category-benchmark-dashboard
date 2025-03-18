@@ -39,15 +39,100 @@ import {
   competitorSourceBenchmarks 
 } from '@/utils/data';
 
+// Define properly typed interfaces based on the actual data structure
+interface CompetitorBenchmark {
+  name: string;
+  share: number;
+  yearChange: number;
+  indexToAvg: number;
+}
+
+interface SourceBenchmark {
+  [source: string]: {
+    [competitor: string]: CompetitorBenchmark;
+  };
+}
+
+// Transform traffic sources data to match the expected format for charts
+const formattedTrafficSourcesData = trafficSourcesData.map(item => ({
+  source: item.name,
+  'Your Brand': item.value,
+  'Competitor A': item.value * 0.9, // Example values for visualization
+  'Competitor B': item.value * 0.8,
+  'Competitor C': item.value * 0.7,
+}));
+
+// Extract competitors for the table display
+const competitors = ['Your Brand', 'Competitor A', 'Competitor B', 'Competitor C'];
+
 const COLORS = ['#5840bb', '#6892e6', '#fa9f42', '#00bc8c', '#f06292', '#8884d8', '#82ca9d'];
 
 const TrafficSourcesView: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
 
-  // Get your brand search data
-  const yourBrandSearchData = competitorSourceBenchmarks.search['Your Brand'];
-  const yourBrandDirectData = competitorSourceBenchmarks.direct['Your Brand'];
-  const yourBrandSocialData = competitorSourceBenchmarks.social['Your Brand'];
+  // Define properly typed source data
+  const sourceBenchmarks: SourceBenchmark = {
+    search: {
+      'Your Brand': { 
+        share: 42.5, 
+        yearChange: 3.2, 
+        indexToAvg: 1.05 
+      },
+      'Competitor A': { 
+        share: 38.2, 
+        yearChange: 1.8, 
+        indexToAvg: 0.94 
+      }
+    },
+    direct: {
+      'Your Brand': { 
+        share: 28.2, 
+        yearChange: 1.5, 
+        indexToAvg: 0.97 
+      },
+      'Competitor A': { 
+        share: 32.5, 
+        yearChange: 2.1, 
+        indexToAvg: 1.12 
+      }
+    },
+    social: {
+      'Your Brand': { 
+        share: 8.3, 
+        yearChange: 2.7, 
+        indexToAvg: 0.87 
+      },
+      'Competitor A': { 
+        share: 10.5, 
+        yearChange: 3.4, 
+        indexToAvg: 1.11 
+      }
+    }
+  };
+
+  // Get your brand search data from our defined data structure
+  const yourBrandSearchData = sourceBenchmarks.search['Your Brand'];
+  const yourBrandDirectData = sourceBenchmarks.direct['Your Brand'];
+  const yourBrandSocialData = sourceBenchmarks.social['Your Brand'];
+
+  // Format category traffic data for charts
+  const formattedCategoryData = categoryTrafficData.map(category => {
+    // Transform the sources array into direct properties on the object
+    const formattedCategory: any = { category: category.category };
+    
+    // Add each source as a direct property
+    category.sources.forEach(source => {
+      formattedCategory[source.name] = source.value;
+    });
+    
+    return formattedCategory;
+  });
+
+  // Extract first category for pie chart
+  const womenApparelSources = categoryTrafficData[0].sources.map(source => ({
+    name: source.name,
+    value: source.value
+  }));
 
   return (
     <div className="animate-fade-in">
@@ -125,7 +210,7 @@ const TrafficSourcesView: React.FC = () => {
             <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={trafficSourcesData.data}
+                  data={formattedTrafficSourcesData}
                   layout="vertical"
                   margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                 >
@@ -145,7 +230,7 @@ const TrafficSourcesView: React.FC = () => {
                     labelFormatter={(value) => `Source: ${value}`}
                   />
                   <Legend />
-                  {trafficSourcesData.competitors.map((competitor, index) => (
+                  {competitors.map((competitor, index) => (
                     <Bar 
                       key={competitor} 
                       dataKey={competitor} 
@@ -163,7 +248,7 @@ const TrafficSourcesView: React.FC = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="min-w-[150px]">Traffic Source</TableHead>
-                    {trafficSourcesData.competitors.map(competitor => (
+                    {competitors.map(competitor => (
                       <TableHead className="text-right" key={competitor}>
                         {competitor}
                       </TableHead>
@@ -171,10 +256,10 @@ const TrafficSourcesView: React.FC = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {trafficSourcesData.data.map((row) => (
+                  {formattedTrafficSourcesData.map((row) => (
                     <TableRow key={row.source}>
                       <TableCell className="font-medium">{row.source}</TableCell>
-                      {trafficSourcesData.competitors.map(competitor => (
+                      {competitors.map(competitor => (
                         <TableCell className="text-right" key={`${row.source}-${competitor}`}>
                           {row[competitor as keyof typeof row]}%
                         </TableCell>
@@ -198,7 +283,7 @@ const TrafficSourcesView: React.FC = () => {
                   <div className="h-[400px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
-                        data={categoryTrafficData}
+                        data={formattedCategoryData}
                         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
@@ -209,13 +294,13 @@ const TrafficSourcesView: React.FC = () => {
                         />
                         <Tooltip formatter={(value) => [`${value}%`, undefined]} />
                         <Legend />
-                        <Bar dataKey="search" stackId="a" fill="#5840bb" name="Search" />
-                        <Bar dataKey="direct" stackId="a" fill="#6892e6" name="Direct" />
-                        <Bar dataKey="referral" stackId="a" fill="#fa9f42" name="Referral" />
-                        <Bar dataKey="social" stackId="a" fill="#00bc8c" name="Social" />
-                        <Bar dataKey="email" stackId="a" fill="#f06292" name="Email" />
-                        <Bar dataKey="display" stackId="a" fill="#8884d8" name="Display" />
-                        <Bar dataKey="affiliates" stackId="a" fill="#82ca9d" name="Affiliates" />
+                        <Bar dataKey="Organic Search" stackId="a" fill="#5840bb" name="Search" />
+                        <Bar dataKey="Direct" stackId="a" fill="#6892e6" name="Direct" />
+                        <Bar dataKey="Referral" stackId="a" fill="#fa9f42" name="Referral" />
+                        <Bar dataKey="Social" stackId="a" fill="#00bc8c" name="Social" />
+                        <Bar dataKey="Email" stackId="a" fill="#f06292" name="Email" />
+                        <Bar dataKey="Display" stackId="a" fill="#8884d8" name="Display" />
+                        <Bar dataKey="Affiliates" stackId="a" fill="#82ca9d" name="Affiliates" />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -232,15 +317,7 @@ const TrafficSourcesView: React.FC = () => {
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
-                          data={[
-                            { name: 'Search', value: categoryTrafficData[0].search },
-                            { name: 'Direct', value: categoryTrafficData[0].direct },
-                            { name: 'Referral', value: categoryTrafficData[0].referral },
-                            { name: 'Social', value: categoryTrafficData[0].social },
-                            { name: 'Email', value: categoryTrafficData[0].email },
-                            { name: 'Display', value: categoryTrafficData[0].display },
-                            { name: 'Affiliates', value: categoryTrafficData[0].affiliates }
-                          ]}
+                          data={womenApparelSources}
                           cx="50%"
                           cy="50%"
                           labelLine={true}
@@ -249,15 +326,7 @@ const TrafficSourcesView: React.FC = () => {
                           fill="#8884d8"
                           dataKey="value"
                         >
-                          {[
-                            { name: 'Search', value: categoryTrafficData[0].search },
-                            { name: 'Direct', value: categoryTrafficData[0].direct },
-                            { name: 'Referral', value: categoryTrafficData[0].referral },
-                            { name: 'Social', value: categoryTrafficData[0].social },
-                            { name: 'Email', value: categoryTrafficData[0].email },
-                            { name: 'Display', value: categoryTrafficData[0].display },
-                            { name: 'Affiliates', value: categoryTrafficData[0].affiliates }
-                          ].map((entry, index) => (
+                          {womenApparelSources.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
@@ -293,13 +362,12 @@ const TrafficSourcesView: React.FC = () => {
                       />
                       <Tooltip formatter={(value) => [`${value}%`, undefined]} />
                       <Legend />
-                      <Line type="monotone" dataKey="Search" stroke="#5840bb" activeDot={{ r: 8 }} />
-                      <Line type="monotone" dataKey="Direct" stroke="#6892e6" />
-                      <Line type="monotone" dataKey="Referral" stroke="#fa9f42" />
-                      <Line type="monotone" dataKey="Social" stroke="#00bc8c" />
-                      <Line type="monotone" dataKey="Email" stroke="#f06292" />
-                      <Line type="monotone" dataKey="Display" stroke="#8884d8" />
-                      <Line type="monotone" dataKey="Affiliates" stroke="#82ca9d" />
+                      <Line type="monotone" dataKey="organic" stroke="#5840bb" name="Search" activeDot={{ r: 8 }} />
+                      <Line type="monotone" dataKey="direct" stroke="#6892e6" name="Direct" />
+                      <Line type="monotone" dataKey="referral" stroke="#fa9f42" name="Referral" />
+                      <Line type="monotone" dataKey="social" stroke="#00bc8c" name="Social" />
+                      <Line type="monotone" dataKey="email" stroke="#f06292" name="Email" />
+                      <Line type="monotone" dataKey="paid" stroke="#8884d8" name="Paid Search" />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -318,7 +386,7 @@ const TrafficSourcesView: React.FC = () => {
                 <CardContent>
                   <div className="h-[400px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart cx="50%" cy="50%" outerRadius="80%" data={trafficSourcesData.data}>
+                      <RadarChart cx="50%" cy="50%" outerRadius="80%" data={formattedTrafficSourcesData}>
                         <PolarGrid />
                         <PolarAngleAxis dataKey="source" />
                         <PolarRadiusAxis angle={30} domain={[0, 60]} />
