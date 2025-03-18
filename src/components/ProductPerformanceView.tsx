@@ -27,6 +27,10 @@ const ProductPerformanceView = () => {
     .map(([category]) => category)
     .join(', ');
   
+  // Fix the arithmetic operations by ensuring they're done with numbers
+  const monthChangeComparison = avgMonthChange - 2.5;
+  const yearChangeComparison = avgYearChange - 15;
+  
   return (
     <div className="animate-fade-in">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 stagger-animate">
@@ -43,7 +47,7 @@ const ProductPerformanceView = () => {
         <MetricsCard
           label="Avg Monthly Growth"
           value={`${avgMonthChange.toFixed(1)}%`}
-          change={`${(avgMonthChange - 2.5).toFixed(1)}%`}
+          change={`${monthChangeComparison.toFixed(1)}%`}
           isPositive={avgMonthChange > 2.5}
           secondaryLabel="YoY"
           secondaryChange="+8.5%"
@@ -52,7 +56,7 @@ const ProductPerformanceView = () => {
         <MetricsCard
           label="Avg Yearly Growth"
           value={`${avgYearChange.toFixed(1)}%`}
-          change={`${(avgYearChange - 15).toFixed(1)}%`}
+          change={`${yearChangeComparison.toFixed(1)}%`}
           isPositive={avgYearChange > 15}
           secondaryLabel="vs Target"
           secondaryChange="+3.5%"

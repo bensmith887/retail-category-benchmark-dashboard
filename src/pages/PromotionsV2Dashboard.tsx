@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -289,20 +290,8 @@ const PromotionsV2Dashboard = () => {
               
               <TabsContent value="optimization">
                 <PromotionOptimizerTabV2 
-                  basePrice={basePrice}
-                  setBasePrice={setBasePrice}
-                  baseSales={baseSales}
-                  setBaseSales={setBaseSales}
-                  discountPercentage={discountPercentage}
-                  setDiscountPercentage={setDiscountPercentage}
-                  selectedPromotionType={selectedPromotionType}
-                  setSelectedPromotionType={setSelectedPromotionType}
-                  projectedSales={projectedSales}
-                  projectedRevenue={projectedRevenue}
-                  revenueImpact={revenueImpact}
-                  optimalDiscount={optimalDiscount}
-                  category={selectedCategory}
-                  subcategory={selectedSubcategory}
+                  initialPrice={basePrice}
+                  initialSales={baseSales}
                 />
               </TabsContent>
               
