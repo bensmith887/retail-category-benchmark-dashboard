@@ -22,7 +22,13 @@ const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
           {tabsData.map((tab) => (
             <Link
               key={tab.id}
-              to={tab.id === 'price-elasticity' ? '/price-elasticity' : '/'}
+              to={
+                tab.id === 'price-elasticity' 
+                  ? '/price-elasticity' 
+                  : tab.id === 'promotions'
+                    ? '/promotions'
+                    : '/'
+              }
               className={cn(
                 "flex items-center py-2 px-4 text-dashboard-secondaryText hover:bg-dashboard-hover rounded-md transition-colors",
                 activeTab === tab.id && "bg-dashboard-active text-dashboard-text"
