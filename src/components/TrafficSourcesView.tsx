@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,11 +73,13 @@ const TrafficSourcesView: React.FC = () => {
   const sourceBenchmarks: SourceBenchmark = {
     search: {
       'Your Brand': { 
+        name: 'Your Brand',
         share: 42.5, 
         yearChange: 3.2, 
         indexToAvg: 1.05 
       },
       'Competitor A': { 
+        name: 'Competitor A',
         share: 38.2, 
         yearChange: 1.8, 
         indexToAvg: 0.94 
@@ -86,11 +87,13 @@ const TrafficSourcesView: React.FC = () => {
     },
     direct: {
       'Your Brand': { 
+        name: 'Your Brand',
         share: 28.2, 
         yearChange: 1.5, 
         indexToAvg: 0.97 
       },
       'Competitor A': { 
+        name: 'Competitor A',
         share: 32.5, 
         yearChange: 2.1, 
         indexToAvg: 1.12 
@@ -98,11 +101,13 @@ const TrafficSourcesView: React.FC = () => {
     },
     social: {
       'Your Brand': { 
+        name: 'Your Brand',
         share: 8.3, 
         yearChange: 2.7, 
         indexToAvg: 0.87 
       },
       'Competitor A': { 
+        name: 'Competitor A',
         share: 10.5, 
         yearChange: 3.4, 
         indexToAvg: 1.11 
