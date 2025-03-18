@@ -1,5 +1,5 @@
+
 import React, { useState, useEffect } from 'react';
-import { TooltipProvider } from "@/components/ui/tooltip";
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -748,4 +748,197 @@ const PriceElasticityDashboard = () => {
                                       label: 'Revenue',
                                       data: [
                                         currentPrice * currentSales,
-                                        project
+                                        projectedRevenue || 0
+                                      ],
+                                      backgroundColor: [
+                                        'rgba(79, 70, 229, 0.7)',
+                                        projectedRevenue > currentPrice * currentSales ? 'rgba(16, 185, 129, 0.7)' : 'rgba(239, 68, 68, 0.7)'
+                                      ]
+                                    }
+                                  ]
+                                }}
+                                options={{
+                                  responsive: true,
+                                  maintainAspectRatio: false,
+                                  scales: {
+                                    y: {
+                                      beginAtZero: true,
+                                      ticks: {
+                                        callback: function(value) {
+                                          return '$' + value.toLocaleString();
+                                        }
+                                      }
+                                    }
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Optimization Recommendation</CardTitle>
+                          <CardDescription>Revenue-maximizing price point</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-4">
+                            <div className="p-4 border border-dashboard-border rounded-lg bg-blue-50">
+                              <h4 className="font-medium mb-2 flex items-center text-blue-800">
+                                <InfoIcon size={16} className="mr-2" />
+                                Recommended Price
+                              </h4>
+                              {recommendedPrice && (
+                                <div className="text-center my-4">
+                                  <span className="text-3xl font-bold text-blue-800">${recommendedPrice.toFixed(2)}</span>
+                                  <p className="text-sm text-blue-700 mt-1">
+                                    {recommendedPrice > currentPrice ? 'Increase' : 'Decrease'} from ${currentPrice.toFixed(2)}
+                                    ({(((recommendedPrice / currentPrice) - 1) * 100).toFixed(1)}%)
+                                  </p>
+                                </div>
+                              )}
+                              <p className="text-sm text-blue-700">
+                                This is the estimated optimal price point to maximize revenue based on elasticity calculations.
+                              </p>
+                            </div>
+                            
+                            <div className="p-4 border border-dashboard-border rounded-lg">
+                              <h4 className="font-medium mb-2">Insights</h4>
+                              <ul className="text-sm space-y-2 text-dashboard-secondaryText">
+                                <li className="flex items-start">
+                                  <span className="mr-2">•</span>
+                                  {selectedProduct === 'baby' ? 'Baby products' : 'Books'} show relatively inelastic demand (elasticity > -1).
+                                </li>
+                                <li className="flex items-start">
+                                  <span className="mr-2">•</span>
+                                  {selectedSubcategory !== 'all' ? (
+                                    <>
+                                      {selectedSubcategory.charAt(0).toUpperCase() + selectedSubcategory.slice(1)} have 
+                                      {selectedSubcategory === 'strollers' ? ' higher' : ' lower'} price sensitivity than other subcategories.
+                                    </>
+                                  ) : (
+                                    <>
+                                      Consider subcategory differences when setting prices.
+                                    </>
+                                  )}
+                                </li>
+                                <li className="flex items-start">
+                                  <span className="mr-2">•</span>
+                                  Small price adjustments can significantly impact overall revenue.
+                                </li>
+                              </ul>
+                            </div>
+                            
+                            <Button variant="outline" className="w-full flex items-center justify-center gap-2">
+                              <RefreshCw size={14} />
+                              Recalculate
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="competitors">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Competitor Elasticity Comparison</CardTitle>
+                          <CardDescription>Price sensitivity across retailers</CardDescription>
+                        </CardHeader>
+                        <CardContent className="h-[350px]">
+                          <Bar data={competitorBenchmarkData} options={elasticityChartOptions} />
+                        </CardContent>
+                      </Card>
+
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Market Positioning</CardTitle>
+                          <CardDescription>Competitive landscape analysis</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="h-[350px] relative">
+                            <div className="absolute inset-0 flex items-center justify-center text-dashboard-secondaryText text-sm">
+                              Market positioning chart coming soon
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                    
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Competitive Analysis Summary</CardTitle>
+                        <CardDescription>Key insights and competitive advantage</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-4">
+                            <h4 className="font-medium">Price Sensitivity Analysis</h4>
+                            <ul className="text-sm space-y-2 text-dashboard-secondaryText">
+                              <li className="flex items-start">
+                                <span className="mr-2">•</span>
+                                Amazon shows significantly lower price sensitivity (more inelastic) than other mass retailers like Walmart and Target.
+                              </li>
+                              <li className="flex items-start">
+                                <span className="mr-2">•</span>
+                                For baby products, Amazon's elasticity (-0.27) is much lower than Walmart (-1.2), indicating Amazon customers are less price-sensitive.
+                              </li>
+                              <li className="flex items-start">
+                                <span className="mr-2">•</span>
+                                In books, Amazon (-0.24) has the lowest elasticity compared to competitors, allowing for potential price optimization.
+                              </li>
+                              <li className="flex items-start">
+                                <span className="mr-2">•</span>
+                                Specialty retailers (Buy Buy Baby, Barnes & Noble) show moderate elasticity, positioned between mass merchants and Amazon.
+                              </li>
+                            </ul>
+                          </div>
+                          
+                          <div className="space-y-4">
+                            <h4 className="font-medium">Strategic Recommendations</h4>
+                            <ul className="text-sm space-y-2 text-dashboard-secondaryText">
+                              <li className="flex items-start">
+                                <span className="mr-2">•</span>
+                                <strong>Baby Products:</strong> Consider selective price increases in subcategories with lower elasticity (diapers, toys).
+                              </li>
+                              <li className="flex items-start">
+                                <span className="mr-2">•</span>
+                                <strong>Books:</strong> Children's books (-0.09) have extremely low elasticity, suggesting opportunity for price optimization.
+                              </li>
+                              <li className="flex items-start">
+                                <span className="mr-2">•</span>
+                                <strong>Competitive Edge:</strong> Focus on non-price differentiation against more elastic competitors like Walmart.
+                              </li>
+                              <li className="flex items-start">
+                                <span className="mr-2">•</span>
+                                <strong>Pricing Strategy:</strong> Maintain competitive pricing on highly elastic items (strollers, furniture) while optimizing less elastic categories.
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                </UITabs>
+                
+                <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-4 border-t border-dashboard-border">
+                  <p>Source: SimilarWeb Data • March 2023 - February 2025 • 47,901 products analyzed</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        <footer className="bg-white border-t border-dashboard-border py-4 px-6">
+          <div className="flex justify-between items-center text-sm text-dashboard-secondaryText">
+            <span>© 2023 CategoryBench</span>
+            <span>Last updated: March 15, 2024</span>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+};
+
+export default PriceElasticityDashboard;
