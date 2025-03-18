@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -62,10 +61,8 @@ const PriceElasticityDashboard = () => {
     return () => setMounted(false);
   }, []);
 
-  // Calculate elasticity impact for the recommendation engine
   useEffect(() => {
     if (currentPrice && currentSales) {
-      // Get the elasticity value for the selected category/subcategory
       let elasticityValue = -0.27; // Default for baby products
       
       if (selectedProduct === 'baby') {
@@ -81,23 +78,15 @@ const PriceElasticityDashboard = () => {
         else if (selectedSubcategory === 'children') elasticityValue = -0.09;
       }
       
-      // Calculate the percentage change in price
       const percentageChange = priceChange / 100;
       
-      // Calculate the projected impact on sales using the elasticity formula
-      // If elasticity is -0.5 and price increases by 10%, sales decrease by 5%
       const salesImpact = currentSales * (1 + (elasticityValue * percentageChange));
       
-      // Calculate the new price
       const newPrice = currentPrice * (1 + percentageChange);
       
-      // Calculate the projected revenue
       const newRevenue = salesImpact * newPrice;
       const currentRevenue = currentSales * currentPrice;
       
-      // Calculate the optimal price for revenue maximization
-      // For a linear demand curve, optimal price is at elasticity = -1
-      // For our estimated elasticity, we can approximate the optimal price
       const optimalPriceChange = (-1 / elasticityValue) - 1;
       const optimalPrice = currentPrice * (1 + optimalPriceChange);
       
@@ -107,7 +96,6 @@ const PriceElasticityDashboard = () => {
     }
   }, [currentPrice, currentSales, priceChange, selectedProduct, selectedSubcategory]);
 
-  // Chart data for price trends
   const priceTrendData = {
     labels: ['Mar 2023', 'Jun 2023', 'Sep 2023', 'Dec 2023', 'Mar 2024', 'Jun 2024', 'Sep 2024', 'Dec 2024', 'Feb 2025'],
     datasets: [
@@ -130,7 +118,6 @@ const PriceElasticityDashboard = () => {
     ]
   };
 
-  // Chart data for elasticity trends
   const elasticityTrendData = {
     labels: ['Mar 2023', 'Jun 2023', 'Sep 2023', 'Dec 2023', 'Mar 2024', 'Jun 2024', 'Sep 2024', 'Dec 2024', 'Feb 2025'],
     datasets: [
@@ -151,7 +138,6 @@ const PriceElasticityDashboard = () => {
     ]
   };
 
-  // Chart data for category comparison
   const categoryComparisonData = {
     labels: ['Baby Products', 'Books'],
     datasets: [
@@ -171,7 +157,6 @@ const PriceElasticityDashboard = () => {
     ]
   };
 
-  // Chart data for subcategory comparison
   const subcategoryComparisonData = {
     labels: ['Strollers', 'Furniture', 'Toys', 'Diapers', 'Business Books', 'Fiction Books', 'Children\'s Books'],
     datasets: [
@@ -201,7 +186,6 @@ const PriceElasticityDashboard = () => {
     ]
   };
 
-  // Chart data for price vs elasticity scatter plot
   const priceVsElasticityData = {
     datasets: [
       {
@@ -241,7 +225,6 @@ const PriceElasticityDashboard = () => {
     ]
   };
 
-  // Chart data for competitor benchmarking
   const competitorBenchmarkData = {
     labels: ['Amazon', 'Walmart', 'Target', 'Buy Buy Baby', 'Barnes & Noble'],
     datasets: [
@@ -262,7 +245,6 @@ const PriceElasticityDashboard = () => {
     ]
   };
 
-  // Chart options
   const lineChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -296,7 +278,7 @@ const PriceElasticityDashboard = () => {
     },
     scales: {
       y: {
-        reverse: true, // Negative elasticity values are shown as positive bars
+        reverse: true,
         beginAtZero: true,
       }
     }
@@ -313,7 +295,7 @@ const PriceElasticityDashboard = () => {
     },
     scales: {
       x: {
-        reverse: true, // Negative elasticity values are shown as positive bars
+        reverse: true,
         beginAtZero: true,
       }
     }
@@ -336,7 +318,7 @@ const PriceElasticityDashboard = () => {
     },
     scales: {
       y: {
-        reverse: true, // Negative elasticity values appear in expected direction
+        reverse: true,
         title: {
           display: true,
           text: 'Price Elasticity'
@@ -942,3 +924,4 @@ const PriceElasticityDashboard = () => {
 };
 
 export default PriceElasticityDashboard;
+
