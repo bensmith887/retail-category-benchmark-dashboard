@@ -72,7 +72,7 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
               />
               <Tooltip 
                 cursor={{ strokeDasharray: '3 3' }}
-                formatter={(value, name) => [`Elasticity: ${value.toFixed(2)}`, name]}
+                formatter={(value: any) => [`Elasticity: ${typeof value === 'number' ? value.toFixed(2) : value}`, 'Elasticity']}
                 contentStyle={{ 
                   borderRadius: '6px', 
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
@@ -82,7 +82,7 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
               <Scatter 
                 data={heatmapData} 
                 fill="#5840bb"
-                shape={(props) => {
+                shape={(props: any) => {
                   const { cx, cy, width, height, value } = props;
                   const opacity = Math.min(value * 0.8, 0.9);
                   return (
@@ -126,7 +126,7 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
                 tickFormatter={(value) => `${value}`}
               />
               <Tooltip 
-                formatter={(value) => [`${value}`, 'Elasticity']}
+                formatter={(value: any) => [`${value}`, 'Elasticity']}
                 contentStyle={{ 
                   borderRadius: '6px', 
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',

@@ -4,6 +4,9 @@ import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
 import { Tabs as UITabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Info, Download, FileText } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 // Import refactored components
 import TimingCalendarTab from '@/components/promotions/TimingCalendarTab';
@@ -12,7 +15,7 @@ import PromotionOptimizerTab from '@/components/promotions/PromotionOptimizerTab
 import SeasonalStrategyTab from '@/components/promotions/SeasonalStrategyTab';
 
 // Import utilities
-import { calculatePromotionImpact, generateHeatmapData, generatePromotionData } from '@/utils/promotionUtils';
+import { calculatePromotionImpact, generateHeatmapData, generatePromotionData, generateCampaignCalendar } from '@/utils/promotionUtils';
 
 const PromotionsDashboard = () => {
   const [activeTab, setActiveTab] = useState('promotions');
@@ -29,10 +32,12 @@ const PromotionsDashboard = () => {
   const [projectedRevenue, setProjectedRevenue] = useState(0);
   const [revenueImpact, setRevenueImpact] = useState(0);
   const [optimalDiscount, setOptimalDiscount] = useState(0);
+  const [elasticity, setElasticity] = useState(0);
 
   // Load promotion data
-  const { monthlyElasticityData, subcategoryElasticityData, priceSensitivityData } = generatePromotionData();
+  const { monthlyElasticityData, subcategoryElasticityData, priceSensitivityData, seasonalStrategyData } = generatePromotionData();
   const heatmapData = generateHeatmapData(monthlyElasticityData);
+  const campaignCalendar = generateCampaignCalendar();
 
   useEffect(() => {
     setMounted(true);
@@ -54,8 +59,14 @@ const PromotionsDashboard = () => {
       setProjectedRevenue(results.projectedRevenue);
       setRevenueImpact(results.revenueImpact);
       setOptimalDiscount(results.optimalDiscount);
+      setElasticity(results.elasticity);
     }
   }, [basePrice, baseSales, discountPercentage, selectedCategory, selectedSubcategory, selectedMonth]);
+
+  const handleExportData = () => {
+    console.log('Exporting data...');
+    // In a real implementation, this would generate a CSV or PDF
+  };
 
   return (
     <div className="flex min-h-screen bg-dashboard-bg">
@@ -126,6 +137,32 @@ const PromotionsDashboard = () => {
                     <SelectItem value="dec">December</SelectItem>
                   </SelectContent>
                 </Select>
+                
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <Info className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-sm">
+                      <p className="text-sm">
+                        <strong>Price Elasticity</strong> measures how sensitive demand is to price changes. 
+                        A value of -1.0 means a 10% price reduction increases sales by 10%.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
+                <Button variant="outline" onClick={handleExportData}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Export
+                </Button>
+                
+                <Button variant="outline">
+                  <FileText className="h-4 w-4 mr-2" />
+                  PDF Report
+                </Button>
               </div>
             </div>
 
@@ -169,9 +206,21 @@ const PromotionsDashboard = () => {
               </TabsContent>
               
               <TabsContent value="strategy">
-                <SeasonalStrategyTab />
+                <SeasonalStrategyTab 
+                  seasonalStrategyData={seasonalStrategyData}
+                  campaignCalendar={campaignCalendar}
+                />
               </TabsContent>
             </UITabs>
+            
+            <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-6 border-t border-dashboard-border">
+              <p>
+                Source: SimilarWeb • Data Period: Mar 2023 - Feb 2025 • Analysis based on 47,901 data points and 1,256 elasticity measurements
+              </p>
+              <p className="mt-1">
+                Last Updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+              </p>
+            </div>
           </div>
         </div>
       </div>
