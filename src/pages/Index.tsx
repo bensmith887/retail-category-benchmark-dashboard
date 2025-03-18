@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -23,11 +24,21 @@ import { metricsData, insightData } from '@/utils/data';
 const Index = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [mounted, setMounted] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setMounted(true);
     return () => setMounted(false);
   }, []);
+
+  // Handle tab changes, redirecting to the price elasticity page when selected
+  const handleTabChange = (tabId: string) => {
+    if (tabId === 'price-elasticity') {
+      navigate('/price-elasticity');
+    } else {
+      setActiveTab(tabId);
+    }
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -90,8 +101,6 @@ const Index = () => {
         return <CustomerSentimentView />;
       case 'promotion-effectiveness':
         return <PromotionEffectivenessView />;
-      case 'price-elasticity':
-        return <PriceElasticityView />;
       case 'keyword-category':
         return <KeywordCategoryShareView />;
       case 'retail-media':
@@ -104,7 +113,7 @@ const Index = () => {
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-dashboard-bg">
-        <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+        <Tabs activeTab={activeTab} setActiveTab={handleTabChange} />
         <SidebarInset className="flex flex-col">
           <Header />
           <div className="flex-grow py-6 px-6">

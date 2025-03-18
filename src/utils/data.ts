@@ -54,7 +54,7 @@ export const insightData = [
 
 import { 
   BarChart3, PieChart, TrendingUp, Activity, LineChart, MessageSquare, 
-  DollarSign, Percent, Tag, ShoppingCart, Users, Search, Share2
+  DollarSign, Percent, Tag, ShoppingCart, Users, Search, Share2, Heart, ExternalLink, Radio
 } from 'lucide-react';
 
 // Tab data
@@ -62,52 +62,52 @@ export const tabsData = [
   {
     id: 'overview',
     name: 'Overview',
-    icon: BarChart3
+    icon: (props: any) => <BarChart size={16} {...props} />
   },
   {
     id: 'traffic-share',
     name: 'Market Share',
-    icon: PieChart
+    icon: (props: any) => <PieChart size={16} {...props} />
   },
   {
     id: 'pricing',
     name: 'Pricing',
-    icon: DollarSign
-  },
-  {
-    id: 'product-performance',
-    name: 'Product Performance',
-    icon: Activity
-  },
-  {
-    id: 'traffic-sources',
-    name: 'Traffic Sources',
-    icon: Share2
-  },
-  {
-    id: 'customer-sentiment',
-    name: 'Customer Sentiment',
-    icon: MessageSquare
-  },
-  {
-    id: 'promotion-effectiveness',
-    name: 'Promotion Effectiveness',
-    icon: TrendingUp
+    icon: (props: any) => <DollarSign size={16} {...props} />
   },
   {
     id: 'price-elasticity',
     name: 'Price Elasticity',
-    icon: Percent
+    icon: (props: any) => <TrendingUp size={16} {...props} />
+  },
+  {
+    id: 'product-performance',
+    name: 'Product Performance',
+    icon: (props: any) => <Activity size={16} {...props} />
+  },
+  {
+    id: 'customer-sentiment',
+    name: 'Customer Sentiment',
+    icon: (props: any) => <Heart size={16} {...props} />
+  },
+  {
+    id: 'promotion-effectiveness',
+    name: 'Promotions',
+    icon: (props: any) => <Tag size={16} {...props} />
   },
   {
     id: 'keyword-category',
-    name: 'Keyword Categories',
-    icon: Tag
+    name: 'Keyword Share',
+    icon: (props: any) => <Search size={16} {...props} />
+  },
+  {
+    id: 'traffic-sources',
+    name: 'Traffic Sources',
+    icon: (props: any) => <ExternalLink size={16} {...props} />
   },
   {
     id: 'retail-media',
     name: 'Retail Media',
-    icon: ShoppingCart
+    icon: (props: any) => <Radio size={16} {...props} />
   }
 ];
 
