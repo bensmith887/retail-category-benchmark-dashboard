@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -204,7 +203,25 @@ const PromotionsV2Dashboard = () => {
               </div>
             </div>
 
-            {/* Top Metrics - Similar to Price Elasticity Dashboard */}
+            {/* Understanding Elasticity Section */}
+            <div className="dashboard-card mb-6 bg-blue-50 border-l-4 border-dashboard-primary">
+              <div className="flex items-start gap-3">
+                <Info className="h-5 w-5 text-dashboard-primary mt-0.5 flex-shrink-0" />
+                <div>
+                  <h3 className="text-lg font-medium text-dashboard-text mb-1">Understanding Price Elasticity</h3>
+                  <p className="text-sm text-dashboard-secondaryText">
+                    Price elasticity measures how demand responds to price changes. A value of <strong>-1.0</strong> means a 10% price 
+                    reduction leads to 10% more sales (unit elastic). Values between <strong>0 and -1</strong> indicate 
+                    inelastic demand (less responsive), while values <strong>below -1</strong> show elastic demand 
+                    (more responsive). For example, an elasticity of <strong>-2.0</strong> means a 10% price reduction 
+                    increases sales by 20%. Negative values are normal and indicate the inverse relationship 
+                    between price and demand.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Top Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
               <MetricsCard
                 label="Avg. Elasticity"
@@ -297,7 +314,7 @@ const PromotionsV2Dashboard = () => {
               </TabsContent>
             </UITabs>
             
-            {/* Insights - Similar to Price Elasticity Dashboard */}
+            {/* Insights */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
               {promotionalInsights.map((insight, index) => (
                 <InsightCard
