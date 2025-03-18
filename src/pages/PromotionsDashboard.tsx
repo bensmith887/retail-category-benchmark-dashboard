@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -12,7 +11,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/
 import MetricsCard from '@/components/MetricsCard';
 import { 
   TrendingUp, BarChart3, Target, Calendar, Percent, Tag, 
-  ArrowUpRight, ArrowDownRight, ShoppingCart, DollarSign, Clock
+  ArrowUpRight, ArrowDownRight, ShoppingCart, DollarSign, Clock, Check
 } from 'lucide-react';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
@@ -32,7 +31,6 @@ const PromotionsDashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState('all');
   const [selectedPromotionType, setSelectedPromotionType] = useState('discount');
 
-  // Calculate promotion impact
   const [basePrice, setBasePrice] = useState(29.99);
   const [baseSales, setBaseSales] = useState(1000);
   const [projectedSales, setProjectedSales] = useState(0);
@@ -45,11 +43,9 @@ const PromotionsDashboard = () => {
     return () => setMounted(false);
   }, []);
 
-  // Calculate promotion impact based on elasticity and discount
   useEffect(() => {
     if (basePrice && baseSales) {
-      // Get elasticity value for the selected category and subcategory
-      let elasticityValue = -0.89; // Default elasticity
+      let elasticityValue = -0.89;
       
       if (selectedCategory === 'baby') {
         if (selectedSubcategory === 'feeding') elasticityValue = -1.03;
@@ -63,14 +59,12 @@ const PromotionsDashboard = () => {
         else if (selectedSubcategory === 'all') elasticityValue = -0.55;
       }
       
-      // Apply monthly seasonality factor
-      if (selectedMonth === 'jul') elasticityValue *= 1.7; // July has highest sensitivity
+      if (selectedMonth === 'jul') elasticityValue *= 1.7;
       else if (selectedMonth === 'nov' || selectedMonth === 'dec') {
-        if (selectedCategory === 'books') elasticityValue *= 1.5; // Books more sensitive during holidays
-        else elasticityValue *= 1.2; // Baby products less affected
+        if (selectedCategory === 'books') elasticityValue *= 1.5;
+        else elasticityValue *= 1.2;
       }
       
-      // Calculate promotion impact
       const discountRate = discountPercentage / 100;
       const newPrice = basePrice * (1 - discountRate);
       const salesImpact = baseSales * (1 + (-elasticityValue * discountRate));
@@ -79,8 +73,6 @@ const PromotionsDashboard = () => {
       const currentRevenue = baseSales * basePrice;
       const revImpact = newRevenue - currentRevenue;
       
-      // Calculate optimal discount percentage for maximum revenue
-      // For a linear demand curve with elasticity e, optimal discount is (1/e)
       const optDiscount = Math.min(Math.round(100 / Math.abs(elasticityValue)), 50);
       
       setProjectedSales(Math.round(salesImpact));
@@ -90,7 +82,6 @@ const PromotionsDashboard = () => {
     }
   }, [basePrice, baseSales, discountPercentage, selectedCategory, selectedSubcategory, selectedMonth]);
 
-  // Promotional elasticity data by month
   const monthlyElasticityData = [
     { month: 'Jan', baby: -0.65, books: -0.45 },
     { month: 'Feb', baby: -0.71, books: -0.48 },
@@ -106,7 +97,6 @@ const PromotionsDashboard = () => {
     { month: 'Dec', baby: -0.98, books: -0.96 }
   ];
 
-  // Subcategory elasticity comparison data
   const subcategoryElasticityData = [
     { name: 'Feeding', elasticity: -1.03, category: 'Baby' },
     { name: 'Diapers', elasticity: -0.97, category: 'Baby' },
@@ -120,7 +110,6 @@ const PromotionsDashboard = () => {
     { name: 'Academic', elasticity: -0.52, category: 'Books' }
   ];
 
-  // Seasonal heat map data
   const heatmapData = [];
   for (let i = 0; i < 12; i++) {
     for (let j = 0; j < 2; j++) {
@@ -135,13 +124,11 @@ const PromotionsDashboard = () => {
     }
   }
 
-  // Price sensitivity comparison (increase vs decrease)
   const priceSensitivityData = [
     { name: 'Price Increase', value: 0.89 },
     { name: 'Price Discount', value: 0.04 }
   ];
 
-  // Chart options and styles
   const lineChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -247,7 +234,6 @@ const PromotionsDashboard = () => {
               </div>
             </div>
 
-            {/* Promotion Dashboard Tabs */}
             <UITabs defaultValue="timing" className="mb-6">
               <TabsList className="grid grid-cols-4 mb-4">
                 <TabsTrigger value="timing">Timing & Calendar</TabsTrigger>
@@ -256,7 +242,6 @@ const PromotionsDashboard = () => {
                 <TabsTrigger value="strategy">Seasonal Strategy</TabsTrigger>
               </TabsList>
               
-              {/* Tab 1: Promotional Calendar & Timing */}
               <TabsContent value="timing" className="animate-fade-in">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                   <MetricsCard
@@ -285,7 +270,6 @@ const PromotionsDashboard = () => {
                   />
                 </div>
                 
-                {/* Seasonal Heat Map */}
                 <div className="dashboard-card mb-6">
                   <h3 className="text-lg font-medium text-dashboard-text mb-4">Promotional Sensitivity Heat Map</h3>
                   <div style={{ height: "350px" }}>
@@ -349,7 +333,6 @@ const PromotionsDashboard = () => {
                   </div>
                 </div>
                 
-                {/* Monthly Elasticity Trends */}
                 <div className="dashboard-card mb-6">
                   <h3 className="text-lg font-medium text-dashboard-text mb-4">Monthly Promotional Elasticity Trends</h3>
                   <div style={{ height: "300px" }}>
@@ -403,7 +386,6 @@ const PromotionsDashboard = () => {
                 </div>
               </TabsContent>
               
-              {/* Tab 2: Category & Subcategory Analysis */}
               <TabsContent value="category" className="animate-fade-in">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                   <MetricsCard
@@ -432,7 +414,6 @@ const PromotionsDashboard = () => {
                   />
                 </div>
                 
-                {/* Subcategory Elasticity Comparison */}
                 <div className="dashboard-card mb-6">
                   <h3 className="text-lg font-medium text-dashboard-text mb-4">Subcategory Promotional Responsiveness</h3>
                   <div style={{ height: "350px" }}>
@@ -476,7 +457,6 @@ const PromotionsDashboard = () => {
                   </div>
                 </div>
                 
-                {/* Price Sensitivity Comparison */}
                 <div className="dashboard-card mb-6">
                   <h3 className="text-lg font-medium text-dashboard-text mb-4">Price Increase vs. Decrease Sensitivity</h3>
                   <div style={{ height: "300px" }}>
@@ -514,7 +494,6 @@ const PromotionsDashboard = () => {
                 </div>
               </TabsContent>
               
-              {/* Tab 3: Promotion Optimization Tool */}
               <TabsContent value="optimization" className="animate-fade-in">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                   <MetricsCard
@@ -543,7 +522,6 @@ const PromotionsDashboard = () => {
                   />
                 </div>
                 
-                {/* Discount Simulator */}
                 <div className="dashboard-card mb-6">
                   <h3 className="text-lg font-medium text-dashboard-text mb-4">Discount Simulator</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -664,7 +642,6 @@ const PromotionsDashboard = () => {
                   </div>
                 </div>
                 
-                {/* ROI Calculator */}
                 <div className="dashboard-card mb-6">
                   <h3 className="text-lg font-medium text-dashboard-text mb-4">Promotion ROI by Discount Level</h3>
                   <div style={{ height: "300px" }}>
@@ -742,7 +719,6 @@ const PromotionsDashboard = () => {
                 </div>
               </TabsContent>
               
-              {/* Tab 4: Seasonal Strategy Planner */}
               <TabsContent value="strategy" className="animate-fade-in">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                   <MetricsCard
@@ -771,7 +747,6 @@ const PromotionsDashboard = () => {
                   />
                 </div>
                 
-                {/* Monthly Strategy Calendar */}
                 <div className="dashboard-card mb-6">
                   <h3 className="text-lg font-medium text-dashboard-text mb-4">Monthly Promotion Strategy Calendar</h3>
                   <div className="overflow-auto">
@@ -826,7 +801,6 @@ const PromotionsDashboard = () => {
                   </div>
                 </div>
                 
-                {/* Promotion Comparison */}
                 <div className="dashboard-card mb-6">
                   <h3 className="text-lg font-medium text-dashboard-text mb-4">Peak vs. Off-Peak Promotion Strategy Comparison</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -903,7 +877,6 @@ const PromotionsDashboard = () => {
                   </div>
                 </div>
                 
-                {/* Elasticity Explanation */}
                 <div className="dashboard-card mb-6 bg-gradient-to-r from-dashboard-highlight to-white">
                   <h3 className="text-lg font-medium text-dashboard-text mb-4">Understanding Price Elasticity</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
@@ -979,7 +952,6 @@ const PromotionsDashboard = () => {
               </TabsContent>
             </UITabs>
             
-            {/* Insights */}
             <div className="mb-6">
               <h3 className="text-lg font-medium text-dashboard-text mb-3">Key Promotional Insights</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -994,7 +966,6 @@ const PromotionsDashboard = () => {
               </div>
             </div>
             
-            {/* Subfooter */}
             <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-4 border-t border-dashboard-border">
               <p>Source: SimilarWeb • Data Points: 47,901 • Time Period: Mar 2023 - Feb 2025</p>
             </div>
