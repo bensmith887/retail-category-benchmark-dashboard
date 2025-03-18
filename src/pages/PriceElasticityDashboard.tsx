@@ -808,7 +808,7 @@ const PriceElasticityDashboard = () => {
                               <ul className="text-sm space-y-2 text-dashboard-secondaryText">
                                 <li className="flex items-start">
                                   <span className="mr-2">•</span>
-                                  {selectedProduct === 'baby' ? 'Baby products' : 'Books'} show relatively inelastic demand (elasticity > -1).
+                                  {selectedProduct === 'baby' ? 'Baby products' : 'Books'} show relatively inelastic demand (elasticity {'\u003E'} -1).
                                 </li>
                                 <li className="flex items-start">
                                   <span className="mr-2">•</span>
