@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Calculator, DollarSign, ShoppingCart, Percent, BarChart4 } from 'lucide-react';
+
+import React, { useState, useEffect } from 'react';
+import { Calculator, DollarSign, ShoppingCart, Percent, BarChart4, Filter } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -47,9 +48,22 @@ const PromotionOptimizerTabV2: React.FC<PromotionOptimizerTabV2Props> = ({
   const [seasonality, setSeasonality] = useState(0);
   const [adSupport, setAdSupport] = useState(0);
   const [productLifecycle, setProductLifecycle] = useState('growth');
+  const [localCategory, setLocalCategory] = useState(category);
+  const [localSubcategory, setLocalSubcategory] = useState(subcategory);
+  const [calculatedElasticity, setCalculatedElasticity] = useState(-0.89);
   
-  // Use a default elasticity value for the display, or calculate it
-  const defaultElasticity = -0.89; // We'll use this as a fallback
+  // Calculate elasticity based on category and subcategory
+  useEffect(() => {
+    const calcResults = calculatePromotionImpact(
+      basePrice,
+      baseSales,
+      discountPercentage,
+      localCategory,
+      localSubcategory,
+      'all'
+    );
+    setCalculatedElasticity(calcResults.elasticity);
+  }, [basePrice, baseSales, discountPercentage, localCategory, localSubcategory]);
   
   // Create comparison data for different discount levels
   const generateComparisonData = () => {
@@ -60,8 +74,8 @@ const PromotionOptimizerTabV2: React.FC<PromotionOptimizerTabV2Props> = ({
         basePrice,
         baseSales,
         discount,
-        category,
-        subcategory,
+        localCategory,
+        localSubcategory,
         'all'
       );
       
@@ -78,11 +92,9 @@ const PromotionOptimizerTabV2: React.FC<PromotionOptimizerTabV2Props> = ({
   
   // Generate what-if scenario data
   const generateScenarioData = () => {
-    const baseElasticity = -0.89;
-    
     // Calculate adjusted elasticity
     const adjustedElasticity = calculateWhatIfScenario(
-      baseElasticity,
+      calculatedElasticity,
       {
         competitorActivity,
         seasonality,
@@ -148,9 +160,62 @@ const PromotionOptimizerTabV2: React.FC<PromotionOptimizerTabV2Props> = ({
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-1">
               <div className="dashboard-card h-full">
-                <h3 className="text-lg font-medium text-dashboard-text mb-4">Discount Settings</h3>
+                <h3 className="text-lg font-medium text-dashboard-text mb-4 flex items-center">
+                  <Filter className="mr-2 h-5 w-5 text-dashboard-primary" />
+                  Discount Settings
+                </h3>
                 
                 <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="categorySelect">Category</Label>
+                      <Select
+                        value={localCategory}
+                        onValueChange={setLocalCategory}
+                      >
+                        <SelectTrigger id="categorySelect">
+                          <SelectValue placeholder="Select Category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="baby">Baby Products</SelectItem>
+                          <SelectItem value="books">Books</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="subcategorySelect">Subcategory</Label>
+                      <Select
+                        value={localSubcategory}
+                        onValueChange={setLocalSubcategory}
+                      >
+                        <SelectTrigger id="subcategorySelect">
+                          <SelectValue placeholder="Select Subcategory" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Subcategories</SelectItem>
+                          {localCategory === 'baby' ? (
+                            <>
+                              <SelectItem value="feeding">Feeding</SelectItem>
+                              <SelectItem value="diapers">Diapers</SelectItem>
+                              <SelectItem value="bath">Bath</SelectItem>
+                              <SelectItem value="furniture">Furniture</SelectItem>
+                              <SelectItem value="strollers">Strollers</SelectItem>
+                              <SelectItem value="toys">Toys</SelectItem>
+                            </>
+                          ) : (
+                            <>
+                              <SelectItem value="business">Business</SelectItem>
+                              <SelectItem value="fiction">Fiction</SelectItem>
+                              <SelectItem value="children">Children's</SelectItem>
+                              <SelectItem value="academic">Academic</SelectItem>
+                            </>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
                   <div className="space-y-2">
                     <Label htmlFor="basePrice">Base Price ($)</Label>
                     <Input
@@ -198,14 +263,6 @@ const PromotionOptimizerTabV2: React.FC<PromotionOptimizerTabV2Props> = ({
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="discount" id="discount" />
                         <Label htmlFor="discount">Price Discount</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="bundle" id="bundle" />
-                        <Label htmlFor="bundle">Product Bundle</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="coupon" id="coupon" />
-                        <Label htmlFor="coupon">Coupon Code</Label>
                       </div>
                     </RadioGroup>
                   </div>
@@ -256,7 +313,7 @@ const PromotionOptimizerTabV2: React.FC<PromotionOptimizerTabV2Props> = ({
                   </div>
                   <p className="text-2xl font-semibold">{optimalDiscount}%</p>
                   <p className="text-sm text-dashboard-secondaryText mt-1">
-                    Based on elasticity of {defaultElasticity.toFixed(2)}
+                    Based on elasticity of {calculatedElasticity.toFixed(2)}
                   </p>
                 </div>
                 
