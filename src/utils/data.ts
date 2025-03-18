@@ -62,52 +62,52 @@ export const tabsData = [
   {
     id: 'overview',
     name: 'Overview',
-    icon: (props: any) => <BarChart size={16} {...props} />
+    icon: 'BarChart3'
   },
   {
     id: 'traffic-share',
     name: 'Market Share',
-    icon: (props: any) => <PieChart size={16} {...props} />
+    icon: 'PieChart'
   },
   {
     id: 'pricing',
     name: 'Pricing',
-    icon: (props: any) => <DollarSign size={16} {...props} />
+    icon: 'DollarSign'
   },
   {
     id: 'price-elasticity',
     name: 'Price Elasticity',
-    icon: (props: any) => <TrendingUp size={16} {...props} />
+    icon: 'TrendingUp'
   },
   {
     id: 'product-performance',
     name: 'Product Performance',
-    icon: (props: any) => <Activity size={16} {...props} />
+    icon: 'Activity'
   },
   {
     id: 'customer-sentiment',
     name: 'Customer Sentiment',
-    icon: (props: any) => <Heart size={16} {...props} />
+    icon: 'Heart'
   },
   {
     id: 'promotion-effectiveness',
     name: 'Promotions',
-    icon: (props: any) => <Tag size={16} {...props} />
+    icon: 'Tag'
   },
   {
     id: 'keyword-category',
     name: 'Keyword Share',
-    icon: (props: any) => <Search size={16} {...props} />
+    icon: 'Search'
   },
   {
     id: 'traffic-sources',
     name: 'Traffic Sources',
-    icon: (props: any) => <ExternalLink size={16} {...props} />
+    icon: 'ExternalLink'
   },
   {
     id: 'retail-media',
     name: 'Retail Media',
-    icon: (props: any) => <Radio size={16} {...props} />
+    icon: 'Radio'
   }
 ];
 
@@ -732,3 +732,4 @@ export const retailMediaData = {
     { channel: 'Video', current: 5, recommended: 10 }
   ]
 };
+

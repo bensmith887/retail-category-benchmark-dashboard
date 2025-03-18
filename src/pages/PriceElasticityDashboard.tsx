@@ -748,4 +748,4 @@ const PriceElasticityDashboard = () => {
                                       label: 'Revenue',
                                       data: [
                                         currentPrice * currentSales,
-                                        projectedRevenue ||
+                                        project

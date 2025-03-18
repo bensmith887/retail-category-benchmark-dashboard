@@ -1,73 +1,41 @@
 
-import React from 'react';
-import { tabsData } from '@/utils/data';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar
-} from "@/components/ui/sidebar";
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { TabIcon } from "./TabIcon";
+import { tabsData } from "@/utils/data";
+import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface TabsProps {
   activeTab: string;
-  setActiveTab: (tabId: string) => void;
+  setActiveTab: (tab: string) => void;
 }
 
 const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
-  const { state, toggleSidebar } = useSidebar();
-  
   return (
-    <>
-      {/* Fixed toggle button that's always visible */}
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        onClick={toggleSidebar} 
-        className="fixed top-4 left-4 z-20 h-8 w-8 p-0 bg-white/80 hover:bg-white shadow-sm rounded-full border transition-all duration-300"
-      >
-        {state === 'expanded' ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
-      </Button>
-
-      <Sidebar side="left" variant="sidebar" className="w-[180px] group-data-[collapsible=icon]:w-[60px]">
-        <SidebarContent>
-          <div className="p-2 flex justify-end">
-            {/* This is the in-sidebar toggle button (can be kept for consistency) */}
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={toggleSidebar} 
-              className="h-8 w-8 p-0"
+    <div className="w-16 md:w-64 h-screen bg-white border-r border-dashboard-border flex-shrink-0">
+      <div className="h-16 flex items-center justify-center md:justify-start px-4 border-b border-dashboard-border">
+        <span className="hidden md:block text-lg font-medium">CategoryBench</span>
+        <span className="block md:hidden text-lg font-medium">CB</span>
+      </div>
+      <div className="py-4">
+        <div className="space-y-1">
+          {tabsData.map((tab) => (
+            <Link
+              key={tab.id}
+              to={tab.id === 'price-elasticity' ? '/price-elasticity' : '/'}
+              className={cn(
+                "flex items-center py-2 px-4 text-dashboard-secondaryText hover:bg-dashboard-hover rounded-md transition-colors",
+                activeTab === tab.id && "bg-dashboard-active text-dashboard-text"
+              )}
+              onClick={() => setActiveTab(tab.id)}
             >
-              {state === 'expanded' ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
-            </Button>
-          </div>
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {tabsData.map((tab) => (
-                  <SidebarMenuItem key={tab.id}>
-                    <SidebarMenuButton 
-                      isActive={activeTab === tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      tooltip={tab.name}
-                    >
-                      {tab.icon && <tab.icon />}
-                      <span>{tab.name}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
-    </>
+              <TabIcon name={tab.icon} size={16} className="mr-3" />
+              <span className="hidden md:block">{tab.name}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 
