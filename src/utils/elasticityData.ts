@@ -1,3 +1,4 @@
+
 // Price Elasticity Data
 export const elasticityData = [
   {
@@ -213,40 +214,50 @@ export const competitorData = [
     name: 'Amazon',
     elasticityBaby: -0.27,
     elasticityBooks: -0.24,
+    elasticityTools: -1.06,
     avgPriceBaby: 28.56,
     avgPriceBooks: 15.11,
+    avgPriceTools: 35.99,
     marketShare: 38.7
   },
   {
     name: 'Walmart',
     elasticityBaby: -1.2,
     elasticityBooks: -0.8,
+    elasticityTools: -1.15,
     avgPriceBaby: 24.89,
     avgPriceBooks: 13.45,
+    avgPriceTools: 33.79,
     marketShare: 18.3
   },
   {
     name: 'Target',
     elasticityBaby: -0.9,
     elasticityBooks: -0.7,
+    elasticityTools: -1.08,
     avgPriceBaby: 26.12,
     avgPriceBooks: 14.23,
+    avgPriceTools: 34.55,
     marketShare: 12.5
   },
   {
     name: 'Buy Buy Baby',
     elasticityBaby: -0.7,
     elasticityBooks: null,
+    elasticityTools: null,
     avgPriceBaby: 32.45,
     avgPriceBooks: null,
+    avgPriceTools: null,
     marketShare: 5.2
   },
   {
     name: 'Barnes & Noble',
     elasticityBaby: null,
     elasticityBooks: -0.4,
+    elasticityTools: null,
     avgPriceBaby: null,
     avgPriceBooks: 16.78,
+    avgPriceTools: null,
     marketShare: 4.8
   },
   {
@@ -331,4 +342,182 @@ export const subcategoryMonthlyElasticityData = {
     { month: 'Nov', elasticity: -1.11 },
     { month: 'Dec', elasticity: -1.38 }
   ]
+};
+
+// Adding promotional periods data to better handle major promotional events like Black Friday
+export const promotionalPeriods = [
+  {
+    id: 'black_friday',
+    name: 'Black Friday',
+    multiplier: 1.5,
+    startDate: '2023-11-24',
+    endDate: '2023-11-27',
+    categories: ['Baby Products', 'Books', 'Tools & Home Improvement'],
+    description: 'Black Friday sales period',
+    subcategoryMultipliers: {
+      'Strollers': 1.7,
+      'Power & Hand Tools': 1.8,
+      'Fiction Books': 1.6
+    }
+  },
+  {
+    id: 'cyber_monday',
+    name: 'Cyber Monday',
+    multiplier: 1.3,
+    startDate: '2023-11-28',
+    endDate: '2023-11-28',
+    categories: ['Baby Products', 'Books', 'Tools & Home Improvement'],
+    description: 'Cyber Monday online sales event',
+    subcategoryMultipliers: {
+      'Business Books': 1.5,
+      'Hardware': 1.4,
+      'Baby Toys': 1.5
+    }
+  },
+  {
+    id: 'spring_sale',
+    name: 'Spring Home Sale',
+    multiplier: 1.25,
+    startDate: '2023-04-10',
+    endDate: '2023-04-20',
+    categories: ['Tools & Home Improvement'],
+    description: 'Spring home improvement and renovation sales event',
+    subcategoryMultipliers: {
+      'Paint & Wall Treatments': 1.4,
+      'Hardware': 1.3
+    }
+  },
+  {
+    id: 'prime_day',
+    name: 'Prime Day',
+    multiplier: 1.4,
+    startDate: '2023-07-11',
+    endDate: '2023-07-12',
+    categories: ['Baby Products', 'Books', 'Tools & Home Improvement'],
+    description: 'Amazon Prime Day event',
+    subcategoryMultipliers: {
+      'Baby Furniture': 1.4,
+      'Fiction Books': 1.3,
+      'Power & Hand Tools': 1.5
+    }
+  },
+  {
+    id: 'back_to_school',
+    name: 'Back to School',
+    multiplier: 1.2,
+    startDate: '2023-08-01',
+    endDate: '2023-08-31',
+    categories: ['Books'],
+    description: 'Back to school shopping season',
+    subcategoryMultipliers: {
+      'Children\'s Books': 1.4,
+      'Business Books': 1.3
+    }
+  },
+  {
+    id: 'holiday_season',
+    name: 'Holiday Season',
+    multiplier: 1.35,
+    startDate: '2023-12-01',
+    endDate: '2023-12-24',
+    categories: ['Baby Products', 'Books', 'Tools & Home Improvement'],
+    description: 'December holiday shopping season',
+    subcategoryMultipliers: {
+      'Baby Toys': 1.6,
+      'Children\'s Books': 1.7,
+      'Hardware': 1.4
+    }
+  }
+];
+
+// Function to get elasticity value for a specific category, subcategory, and month with promotional period adjustment
+export const getAdjustedElasticity = (
+  category: string,
+  subcategory: string = '',
+  month: string = '',
+  promotionalPeriodIds: string[] = []
+) => {
+  // Find base elasticity for category/subcategory
+  let baseElasticity = -1.0; // Default fallback value
+  
+  // Find category elasticity
+  const categoryData = elasticityData.find(item => item.category === category);
+  if (categoryData) {
+    baseElasticity = categoryData.elasticity;
+    
+    // If subcategory is specified, find subcategory elasticity
+    if (subcategory) {
+      const subcategoryItem = categoryData.subcategories.find(sub => sub.name === subcategory);
+      if (subcategoryItem) {
+        baseElasticity = subcategoryItem.elasticity;
+      }
+    }
+  }
+  
+  // Apply monthly seasonality if month is specified
+  if (month && category === 'Tools & Home Improvement') {
+    // Apply monthly factors for Tools & Home Improvement
+    const monthData = toolsMonthlyElasticityData.find(m => m.month === month);
+    if (monthData) {
+      baseElasticity = monthData.elasticity;
+      
+      // If subcategory is also specified, get more specific monthly data
+      if (subcategory && subcategoryMonthlyElasticityData[subcategory]) {
+        const subcategoryMonthData = subcategoryMonthlyElasticityData[subcategory].find(
+          m => m.month === month
+        );
+        if (subcategoryMonthData) {
+          baseElasticity = subcategoryMonthData.elasticity;
+        }
+      }
+    }
+  }
+  
+  // Apply promotional period multipliers if applicable
+  if (promotionalPeriodIds.length > 0) {
+    let multiplier = 1.0;
+    
+    // Get all applicable promotional periods
+    const activePromotions = promotionalPeriods.filter(period => 
+      promotionalPeriodIds.includes(period.id) && 
+      period.categories.includes(category)
+    );
+    
+    // Calculate combined multiplier from all active promotional periods
+    activePromotions.forEach(promotion => {
+      let periodMultiplier = promotion.multiplier;
+      
+      // Apply subcategory-specific multiplier if available
+      if (subcategory && promotion.subcategoryMultipliers && 
+          promotion.subcategoryMultipliers[subcategory]) {
+        periodMultiplier = promotion.subcategoryMultipliers[subcategory];
+      }
+      
+      // Use maximum multiplier approach (don't stack multipliers)
+      multiplier = Math.max(multiplier, periodMultiplier);
+    });
+    
+    // Apply multiplier to base elasticity (making it more elastic)
+    baseElasticity = baseElasticity * multiplier;
+  }
+  
+  return baseElasticity;
+};
+
+// Function to get all promotional periods for a specific date range
+export const getPromotionalPeriodsForDateRange = (startDate: string, endDate: string) => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  
+  return promotionalPeriods.filter(period => {
+    const periodStart = new Date(period.startDate);
+    const periodEnd = new Date(period.endDate);
+    
+    // Check if periods overlap
+    return (
+      (periodStart >= start && periodStart <= end) || // Period starts within range
+      (periodEnd >= start && periodEnd <= end) || // Period ends within range
+      (periodStart <= start && periodEnd >= end) // Period encompasses range
+    );
+  });
 };
