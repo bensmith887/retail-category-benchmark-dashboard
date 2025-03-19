@@ -1,91 +1,127 @@
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, ScatterChart, Scatter, ZAxis, Cell } from 'recharts';
 import MetricsCard from './MetricsCard';
 import InsightCard from './InsightCard';
-import { Target, TrendingDown, Zap, Calculator } from 'lucide-react';
+import { Target, TrendingDown, Zap, Calculator, Filter } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { elasticityData, priceData, subcategoryElasticityData, competitorData, toolsMonthlyElasticityData } from '@/utils/elasticityData';
 
-// Sample data for elasticity charts
-const elasticityTrendData = [
-  { month: 'Jan', coefficient: -1.2, competitor1: -0.8, competitor2: -1.4, competitor3: -1.1 },
-  { month: 'Feb', coefficient: -1.3, competitor1: -0.9, competitor2: -1.3, competitor3: -1.2 },
-  { month: 'Mar', coefficient: -1.5, competitor1: -1.0, competitor2: -1.2, competitor3: -1.3 },
-  { month: 'Apr', coefficient: -1.4, competitor1: -1.1, competitor2: -1.1, competitor3: -1.4 },
-  { month: 'May', coefficient: -1.2, competitor1: -1.2, competitor2: -1.0, competitor3: -1.5 },
-  { month: 'Jun', coefficient: -1.0, competitor1: -1.3, competitor2: -0.9, competitor3: -1.4 },
-];
-
-const correlationData = [
-  { price: 10, conversionRate: 12, name: 'Product A', sales: 120 },
-  { price: 15, conversionRate: 10, name: 'Product B', sales: 150 },
-  { price: 20, conversionRate: 8, name: 'Product C', sales: 160 },
-  { price: 25, conversionRate: 6, name: 'Product D', sales: 150 },
-  { price: 30, conversionRate: 5, name: 'Product E', sales: 150 },
-  { price: 35, conversionRate: 4, name: 'Product F', sales: 140 },
-  { price: 40, conversionRate: 3, name: 'Product G', sales: 120 },
-  { price: 45, conversionRate: 2, name: 'Product H', sales: 90 },
-];
-
-const categoryElasticityData = [
-  { category: 'Electronics', elasticity: -1.5 },
-  { category: 'Apparel', elasticity: -2.1 },
-  { category: 'Home Goods', elasticity: -1.2 },
-  { category: 'Beauty', elasticity: -0.8 },
-  { category: 'Toys', elasticity: -1.7 },
-];
-
-const pricePositioningData = [
-  { name: 'Your Brand', price: 25, marketShare: 15 },
-  { name: 'Competitor A', price: 22, marketShare: 12 },
-  { name: 'Competitor B', price: 30, marketShare: 18 },
-  { name: 'Competitor C', price: 20, marketShare: 10 },
-  { name: 'Competitor D', price: 28, marketShare: 14 },
-  { name: 'Competitor E', price: 35, marketShare: 20 },
-];
-
-const simulationData = [
-  { priceChange: -15, revenueImpact: 12, marketShareImpact: 4.2, profitImpact: -2 },
-  { priceChange: -10, revenueImpact: 8, marketShareImpact: 2.8, profitImpact: 0 },
-  { priceChange: -5, revenueImpact: 4, marketShareImpact: 1.4, profitImpact: 2 },
-  { priceChange: 0, revenueImpact: 0, marketShareImpact: 0, profitImpact: 0 },
-  { priceChange: 5, revenueImpact: -3, marketShareImpact: -1.2, profitImpact: 1 },
-  { priceChange: 10, revenueImpact: -6, marketShareImpact: -2.3, profitImpact: -1 },
-  { priceChange: 15, revenueImpact: -10, marketShareImpact: -3.5, profitImpact: -5 },
-];
-
-// Insights for Price Elasticity
-const priceElasticityInsights = [
-  {
-    title: 'Price Opportunity',
-    description: 'Electronics category shows elasticity of -1.5, suggesting room for 3-5% price increase with minimal impact.',
-    type: 'opportunity' as const
-  },
-  {
-    title: 'Competitive Threat',
-    description: 'Competitor B is lowering prices in key product categories where elasticity is high (-2.1).',
-    type: 'threat' as const
-  },
-  {
-    title: 'Positive Indicator',
-    description: 'Beauty products show low elasticity (-0.8), indicating strong brand loyalty and price insensitivity.',
-    type: 'positive' as const
-  },
-  {
-    title: 'Recommendation',
-    description: 'Consider 5% price increases in Beauty category while keeping Apparel prices stable due to high elasticity.',
-    type: 'recommendation' as const
-  }
-];
-
+// Price Sensitivity Analysis Section
 const PriceElasticityView: React.FC = () => {
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  
+  // Get all available categories
+  const categories = useMemo(() => {
+    return ['all', ...elasticityData.map(item => item.category)];
+  }, []);
+  
+  // Filter elasticity data based on selected category
+  const filteredCategoryElasticityData = useMemo(() => {
+    if (selectedCategory === 'all') {
+      return elasticityData.map(item => ({
+        category: item.category,
+        elasticity: item.elasticity
+      }));
+    } else {
+      return elasticityData
+        .filter(item => item.category === selectedCategory)
+        .map(item => ({
+          category: item.category,
+          elasticity: item.elasticity
+        }));
+    }
+  }, [selectedCategory]);
+  
+  // Filter subcategory data based on selected category
+  const filteredSubcategoryData = useMemo(() => {
+    if (selectedCategory === 'all') {
+      return subcategoryElasticityData;
+    } else {
+      return subcategoryElasticityData.filter(item => item.category === selectedCategory);
+    }
+  }, [selectedCategory]);
+  
+  // Create elasticity trend data with all competitors
+  const elasticityTrendData = useMemo(() => {
+    return toolsMonthlyElasticityData.map(monthData => {
+      const competitors = competitorData.slice(1, 4).map((comp, idx) => ({
+        [`competitor${idx+1}`]: -(Math.abs(monthData.elasticity) * (0.8 + (Math.random() * 0.4)))
+      }));
+      
+      return {
+        month: monthData.month,
+        coefficient: monthData.elasticity,
+        ...Object.assign({}, ...competitors)
+      };
+    });
+  }, []);
+  
+  // Price vs. Conversion correlation data
+  const correlationData = [
+    { price: 10, conversionRate: 12, name: 'Product A', sales: 120 },
+    { price: 15, conversionRate: 10, name: 'Product B', sales: 150 },
+    { price: 20, conversionRate: 8, name: 'Product C', sales: 160 },
+    { price: 25, conversionRate: 6, name: 'Product D', sales: 150 },
+    { price: 30, conversionRate: 5, name: 'Product E', sales: 150 },
+    { price: 35, conversionRate: 4, name: 'Product F', sales: 140 },
+    { price: 40, conversionRate: 3, name: 'Product G', sales: 120 },
+    { price: 45, conversionRate: 2, name: 'Product H', sales: 90 },
+  ];
+  
+  // Price positioning data
+  const pricePositioningData = [
+    { name: 'Your Brand', price: 25, marketShare: 15 },
+    { name: 'Competitor A', price: 22, marketShare: 12 },
+    { name: 'Competitor B', price: 30, marketShare: 18 },
+    { name: 'Competitor C', price: 20, marketShare: 10 },
+    { name: 'Competitor D', price: 28, marketShare: 14 },
+    { name: 'Competitor E', price: 35, marketShare: 20 },
+  ];
+  
+  // Simulation data
+  const simulationData = [
+    { priceChange: -15, revenueImpact: 12, marketShareImpact: 4.2, profitImpact: -2 },
+    { priceChange: -10, revenueImpact: 8, marketShareImpact: 2.8, profitImpact: 0 },
+    { priceChange: -5, revenueImpact: 4, marketShareImpact: 1.4, profitImpact: 2 },
+    { priceChange: 0, revenueImpact: 0, marketShareImpact: 0, profitImpact: 0 },
+    { priceChange: 5, revenueImpact: -3, marketShareImpact: -1.2, profitImpact: 1 },
+    { priceChange: 10, revenueImpact: -6, marketShareImpact: -2.3, profitImpact: -1 },
+    { priceChange: 15, revenueImpact: -10, marketShareImpact: -3.5, profitImpact: -5 },
+  ];
+  
+  // Insights for Price Elasticity - Include Tools & Home Improvement
+  const priceElasticityInsights = [
+    {
+      title: 'Price Opportunity',
+      description: 'Baby Products category shows elasticity of -0.27, suggesting room for price increase with minimal impact.',
+      type: 'opportunity' as const
+    },
+    {
+      title: 'Competitive Threat',
+      description: 'Competitor B is lowering prices in Hardware subcategory where elasticity is high (-1.16).',
+      type: 'threat' as const
+    },
+    {
+      title: 'Seasonal Pattern',
+      description: 'Tools & Home Improvement shows high elasticity (-2.20) in April, indicating promotion effectiveness.',
+      type: 'positive' as const
+    },
+    {
+      title: 'Recommendation',
+      description: 'Consider 5% price increases in Baby & Books categories while keeping Tools prices stable due to high elasticity.',
+      type: 'recommendation' as const
+    }
+  ];
+
   return (
     <div className="animate-fade-in">
       {/* Top Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <MetricsCard
           label="Avg. Elasticity"
-          value="-1.2"
+          value={elasticityData.reduce((sum, item) => sum + item.elasticity, 0) / elasticityData.length}
           change="-0.2"
           isPositive={false}
           secondaryLabel="YoY"
@@ -125,6 +161,25 @@ const PriceElasticityView: React.FC = () => {
         />
       </div>
 
+      {/* Category Filter */}
+      <div className="flex justify-end mb-4">
+        <div className="flex items-center">
+          <Filter className="mr-2 h-4 w-4 text-dashboard-secondaryText" />
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category === 'all' ? 'All Categories' : category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       {/* Price Sensitivity Analysis Section */}
       <div className="dashboard-card mb-6">
         <h3 className="text-lg font-medium text-dashboard-text mb-4">Price Sensitivity Analysis</h3>
@@ -161,7 +216,7 @@ const PriceElasticityView: React.FC = () => {
               </ResponsiveContainer>
             </div>
             <p className="text-xs text-dashboard-secondaryText mt-2">
-              More negative values indicate higher price sensitivity.
+              More negative values indicate higher price sensitivity. Tools & Home Improvement peaks in April.
             </p>
           </div>
 
@@ -214,7 +269,7 @@ const PriceElasticityView: React.FC = () => {
           <h3 className="text-sm font-medium text-dashboard-secondaryText mb-2">Elasticity by Category</h3>
           <div style={{ height: "280px" }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={categoryElasticityData}>
+              <BarChart data={filteredCategoryElasticityData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
                 <XAxis dataKey="category" axisLine={false} tickLine={false} />
                 <YAxis 
@@ -232,16 +287,63 @@ const PriceElasticityView: React.FC = () => {
                   }}
                 />
                 <Bar dataKey="elasticity" name="Elasticity Coefficient" radius={[4, 4, 0, 0]}>
-                  {categoryElasticityData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.elasticity < -1.5 ? '#ef4444' : '#5840bb'} />
+                  {filteredCategoryElasticityData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.elasticity < -1.0 ? '#ef4444' : '#5840bb'} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
           <p className="text-xs text-dashboard-secondaryText mt-2">
-            Categories with elasticity below -1.5 (red) are highly sensitive to price changes.
+            Categories with elasticity below -1.0 (red) are highly sensitive to price changes. Tools & Home Improvement is particularly sensitive.
           </p>
+        </div>
+      </div>
+
+      {/* Subcategory Analysis Section */}
+      <div className="dashboard-card mb-6">
+        <h3 className="text-lg font-medium text-dashboard-text mb-4">Subcategory Analysis</h3>
+        <div style={{ height: "350px" }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={filteredSubcategoryData}
+              layout="vertical"
+              margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+              <XAxis 
+                type="number"
+                domain={[-1.5, 0]}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis 
+                dataKey="name" 
+                type="category"
+                axisLine={false}
+                tickLine={false}
+              />
+              <Tooltip
+                formatter={(value: any) => [`${value}`, 'Elasticity']}
+                contentStyle={{ 
+                  borderRadius: '6px', 
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                  border: '1px solid #e5e7eb'
+                }}
+              />
+              <Bar dataKey="elasticity" radius={[0, 4, 4, 0]}>
+                {filteredSubcategoryData.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={entry.elasticity < -1.0 ? '#ef4444' : '#5840bb'} 
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="text-xs text-dashboard-secondaryText mt-2">
+          Hardware subcategory shows the highest elasticity at -1.16, whereas Children's Books show the lowest at -0.09.
         </div>
       </div>
 
@@ -333,6 +435,44 @@ const PriceElasticityView: React.FC = () => {
             Simulates the impact of price changes on key metrics. Optimal price point maximizes profit.
           </p>
         </div>
+      </div>
+      
+      {/* Monthly Elasticity Analysis for Tools & Home Improvement */}
+      <div className="dashboard-card mb-6">
+        <h3 className="text-lg font-medium text-dashboard-text mb-4">Monthly Elasticity Analysis - Tools & Home Improvement</h3>
+        <div style={{ height: "280px" }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={toolsMonthlyElasticityData}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
+              <XAxis dataKey="month" axisLine={false} tickLine={false} />
+              <YAxis 
+                domain={[-2.5, 0]} 
+                tickFormatter={(value) => value.toFixed(1)} 
+                axisLine={false} 
+                tickLine={false} 
+              />
+              <Tooltip 
+                formatter={(value: number) => [`${value.toFixed(2)}`, 'Elasticity Coefficient']}
+                contentStyle={{ 
+                  borderRadius: '6px', 
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                  border: '1px solid #e5e7eb'
+                }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="elasticity" 
+                name="Tools & Home Improvement" 
+                stroke="#ef4444" 
+                strokeWidth={2} 
+                dot={{ r: 4 }} 
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <p className="text-xs text-dashboard-secondaryText mt-2">
+          Tools & Home Improvement shows strong seasonal elasticity patterns with peaks in April, June, and August.
+        </p>
       </div>
       
       {/* Insights */}
