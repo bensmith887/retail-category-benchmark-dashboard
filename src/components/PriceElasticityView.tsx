@@ -121,7 +121,10 @@ const PriceElasticityView: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <MetricsCard
           label="Avg. Elasticity"
-          value={elasticityData.reduce((sum, item) => sum + item.elasticity, 0) / elasticityData.length}
+          value={
+            (elasticityData.reduce((sum, item) => sum + item.elasticity, 0) / elasticityData.length)
+            .toFixed(2)
+          }
           change="-0.2"
           isPositive={false}
           secondaryLabel="YoY"
