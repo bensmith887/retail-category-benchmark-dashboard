@@ -31,8 +31,6 @@ const DashboardSelector: React.FC<DashboardSelectorProps> = ({ currentPath }) =>
         return 'Promotions';
       case '/promotions-v2':
         return 'Promotions V2';
-      case '/fashion-analytics':
-        return 'Fashion Analytics';
       default:
         return 'Overview';
     }
@@ -52,7 +50,6 @@ const DashboardSelector: React.FC<DashboardSelectorProps> = ({ currentPath }) =>
           <SelectItem value="/price-elasticity">Price Elasticity</SelectItem>
           <SelectItem value="/promotions">Promotions</SelectItem>
           <SelectItem value="/promotions-v2">Promotions V2</SelectItem>
-          <SelectItem value="/fashion-analytics">Fashion Analytics</SelectItem>
         </SelectContent>
       </Select>
     </div>
