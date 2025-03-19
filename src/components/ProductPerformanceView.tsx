@@ -28,8 +28,8 @@ const ProductPerformanceView = () => {
     .join(', ');
   
   // Fix the arithmetic operations by ensuring they're done with numbers
-  const monthChangeComparison = Number(avgMonthChange) - 2.5;
-  const yearChangeComparison = Number(avgYearChange) - 15;
+  const monthChangeComparison = avgMonthChange - 2.5;
+  const yearChangeComparison = avgYearChange - 15;
   
   return (
     <div className="animate-fade-in">

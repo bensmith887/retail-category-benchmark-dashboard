@@ -1,412 +1,377 @@
 
 import React, { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { TrafficSource, KeywordPerformance } from '@/utils/fashionAnalyticsData';
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+  PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { TrendingUp, TrendingDown, ArrowUpRight, Info } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Download, TrendingUp, DollarSign, ZoomIn } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const COLORS = ['#5840bb', '#6892e6', '#fa9f42', '#00bc8c', '#f06292'];
+interface MarketingChannelTabProps {
+  trafficSources: TrafficSource[];
+  keywordPerformance: KeywordPerformance[];
+}
 
-// Marketing channel data
-const channelData = [
-  { name: 'Organic Search', value: 38, yoy: 5.2, roi: 3.2 },
-  { name: 'Direct', value: 22, yoy: 3.8, roi: 2.8 },
-  { name: 'Social Media', value: 18, yoy: 12.5, roi: 2.1 },
-  { name: 'Email', value: 12, yoy: 8.7, roi: 4.5 },
-  { name: 'Paid Search', value: 10, yoy: -2.1, roi: 1.8 }
-];
+const MarketingChannelTab: React.FC<MarketingChannelTabProps> = ({ 
+  trafficSources,
+  keywordPerformance
+}) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  
+  // Format channel data for charts
+  const channelShareData = trafficSources.map(source => ({
+    name: source.channel,
+    value: source.visits,
+    percentage: (source.visits / trafficSources.reduce((acc, curr) => acc + curr.visits, 0) * 100).toFixed(1)
+  }));
+  
+  // Calculate YoY change
+  const channelGrowthData = trafficSources.map(source => ({
+    name: source.channel,
+    growth: ((source.visits - source.previousVisits) / source.previousVisits * 100).toFixed(1),
+    conversion: source.conversionRate.toFixed(1),
+    visits: source.visits
+  }));
+  
+  // Calculate efficiency metrics
+  const paidChannels = trafficSources.filter(source => source.costPerVisit > 0);
+  const channelEfficiencyData = paidChannels.map(source => ({
+    name: source.channel,
+    cpa: (source.costPerVisit / (source.conversionRate / 100)).toFixed(2),
+    roi: source.roi.toFixed(1),
+    costPerVisit: source.costPerVisit.toFixed(2)
+  }));
+  
+  // Colors for pie chart
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658'];
+  
+  // Calculate channel distribution
+  const totalVisits = trafficSources.reduce((acc, curr) => acc + curr.visits, 0);
+  
+  const channelDistribution = trafficSources.map(source => ({
+    name: source.channel,
+    value: source.visits,
+    percentage: ((source.visits / totalVisits) * 100).toFixed(1)
+  }));
 
-// Monthly trend data
-const monthlyTrendData = [
-  { month: 'Jan', organic: 35, social: 15, email: 10, direct: 21, paid: 11 },
-  { month: 'Feb', organic: 36, social: 16, email: 11, direct: 22, paid: 10 },
-  { month: 'Mar', organic: 37, social: 17, email: 11, direct: 22, paid: 10 },
-  { month: 'Apr', organic: 37, social: 17, email: 12, direct: 22, paid: 10 },
-  { month: 'May', organic: 38, social: 18, email: 12, direct: 22, paid: 10 },
-  { month: 'Jun', organic: 38, social: 18, email: 12, direct: 22, paid: 10 }
-];
-
-// Social media platform data
-const socialPlatformData = [
-  { name: 'Instagram', value: 42, yoy: 15.3 },
-  { name: 'Facebook', value: 28, yoy: -3.2 },
-  { name: 'TikTok', value: 15, yoy: 25.4 },
-  { name: 'Pinterest', value: 10, yoy: 9.1 },
-  { name: 'Twitter', value: 5, yoy: -1.8 }
-];
-
-// ROI by channel data
-const roiData = [
-  { name: 'Email', value: 4.5 },
-  { name: 'Organic Search', value: 3.2 },
-  { name: 'Direct', value: 2.8 },
-  { name: 'Social Media', value: 2.1 },
-  { name: 'Paid Search', value: 1.8 }
-].sort((a, b) => b.value - a.value);
-
-// Competitor channel comparison
-const competitorComparisonData = [
-  { channel: 'Organic Search', yourbrand: 38, competitor1: 35, competitor2: 42 },
-  { channel: 'Direct', yourbrand: 22, competitor1: 25, competitor2: 18 },
-  { channel: 'Social Media', yourbrand: 18, competitor1: 22, competitor2: 24 },
-  { channel: 'Email', yourbrand: 12, competitor1: 8, competitor2: 6 },
-  { channel: 'Paid Search', yourbrand: 10, competitor1: 10, competitor2: 10 }
-];
-
-// Campaign effectiveness data
-const campaignData = [
-  { name: 'Summer Collection', conversion: 3.2, ctr: 2.8, roas: 3.5 },
-  { name: 'Flash Sale', conversion: 4.5, ctr: 3.7, roas: 4.2 },
-  { name: 'New Arrivals', conversion: 2.8, ctr: 2.1, roas: 2.9 },
-  { name: 'Holiday Special', conversion: 3.8, ctr: 3.2, roas: 3.6 },
-  { name: 'Clearance', conversion: 3.5, ctr: 2.9, roas: 3.1 }
-];
-
-const MarketingChannelTab = () => {
-  const [timeframe, setTimeframe] = useState('6m');
-  const [segment, setSegment] = useState('all');
+  const onPieEnter = (_: any, index: number) => {
+    setActiveIndex(index);
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold text-gray-800">Marketing Channel Analysis</h2>
-        <div className="flex space-x-2">
-          <Select value={timeframe} onValueChange={setTimeframe}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Timeframe" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="3m">Last 3 Months</SelectItem>
-              <SelectItem value="6m">Last 6 Months</SelectItem>
-              <SelectItem value="12m">Last 12 Months</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={segment} onValueChange={setSegment}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Segment" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Segments</SelectItem>
-              <SelectItem value="womens">Women's Fashion</SelectItem>
-              <SelectItem value="mens">Men's Fashion</SelectItem>
-              <SelectItem value="accessories">Accessories</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {channelData.map((channel, index) => (
-          <Card key={index} className="shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">{channel.name}</CardTitle>
-              <CardDescription>
-                Traffic Share: <span className="font-medium">{channel.value}%</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-1">
-                  <span className={channel.yoy >= 0 ? "text-green-600" : "text-red-500"}>
-                    {channel.yoy >= 0 ? (
-                      <TrendingUp className="h-4 w-4" />
-                    ) : (
-                      <TrendingDown className="h-4 w-4" />
-                    )}
-                  </span>
-                  <span className={`text-sm font-medium ${channel.yoy >= 0 ? "text-green-600" : "text-red-500"}`}>
-                    {channel.yoy > 0 ? "+" : ""}{channel.yoy}% YoY
-                  </span>
-                </div>
-                <div className="text-sm">
-                  <span className="text-gray-500">ROI:</span> {channel.roi}x
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        <h2 className="text-xl font-semibold">Marketing Channel Effectiveness</h2>
+        <Button variant="outline" size="sm">
+          <Download className="mr-2 h-4 w-4" />
+          Export Data
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-sm">
+        <Card>
           <CardHeader>
-            <CardTitle>Channel Traffic Distribution</CardTitle>
+            <CardTitle>Traffic Distribution by Channel</CardTitle>
             <CardDescription>
-              Breakdown of traffic sources over time
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={channelData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  fill="#8884d8"
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                >
-                  {channelData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Channel Trend Analysis</CardTitle>
-            <CardDescription>
-              6-month traffic source trend comparison
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={monthlyTrendData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="organic" stroke="#5840bb" name="Organic" />
-                <Line type="monotone" dataKey="social" stroke="#6892e6" name="Social" />
-                <Line type="monotone" dataKey="email" stroke="#fa9f42" name="Email" />
-                <Line type="monotone" dataKey="direct" stroke="#00bc8c" name="Direct" />
-                <Line type="monotone" dataKey="paid" stroke="#f06292" name="Paid" />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Social Media Platform Breakdown</CardTitle>
-            <CardDescription>
-              Distribution of social traffic by platform
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={socialPlatformData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="value" fill="#6892e6" name="Traffic Share %" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Marketing ROI by Channel</CardTitle>
-            <CardDescription>
-              Return on investment for each marketing channel
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={roiData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis dataKey="name" type="category" />
-                <Tooltip />
-                <Bar dataKey="value" fill="#5840bb" name="ROI (x)" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="shadow-sm">
-        <CardHeader>
-          <CardTitle>Competitive Channel Analysis</CardTitle>
-          <CardDescription>
-            Channel traffic distribution compared to top competitors
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={competitorComparisonData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="channel" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="yourbrand" fill="#5840bb" name="Your Brand" />
-              <Bar dataKey="competitor1" fill="#6892e6" name="Competitor 1" />
-              <Bar dataKey="competitor2" fill="#fa9f42" name="Competitor 2" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <div>
-            <CardTitle>Campaign Performance</CardTitle>
-            <CardDescription>
-              Conversion rates and ROAS by campaign
-            </CardDescription>
-          </div>
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Info className="h-4 w-4 mr-1" />
-            Last 30 days
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-8">
-            {campaignData.map((campaign, index) => (
-              <div key={index} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium">{campaign.name}</div>
-                  <div className="flex items-center space-x-2">
-                    <div className="text-sm text-muted-foreground">ROAS:</div>
-                    <div className="font-medium text-green-600">{campaign.roas}x</div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <div>Conversion Rate: {campaign.conversion}%</div>
-                  <div>CTR: {campaign.ctr}%</div>
-                </div>
-                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-dashboard-primary to-dashboard-secondary"
-                    style={{ width: `${campaign.conversion * 15}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Action Recommendations</CardTitle>
-            <CardDescription>
-              Priority actions based on channel performance
+              Share of total site visits by marketing channel
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <ArrowUpRight className="h-5 w-5 text-green-600 mt-0.5" />
-                <div>
-                  <h4 className="font-medium">Increase TikTok content frequency</h4>
-                  <p className="text-sm text-muted-foreground">
-                    25.4% YoY growth with potential for higher ROI with increased investment.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <ArrowUpRight className="h-5 w-5 text-green-600 mt-0.5" />
-                <div>
-                  <h4 className="font-medium">Expand email marketing campaigns</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Highest ROI channel (4.5x) with 8.7% YoY growth. Consider increasing frequency.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <ArrowUpRight className="h-5 w-5 text-green-600 mt-0.5" />
-                <div>
-                  <h4 className="font-medium">Optimize paid search keywords</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Declining YoY performance (-2.1%) with lowest ROI (1.8x). Review keyword strategy.
-                  </p>
-                </div>
-              </div>
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    activeIndex={activeIndex}
+                    activeShape={renderActiveShape}
+                    data={channelDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={70}
+                    outerRadius={90}
+                    fill="#8884d8"
+                    dataKey="value"
+                    onMouseEnter={onPieEnter}
+                  >
+                    {channelDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Legend />
+                  <Tooltip 
+                    formatter={(value: number) => [
+                      `${(value / 1000).toFixed(0)}K visits (${(value / totalVisits * 100).toFixed(1)}%)`,
+                      "Traffic"
+                    ]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card>
           <CardHeader>
-            <CardTitle>Channel Opportunity Metrics</CardTitle>
+            <CardTitle>Channel Growth Year-over-Year</CardTitle>
             <CardDescription>
-              Potential growth areas based on competitive analysis
+              YoY change in traffic volume by marketing channel
             </CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={channelGrowthData.sort((a, b) => parseFloat(b.growth) - parseFloat(a.growth))}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis 
+                    domain={[
+                      Math.floor(Math.min(...channelGrowthData.map(d => parseFloat(d.growth)))),
+                      Math.ceil(Math.max(...channelGrowthData.map(d => parseFloat(d.growth))))
+                    ]} 
+                    unit="%" 
+                  />
+                  <Tooltip 
+                    formatter={(value: string) => [`${value}%`, "YoY Growth"]}
+                  />
+                  <Bar dataKey="growth" fill="#8884d8">
+                    {channelGrowthData.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={parseFloat(entry.growth) >= 0 ? '#82ca9d' : '#ff8042'} 
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Paid Channel Performance</CardTitle>
+          <CardDescription>
+            Cost efficiency and ROI analysis for paid marketing channels
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Channel</TableHead>
+                      <TableHead className="text-right">Cost per Visit</TableHead>
+                      <TableHead className="text-right">Conv. Rate</TableHead>
+                      <TableHead className="text-right">CPA</TableHead>
+                      <TableHead className="text-right">ROI</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paidChannels.map((channel, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">{channel.channel}</TableCell>
+                        <TableCell className="text-right">${channel.costPerVisit.toFixed(2)}</TableCell>
+                        <TableCell className="text-right">{channel.conversionRate.toFixed(1)}%</TableCell>
+                        <TableCell className="text-right">
+                          ${(channel.costPerVisit / (channel.conversionRate / 100)).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <span className={cn(
+                            channel.roi >= 3 ? "text-green-500" : 
+                            channel.roi >= 1 ? "text-blue-500" : "text-red-500"
+                          )}>
+                            {channel.roi.toFixed(1)}x
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+            
             <div className="space-y-4">
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span className="text-sm font-medium">Social Media Gap</span>
-                  <span className="text-sm text-muted-foreground">-6% vs. Competitor 2</span>
-                </div>
-                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-red-400" style={{ width: '75%' }} />
-                </div>
+              <h3 className="text-base font-medium">Top Performing Keywords</h3>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Keyword</TableHead>
+                      <TableHead className="text-right">Visits</TableHead>
+                      <TableHead className="text-right">Conv. %</TableHead>
+                      <TableHead className="text-right">CPC</TableHead>
+                      <TableHead>Type</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {keywordPerformance
+                      .sort((a, b) => b.visits - a.visits)
+                      .slice(0, 5)
+                      .map((keyword, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">{keyword.keyword}</TableCell>
+                          <TableCell className="text-right">
+                            {keyword.visits >= 10000 
+                              ? `${(keyword.visits / 1000).toFixed(0)}K` 
+                              : keyword.visits.toLocaleString()
+                            }
+                          </TableCell>
+                          <TableCell className="text-right">{keyword.conversion.toFixed(1)}%</TableCell>
+                          <TableCell className="text-right">${keyword.cpc.toFixed(2)}</TableCell>
+                          <TableCell>
+                            <span className={cn(
+                              "px-2 py-1 rounded text-xs font-medium",
+                              keyword.isOwned 
+                                ? "bg-green-100 text-green-700" 
+                                : "bg-blue-100 text-blue-700"
+                            )}>
+                              {keyword.isOwned ? 'Branded' : 'Generic'}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="bg-blue-50">
+          <CardContent className="pt-6">
+            <div className="flex items-start">
+              <div className="p-2 rounded-full bg-blue-100 mr-4">
+                <TrendingUp className="h-5 w-5 text-blue-700" />
               </div>
               <div>
-                <div className="flex justify-between mb-1">
-                  <span className="text-sm font-medium">Email Advantage</span>
-                  <span className="text-sm text-muted-foreground">+4% vs. Competitors</span>
-                </div>
-                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-green-400" style={{ width: '62%' }} />
-                </div>
+                <h3 className="font-medium text-blue-900 mb-1">Channel Opportunity</h3>
+                <p className="text-sm text-blue-800">
+                  Social Media traffic is growing +{parseFloat(channelGrowthData.find(c => c.name === 'Social Media')?.growth || '0').toFixed(1)}% YoY
+                  but conversion rate is {parseFloat(channelGrowthData.find(c => c.name === 'Social Media')?.conversion || '0').toFixed(1)}%,
+                  below site average.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-green-50">
+          <CardContent className="pt-6">
+            <div className="flex items-start">
+              <div className="p-2 rounded-full bg-green-100 mr-4">
+                <DollarSign className="h-5 w-5 text-green-700" />
               </div>
               <div>
-                <div className="flex justify-between mb-1">
-                  <span className="text-sm font-medium">Organic Search</span>
-                  <span className="text-sm text-muted-foreground">-4% vs. Competitor 2</span>
-                </div>
-                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-amber-400" style={{ width: '90%' }} />
-                </div>
+                <h3 className="font-medium text-green-900 mb-1">ROI Leader</h3>
+                <p className="text-sm text-green-800">
+                  Email marketing has the highest ROI at {paidChannels.sort((a,b) => b.roi - a.roi)[0].roi.toFixed(1)}x.
+                  Consider increasing investment in this high-efficiency channel.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-yellow-50">
+          <CardContent className="pt-6">
+            <div className="flex items-start">
+              <div className="p-2 rounded-full bg-yellow-100 mr-4">
+                <ZoomIn className="h-5 w-5 text-yellow-700" />
               </div>
               <div>
-                <div className="flex justify-between mb-1">
-                  <span className="text-sm font-medium">Direct Traffic</span>
-                  <span className="text-sm text-muted-foreground">-3% vs. Competitor 1</span>
-                </div>
-                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-amber-400" style={{ width: '88%' }} />
-                </div>
+                <h3 className="font-medium text-yellow-900 mb-1">Keyword Insight</h3>
+                <p className="text-sm text-yellow-800">
+                  Branded keywords have a {
+                    (keywordPerformance.filter(k => k.isOwned).reduce((acc, k) => acc + k.conversion, 0) / 
+                    keywordPerformance.filter(k => k.isOwned).length).toFixed(1)
+                  }% avg conversion, 
+                  {
+                    (
+                      (keywordPerformance.filter(k => k.isOwned).reduce((acc, k) => acc + k.conversion, 0) / 
+                      keywordPerformance.filter(k => k.isOwned).length) / 
+                      (keywordPerformance.filter(k => !k.isOwned).reduce((acc, k) => acc + k.conversion, 0) / 
+                      keywordPerformance.filter(k => !k.isOwned).length) * 100 - 100
+                    ).toFixed(0)
+                  }% higher than non-branded.
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
+  );
+};
+
+// Component for active pie chart segment
+const renderActiveShape = (props: any) => {
+  const RADIAN = Math.PI / 180;
+  const {
+    cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
+    fill, payload, percent, value
+  } = props;
+  
+  const sin = Math.sin(-RADIAN * midAngle);
+  const cos = Math.cos(-RADIAN * midAngle);
+  const sx = cx + (outerRadius + 10) * cos;
+  const sy = cy + (outerRadius + 10) * sin;
+  const mx = cx + (outerRadius + 30) * cos;
+  const my = cy + (outerRadius + 30) * sin;
+  const ex = mx + (cos >= 0 ? 1 : -1) * 22;
+  const ey = my;
+  const textAnchor = cos >= 0 ? 'start' : 'end';
+
+  return (
+    <g>
+      <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill} className="text-sm font-medium">
+        {payload.name}
+      </text>
+      <sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+      />
+      <path
+        d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`}
+        stroke={fill}
+        fill="none"
+      />
+      <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+      <text
+        x={ex + (cos >= 0 ? 1 : -1) * 12}
+        y={ey}
+        textAnchor={textAnchor}
+        fill="#333"
+        className="text-xs"
+      >
+        {`${(percent * 100).toFixed(1)}%`}
+      </text>
+      <text
+        x={ex + (cos >= 0 ? 1 : -1) * 12}
+        y={ey}
+        dy={18}
+        textAnchor={textAnchor}
+        fill="#999"
+        className="text-xs"
+      >
+        {`(${(value / 1000).toFixed(0)}K visits)`}
+      </text>
+    </g>
   );
 };
 
