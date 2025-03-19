@@ -45,12 +45,12 @@ const PromotionsV2Dashboard = () => {
   const promotionalInsights = [
     {
       title: 'Timing Opportunity',
-      description: 'July shows highest elasticity (-1.53) across all categories. Prioritize promotions during this month.',
+      description: 'April shows highest elasticity (-2.20) for Tools category. Prioritize promotions during this month.',
       type: 'opportunity' as const
     },
     {
       title: 'Category Insight',
-      description: 'Baby products are 41.8% more responsive to promotions than Books across all time periods.',
+      description: 'Tools & Home products are 82.7% more responsive to promotions than Books across all time periods.',
       type: 'positive' as const
     },
     {
@@ -60,7 +60,7 @@ const PromotionsV2Dashboard = () => {
     },
     {
       title: 'Subcategory Focus',
-      description: 'Feeding products in the Baby category show highest elasticity (-1.03). Prioritize for promotions.',
+      description: 'Hardware products in the Tools category show high elasticity (-1.16). Prioritize for promotions.',
       type: 'recommendation' as const
     }
   ];
@@ -114,6 +114,7 @@ const PromotionsV2Dashboard = () => {
                   <SelectContent>
                     <SelectItem value="baby">Baby Products</SelectItem>
                     <SelectItem value="books">Books</SelectItem>
+                    <SelectItem value="tools">Tools & Home</SelectItem>
                   </SelectContent>
                 </Select>
                 
@@ -132,12 +133,18 @@ const PromotionsV2Dashboard = () => {
                         <SelectItem value="strollers">Strollers</SelectItem>
                         <SelectItem value="toys">Toys</SelectItem>
                       </>
-                    ) : (
+                    ) : selectedCategory === 'books' ? (
                       <>
                         <SelectItem value="business">Business</SelectItem>
                         <SelectItem value="fiction">Fiction</SelectItem>
                         <SelectItem value="children">Children's</SelectItem>
                         <SelectItem value="academic">Academic</SelectItem>
+                      </>
+                    ) : (
+                      <>
+                        <SelectItem value="paint">Paint & Wall Treatments</SelectItem>
+                        <SelectItem value="power_tools">Power & Hand Tools</SelectItem>
+                        <SelectItem value="hardware">Hardware</SelectItem>
                       </>
                     )}
                   </SelectContent>

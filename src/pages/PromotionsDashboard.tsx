@@ -88,6 +88,7 @@ const PromotionsDashboard = () => {
                   <SelectContent>
                     <SelectItem value="baby">Baby Products</SelectItem>
                     <SelectItem value="books">Books</SelectItem>
+                    <SelectItem value="tools">Tools & Home</SelectItem>
                   </SelectContent>
                 </Select>
                 
@@ -106,12 +107,18 @@ const PromotionsDashboard = () => {
                         <SelectItem value="strollers">Strollers</SelectItem>
                         <SelectItem value="toys">Toys</SelectItem>
                       </>
-                    ) : (
+                    ) : selectedCategory === 'books' ? (
                       <>
                         <SelectItem value="business">Business</SelectItem>
                         <SelectItem value="fiction">Fiction</SelectItem>
                         <SelectItem value="children">Children's</SelectItem>
                         <SelectItem value="academic">Academic</SelectItem>
+                      </>
+                    ) : (
+                      <>
+                        <SelectItem value="paint">Paint & Wall Treatments</SelectItem>
+                        <SelectItem value="power_tools">Power & Hand Tools</SelectItem>
+                        <SelectItem value="hardware">Hardware</SelectItem>
                       </>
                     )}
                   </SelectContent>

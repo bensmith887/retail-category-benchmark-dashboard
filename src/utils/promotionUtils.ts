@@ -1,4 +1,3 @@
-
 /**
  * Calculate projected sales and revenue based on elasticity values
  */
@@ -26,17 +25,80 @@ export const calculatePromotionImpact = (
     else if (subcategory === 'children') elasticityValue = -0.42;
     else if (subcategory === 'academic') elasticityValue = -0.52;
     else if (subcategory === 'all') elasticityValue = -0.55;
+  } else if (category === 'tools') {
+    if (subcategory === 'paint') elasticityValue = -0.95;
+    else if (subcategory === 'power_tools') elasticityValue = -0.89;
+    else if (subcategory === 'hardware') elasticityValue = -1.16;
+    else if (subcategory === 'all') elasticityValue = -1.06;
+    
+    // Apply specific month elasticity for tools category
+    if (month === 'jan') elasticityValue = -0.70;
+    else if (month === 'feb') elasticityValue = -0.85;
+    else if (month === 'mar') elasticityValue = -0.70;
+    else if (month === 'apr') elasticityValue = -2.20;
+    else if (month === 'may') elasticityValue = -1.12;
+    else if (month === 'jun') elasticityValue = -1.82;
+    else if (month === 'jul') elasticityValue = -0.70;
+    else if (month === 'aug') elasticityValue = -1.87;
+    else if (month === 'sep') elasticityValue = -0.70;
+    else if (month === 'oct') elasticityValue = -0.70;
+    else if (month === 'nov') elasticityValue = -0.70;
+    else if (month === 'dec') elasticityValue = -0.70;
+    
+    // Apply subcategory-specific monthly elasticity if both subcategory and month are specified
+    if (subcategory === 'paint' && month) {
+      if (month === 'jan') elasticityValue = -0.88;
+      else if (month === 'feb') elasticityValue = -0.70;
+      else if (month === 'mar') elasticityValue = -0.70;
+      else if (month === 'apr') elasticityValue = -0.79;
+      else if (month === 'may') elasticityValue = -1.72;
+      else if (month === 'jun') elasticityValue = -0.70;
+      else if (month === 'jul') elasticityValue = -0.70;
+      else if (month === 'aug') elasticityValue = -2.00;
+      else if (month === 'sep') elasticityValue = -0.79;
+      else if (month === 'oct') elasticityValue = -0.70;
+      else if (month === 'nov') elasticityValue = -0.70;
+      else if (month === 'dec') elasticityValue = -0.70;
+    } else if (subcategory === 'power_tools' && month) {
+      if (month === 'jan') elasticityValue = -0.70;
+      else if (month === 'feb') elasticityValue = -0.76;
+      else if (month === 'mar') elasticityValue = -1.18;
+      else if (month === 'apr') elasticityValue = -0.60;
+      else if (month === 'may') elasticityValue = -0.76;
+      else if (month === 'jun') elasticityValue = -0.89;
+      else if (month === 'jul') elasticityValue = -1.02;
+      else if (month === 'aug') elasticityValue = -0.60;
+      else if (month === 'sep') elasticityValue = -0.60;
+      else if (month === 'oct') elasticityValue = -2.00;
+      else if (month === 'nov') elasticityValue = -0.60;
+      else if (month === 'dec') elasticityValue = -1.01;
+    } else if (subcategory === 'hardware' && month) {
+      if (month === 'jan') elasticityValue = -0.70;
+      else if (month === 'feb') elasticityValue = -0.70;
+      else if (month === 'mar') elasticityValue = -1.13;
+      else if (month === 'apr') elasticityValue = -1.66;
+      else if (month === 'may') elasticityValue = -1.20;
+      else if (month === 'jun') elasticityValue = -0.50;
+      else if (month === 'jul') elasticityValue = -1.20;
+      else if (month === 'aug') elasticityValue = -1.82;
+      else if (month === 'sep') elasticityValue = -1.20;
+      else if (month === 'oct') elasticityValue = -1.80;
+      else if (month === 'nov') elasticityValue = -1.11;
+      else if (month === 'dec') elasticityValue = -1.38;
+    }
   }
   
-  // Apply seasonal multipliers
-  if (month === 'jul') elasticityValue *= 1.7;
-  else if (month === 'nov' || month === 'dec') {
-    if (category === 'books') elasticityValue *= 1.5;
-    else elasticityValue *= 1.2;
-  } else if (month === 'jan' || month === 'feb') {
-    elasticityValue *= 0.8; // Less responsive in post-holiday months
-  } else if (month === 'apr' || month === 'may') {
-    if (category === 'baby') elasticityValue *= 1.1; // Slightly more responsive in spring for baby products
+  // Apply seasonal multipliers for non-tools categories
+  if (category !== 'tools') {
+    if (month === 'jul') elasticityValue *= 1.7;
+    else if (month === 'nov' || month === 'dec') {
+      if (category === 'books') elasticityValue *= 1.5;
+      else elasticityValue *= 1.2;
+    } else if (month === 'jan' || month === 'feb') {
+      elasticityValue *= 0.8; // Less responsive in post-holiday months
+    } else if (month === 'apr' || month === 'may') {
+      if (category === 'baby') elasticityValue *= 1.1; // Slightly more responsive in spring for baby products
+    }
   }
   
   const discountRate = discountPercentage / 100;
@@ -86,18 +148,18 @@ export const generateHeatmapData = (monthlyElasticityData: any[]) => {
  */
 export const generatePromotionData = () => {
   const monthlyElasticityData = [
-    { month: 'Jan', baby: -0.65, books: -0.45 },
-    { month: 'Feb', baby: -0.71, books: -0.48 },
-    { month: 'Mar', baby: -0.68, books: -0.52 },
-    { month: 'Apr', baby: -0.74, books: -0.55 },
-    { month: 'May', baby: -0.82, books: -0.59 },
-    { month: 'Jun', baby: -0.91, books: -0.62 },
-    { month: 'Jul', baby: -1.53, books: -0.84 },
-    { month: 'Aug', baby: -0.93, books: -0.66 },
-    { month: 'Sep', baby: -0.79, books: -0.64 },
-    { month: 'Oct', baby: -0.85, books: -0.78 },
-    { month: 'Nov', baby: -0.94, books: -0.93 },
-    { month: 'Dec', baby: -0.98, books: -0.96 }
+    { month: 'Jan', baby: -0.65, books: -0.45, tools: -0.70 },
+    { month: 'Feb', baby: -0.71, books: -0.48, tools: -0.85 },
+    { month: 'Mar', baby: -0.68, books: -0.52, tools: -0.70 },
+    { month: 'Apr', baby: -0.74, books: -0.55, tools: -2.20 },
+    { month: 'May', baby: -0.82, books: -0.59, tools: -1.12 },
+    { month: 'Jun', baby: -0.91, books: -0.62, tools: -1.82 },
+    { month: 'Jul', baby: -1.53, books: -0.84, tools: -0.70 },
+    { month: 'Aug', baby: -0.93, books: -0.66, tools: -1.87 },
+    { month: 'Sep', baby: -0.79, books: -0.64, tools: -0.70 },
+    { month: 'Oct', baby: -0.85, books: -0.78, tools: -0.70 },
+    { month: 'Nov', baby: -0.94, books: -0.93, tools: -0.70 },
+    { month: 'Dec', baby: -0.98, books: -0.96, tools: -0.70 }
   ];
 
   const subcategoryElasticityData = [
@@ -110,7 +172,10 @@ export const generatePromotionData = () => {
     { name: 'Business', elasticity: -0.56, category: 'Books' },
     { name: 'Fiction', elasticity: -0.66, category: 'Books' },
     { name: 'Children', elasticity: -0.42, category: 'Books' },
-    { name: 'Academic', elasticity: -0.52, category: 'Books' }
+    { name: 'Academic', elasticity: -0.52, category: 'Books' },
+    { name: 'Paint & Wall Treatments', elasticity: -0.95, category: 'Tools' },
+    { name: 'Power & Hand Tools', elasticity: -0.89, category: 'Tools' },
+    { name: 'Hardware', elasticity: -1.16, category: 'Tools' }
   ];
 
   const priceSensitivityData = [
@@ -120,34 +185,38 @@ export const generatePromotionData = () => {
   
   // Generate seasonal strategy data
   const seasonalStrategyData = {
-    peakSeasonMonths: ['Jul', 'Nov', 'Dec'],
-    offPeakMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Aug', 'Sep', 'Oct'],
+    peakSeasonMonths: ['Apr', 'May', 'Jun', 'Aug', 'Jul', 'Nov', 'Dec'],
+    offPeakMonths: ['Jan', 'Feb', 'Mar', 'Sep', 'Oct'],
     
     peakSeasonRecommendations: [
       { category: 'Baby', subcategory: 'Feeding', recommendedDiscount: 15, elasticity: -1.03 * 1.2 },
       { category: 'Baby', subcategory: 'Diapers', recommendedDiscount: 20, elasticity: -0.97 * 1.2 },
       { category: 'Books', subcategory: 'Fiction', recommendedDiscount: 25, elasticity: -0.66 * 1.5 },
-      { category: 'Books', subcategory: 'Children', recommendedDiscount: 30, elasticity: -0.42 * 1.5 }
+      { category: 'Books', subcategory: 'Children', recommendedDiscount: 30, elasticity: -0.42 * 1.5 },
+      { category: 'Tools', subcategory: 'Paint & Wall Treatments', recommendedDiscount: 20, elasticity: -2.00 },
+      { category: 'Tools', subcategory: 'Hardware', recommendedDiscount: 25, elasticity: -1.80 }
     ],
     
     offPeakRecommendations: [
       { category: 'Baby', subcategory: 'Bath', recommendedDiscount: 25, elasticity: -0.34 * 0.9 },
       { category: 'Baby', subcategory: 'Strollers', recommendedDiscount: 10, elasticity: -0.58 * 0.9 },
       { category: 'Books', subcategory: 'Business', recommendedDiscount: 15, elasticity: -0.56 * 0.9 },
-      { category: 'Books', subcategory: 'Academic', recommendedDiscount: 20, elasticity: -0.52 * 0.9 }
+      { category: 'Books', subcategory: 'Academic', recommendedDiscount: 20, elasticity: -0.52 * 0.9 },
+      { category: 'Tools', subcategory: 'Power & Hand Tools', recommendedDiscount: 15, elasticity: -0.60 },
+      { category: 'Tools', subcategory: 'Hardware', recommendedDiscount: 10, elasticity: -0.50 }
     ],
     
     monthlyRecommendations: {
       'Jan': { focus: 'Books', bestSubcategory: 'Business', discount: 15 },
       'Feb': { focus: 'Books', bestSubcategory: 'Academic', discount: 20 },
-      'Mar': { focus: 'Baby', bestSubcategory: 'Bath', discount: 25 },
-      'Apr': { focus: 'Baby', bestSubcategory: 'Furniture', discount: 15 },
-      'May': { focus: 'Baby', bestSubcategory: 'Strollers', discount: 10 },
-      'Jun': { focus: 'Baby', bestSubcategory: 'Toys', discount: 20 },
+      'Mar': { focus: 'Tools', bestSubcategory: 'Power & Hand Tools', discount: 15 },
+      'Apr': { focus: 'Tools', bestSubcategory: 'Hardware', discount: 25 },
+      'May': { focus: 'Tools', bestSubcategory: 'Paint & Wall Treatments', discount: 20 },
+      'Jun': { focus: 'Tools', bestSubcategory: 'Hardware', discount: 10 },
       'Jul': { focus: 'Baby', bestSubcategory: 'Feeding', discount: 15 },
-      'Aug': { focus: 'Books', bestSubcategory: 'Children', discount: 30 },
+      'Aug': { focus: 'Tools', bestSubcategory: 'Paint & Wall Treatments', discount: 30 },
       'Sep': { focus: 'Books', bestSubcategory: 'Academic', discount: 20 },
-      'Oct': { focus: 'Baby', bestSubcategory: 'Diapers', discount: 20 },
+      'Oct': { focus: 'Tools', bestSubcategory: 'Power & Hand Tools', discount: 25 },
       'Nov': { focus: 'Books', bestSubcategory: 'Fiction', discount: 25 },
       'Dec': { focus: 'Books', bestSubcategory: 'Children', discount: 30 }
     }
