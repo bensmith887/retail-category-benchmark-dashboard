@@ -1,3 +1,4 @@
+
 /**
  * Calculate projected sales and revenue based on elasticity values
  */
@@ -109,10 +110,19 @@ export const calculatePromotionImpact = (
   const currentRevenue = baseSales * basePrice;
   const revImpact = newRevenue - currentRevenue;
   
-  // Calculate optimal discount based on elasticity
-  // Optimal discount percentage = 100 / abs(elasticity)
+  // Correct optimal discount calculation based on elasticity
+  // For price elasticity e, the optimal discount is: (1 + 1/e)
+  // This is derived from revenue maximization formula
   // But cap at 50% to prevent unrealistic discounts
-  const optDiscount = Math.min(Math.round(100 / Math.abs(elasticityValue)), 50);
+  let optDiscount;
+  if (elasticityValue < -1) {
+    // When demand is elastic (e < -1), the formula applies
+    optDiscount = Math.min(Math.round(100 * (1 + 1/elasticityValue)), 50);
+  } else {
+    // When demand is inelastic (e > -1), no discount is optimal for revenue
+    // But we cap at minimum 5% for marketing purposes
+    optDiscount = 5;
+  }
   
   return {
     projectedSales: Math.round(salesImpact),
