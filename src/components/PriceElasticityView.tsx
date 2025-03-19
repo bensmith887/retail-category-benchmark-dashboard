@@ -6,7 +6,7 @@ import MetricsCard from './MetricsCard';
 import InsightCard from './InsightCard';
 import { Target, TrendingDown, Zap, Calculator, Filter } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { elasticityData, priceData, subcategoryElasticityData, competitorData, toolsMonthlyElasticityData } from '@/utils/elasticityData';
+import { elasticityData, priceData, subcategoryElasticityData, competitorData, toolsMonthlyElasticityData, subcategoryMonthlyElasticityData, getAdjustedElasticity } from '@/utils/elasticityData';
 
 // Price Sensitivity Analysis Section
 const PriceElasticityView: React.FC = () => {
@@ -57,6 +57,30 @@ const PriceElasticityView: React.FC = () => {
       };
     });
   }, []);
+  
+  // Filter monthly elasticity data based on selected category
+  const selectedCategoryMonthlyElasticityData = useMemo(() => {
+    if (selectedCategory === 'Tools & Home Improvement' || selectedCategory === 'all') {
+      return toolsMonthlyElasticityData;
+    } else {
+      // Create placeholder monthly elasticity data for other categories
+      return toolsMonthlyElasticityData.map(item => ({
+        month: item.month,
+        elasticity: selectedCategory === 'Baby Products' ? -0.27 : -0.24 // Default values for Baby Products and Books
+      }));
+    }
+  }, [selectedCategory]);
+  
+  // Get subcategory monthly data for the selected category
+  const selectedSubcategoryMonthlyElasticityData = useMemo(() => {
+    if (selectedCategory === 'Tools & Home Improvement') {
+      // Return the first subcategory's data as an example
+      const subcategoryKey = Object.keys(subcategoryMonthlyElasticityData)[0];
+      return subcategoryMonthlyElasticityData[subcategoryKey];
+    } else {
+      return [];
+    }
+  }, [selectedCategory]);
   
   // Price vs. Conversion correlation data
   const correlationData = [
@@ -442,10 +466,12 @@ const PriceElasticityView: React.FC = () => {
       
       {/* Monthly Elasticity Analysis for Tools & Home Improvement */}
       <div className="dashboard-card mb-6">
-        <h3 className="text-lg font-medium text-dashboard-text mb-4">Monthly Elasticity Analysis - Tools & Home Improvement</h3>
+        <h3 className="text-lg font-medium text-dashboard-text mb-4">
+          Monthly Elasticity Analysis - {selectedCategory === 'all' ? 'Tools & Home Improvement' : selectedCategory}
+        </h3>
         <div style={{ height: "280px" }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={toolsMonthlyElasticityData}>
+            <LineChart data={selectedCategoryMonthlyElasticityData}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
               <XAxis dataKey="month" axisLine={false} tickLine={false} />
               <YAxis 
@@ -465,16 +491,58 @@ const PriceElasticityView: React.FC = () => {
               <Line 
                 type="monotone" 
                 dataKey="elasticity" 
-                name="Tools & Home Improvement" 
-                stroke="#ef4444" 
+                name={selectedCategory === 'all' ? 'Tools & Home Improvement' : selectedCategory} 
+                stroke={selectedCategory === 'Tools & Home Improvement' ? '#ef4444' : '#5840bb'} 
                 strokeWidth={2} 
                 dot={{ r: 4 }} 
               />
+              
+              {/* Only show subcategory lines for Tools & Home Improvement */}
+              {selectedCategory === 'Tools & Home Improvement' && (
+                <>
+                  <Line 
+                    type="monotone" 
+                    dataKey="elasticity" 
+                    name="Paint & Wall Treatments" 
+                    stroke="#6892e6" 
+                    strokeWidth={1} 
+                    dot={{ r: 3 }} 
+                    connectNulls 
+                    data={subcategoryMonthlyElasticityData['Paint & Wall Treatments']} 
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="elasticity" 
+                    name="Power & Hand Tools" 
+                    stroke="#fa9f42" 
+                    strokeWidth={1} 
+                    dot={{ r: 3 }} 
+                    connectNulls 
+                    data={subcategoryMonthlyElasticityData['Power & Hand Tools']} 
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="elasticity" 
+                    name="Hardware" 
+                    stroke="#00bc8c" 
+                    strokeWidth={1} 
+                    dot={{ r: 3 }} 
+                    connectNulls 
+                    data={subcategoryMonthlyElasticityData['Hardware']} 
+                  />
+                </>
+              )}
             </LineChart>
           </ResponsiveContainer>
         </div>
         <p className="text-xs text-dashboard-secondaryText mt-2">
-          Tools & Home Improvement shows strong seasonal elasticity patterns with peaks in April, June, and August.
+          {selectedCategory === 'Tools & Home Improvement' 
+            ? 'Tools & Home Improvement shows strong seasonal elasticity patterns with peaks in April, June, and August.' 
+            : (selectedCategory === 'Baby Products' 
+                ? 'Baby Products show relatively stable elasticity throughout the year.' 
+                : (selectedCategory === 'Books' 
+                    ? 'Books show consistent elasticity patterns with minor seasonal variations.' 
+                    : 'Monthly elasticity patterns vary by category with Tools & Home Improvement showing the highest fluctuations.'))}
         </p>
       </div>
       

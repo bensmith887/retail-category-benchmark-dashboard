@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -25,7 +26,8 @@ import {
   elasticityData, 
   priceData, 
   subcategoryElasticityData, 
-  competitorData 
+  competitorData,
+  toolsMonthlyElasticityData
 } from '@/utils/elasticityData';
 
 // Register ChartJS components
@@ -76,6 +78,11 @@ const PriceElasticityDashboard = () => {
         if (selectedSubcategory === 'business') elasticityValue = -0.31;
         else if (selectedSubcategory === 'fiction') elasticityValue = -0.25;
         else if (selectedSubcategory === 'children') elasticityValue = -0.09;
+      } else if (selectedProduct === 'tools') {
+        elasticityValue = -1.06;
+        if (selectedSubcategory === 'paint') elasticityValue = -0.95;
+        else if (selectedSubcategory === 'power') elasticityValue = -0.89;
+        else if (selectedSubcategory === 'hardware') elasticityValue = -1.16;
       }
       
       const percentageChange = priceChange / 100;
@@ -114,6 +121,14 @@ const PriceElasticityDashboard = () => {
         backgroundColor: 'rgba(16, 185, 129, 0.1)',
         tension: 0.4,
         fill: true
+      },
+      {
+        label: 'Tools & Home Improvement',
+        data: [33.45, 34.12, 34.89, 35.34, 35.67, 35.99, 36.24, 36.56, 36.82],
+        borderColor: 'rgb(244, 63, 94)',
+        backgroundColor: 'rgba(244, 63, 94, 0.1)',
+        tension: 0.4,
+        fill: true
       }
     ]
   };
@@ -134,23 +149,32 @@ const PriceElasticityDashboard = () => {
         borderColor: 'rgb(16, 185, 129)',
         backgroundColor: 'rgb(16, 185, 129)',
         tension: 0.4
+      },
+      {
+        label: 'Tools & Home Improvement',
+        data: [-0.70, -0.85, -0.70, -2.20, -1.12, -1.82, -0.70, -1.87, -0.70],
+        borderColor: 'rgb(244, 63, 94)',
+        backgroundColor: 'rgb(244, 63, 94)',
+        tension: 0.4
       }
     ]
   };
 
   const categoryComparisonData = {
-    labels: ['Baby Products', 'Books'],
+    labels: ['Baby Products', 'Books', 'Tools & Home Improvement'],
     datasets: [
       {
         label: 'Price Elasticity',
-        data: [-0.27, -0.24],
+        data: [-0.27, -0.24, -1.06],
         backgroundColor: [
           'rgba(79, 70, 229, 0.7)',
-          'rgba(16, 185, 129, 0.7)'
+          'rgba(16, 185, 129, 0.7)',
+          'rgba(244, 63, 94, 0.7)'
         ],
         borderColor: [
           'rgb(79, 70, 229)',
-          'rgb(16, 185, 129)'
+          'rgb(16, 185, 129)',
+          'rgb(244, 63, 94)'
         ],
         borderWidth: 1
       }
@@ -158,28 +182,28 @@ const PriceElasticityDashboard = () => {
   };
 
   const subcategoryComparisonData = {
-    labels: ['Strollers', 'Furniture', 'Toys', 'Diapers', 'Business Books', 'Fiction Books', 'Children\'s Books'],
+    labels: [
+      'Strollers', 'Furniture', 'Toys', 'Diapers', 
+      'Business Books', 'Fiction Books', 'Children\'s Books',
+      'Paint & Wall Treatments', 'Power & Hand Tools', 'Hardware'
+    ],
     datasets: [
       {
         label: 'Price Elasticity',
-        data: [-0.85, -0.65, -0.54, -0.30, -0.31, -0.25, -0.09],
+        data: [
+          -0.85, -0.65, -0.54, -0.30, 
+          -0.31, -0.25, -0.09,
+          -0.95, -0.89, -1.16
+        ],
         backgroundColor: [
-          'rgba(79, 70, 229, 0.7)',
-          'rgba(79, 70, 229, 0.6)',
-          'rgba(79, 70, 229, 0.5)',
-          'rgba(79, 70, 229, 0.4)',
-          'rgba(16, 185, 129, 0.7)',
-          'rgba(16, 185, 129, 0.5)',
-          'rgba(16, 185, 129, 0.3)'
+          'rgba(79, 70, 229, 0.7)', 'rgba(79, 70, 229, 0.6)', 'rgba(79, 70, 229, 0.5)', 'rgba(79, 70, 229, 0.4)',
+          'rgba(16, 185, 129, 0.7)', 'rgba(16, 185, 129, 0.5)', 'rgba(16, 185, 129, 0.3)',
+          'rgba(244, 63, 94, 0.7)', 'rgba(244, 63, 94, 0.5)', 'rgba(244, 63, 94, 0.3)'
         ],
         borderColor: [
-          'rgb(79, 70, 229)',
-          'rgb(79, 70, 229)',
-          'rgb(79, 70, 229)',
-          'rgb(79, 70, 229)',
-          'rgb(16, 185, 129)',
-          'rgb(16, 185, 129)',
-          'rgb(16, 185, 129)'
+          'rgb(79, 70, 229)', 'rgb(79, 70, 229)', 'rgb(79, 70, 229)', 'rgb(79, 70, 229)',
+          'rgb(16, 185, 129)', 'rgb(16, 185, 129)', 'rgb(16, 185, 129)',
+          'rgb(244, 63, 94)', 'rgb(244, 63, 94)', 'rgb(244, 63, 94)'
         ],
         borderWidth: 1
       }
@@ -221,25 +245,49 @@ const PriceElasticityDashboard = () => {
         ],
         backgroundColor: 'rgba(16, 185, 129, 0.7)',
         radius: 5
+      },
+      {
+        label: 'Tools & Home Improvement',
+        data: [
+          { x: 10, y: -0.85 },
+          { x: 20, y: -0.92 },
+          { x: 30, y: -1.06 },
+          { x: 40, y: -1.12 },
+          { x: 50, y: -1.18 },
+          { x: 75, y: -1.25 },
+          { x: 125, y: -1.32 },
+          { x: 200, y: -1.38 },
+          { x: 300, y: -1.45 },
+          { x: 450, y: -1.55 }
+        ],
+        backgroundColor: 'rgba(244, 63, 94, 0.7)',
+        radius: 5
       }
     ]
   };
 
   const competitorBenchmarkData = {
-    labels: ['Amazon', 'Walmart', 'Target', 'Buy Buy Baby', 'Barnes & Noble'],
+    labels: ['Amazon', 'Walmart', 'Target', 'Buy Buy Baby', 'Barnes & Noble', 'Home Depot', 'Lowe\'s'],
     datasets: [
       {
         label: 'Price Elasticity (Baby Products)',
-        data: [-0.27, -1.2, -0.9, -0.7, null],
+        data: [-0.27, -1.2, -0.9, -0.7, null, null, null],
         backgroundColor: 'rgba(79, 70, 229, 0.7)',
         borderColor: 'rgb(79, 70, 229)',
         borderWidth: 1
       },
       {
         label: 'Price Elasticity (Books)',
-        data: [-0.24, -0.8, -0.7, null, -0.4],
+        data: [-0.24, -0.8, -0.7, null, -0.4, null, null],
         backgroundColor: 'rgba(16, 185, 129, 0.7)',
         borderColor: 'rgb(16, 185, 129)',
+        borderWidth: 1
+      },
+      {
+        label: 'Price Elasticity (Tools & Home)',
+        data: [-1.06, -1.15, -1.08, null, null, -0.98, -1.02],
+        backgroundColor: 'rgba(244, 63, 94, 0.7)',
+        borderColor: 'rgb(244, 63, 94)',
         borderWidth: 1
       }
     ]
@@ -357,6 +405,7 @@ const PriceElasticityDashboard = () => {
                         <SelectItem value="all">All Categories</SelectItem>
                         <SelectItem value="baby">Baby Products</SelectItem>
                         <SelectItem value="books">Books</SelectItem>
+                        <SelectItem value="tools">Tools & Home Improvement</SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -572,7 +621,7 @@ const PriceElasticityDashboard = () => {
                                     </div>
                                   </td>
                                 </tr>
-                                <tr>
+                                <tr className="border-b">
                                   <td className="py-3 px-4">Children's Books</td>
                                   <td className="py-3 px-4">-0.09</td>
                                   <td className="py-3 px-4">$8.99</td>
@@ -580,6 +629,39 @@ const PriceElasticityDashboard = () => {
                                   <td className="py-3 px-4">
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                       <div className="bg-green-600 h-2 rounded-full" style={{ width: "9%" }}></div>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <tr className="border-b">
+                                  <td className="py-3 px-4">Paint & Wall Treatments</td>
+                                  <td className="py-3 px-4">-0.95</td>
+                                  <td className="py-3 px-4">$28.99</td>
+                                  <td className="py-3 px-4">3,150</td>
+                                  <td className="py-3 px-4">
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                      <div className="bg-rose-600 h-2 rounded-full" style={{ width: "95%" }}></div>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <tr className="border-b">
+                                  <td className="py-3 px-4">Power & Hand Tools</td>
+                                  <td className="py-3 px-4">-0.89</td>
+                                  <td className="py-3 px-4">$45.99</td>
+                                  <td className="py-3 px-4">2,780</td>
+                                  <td className="py-3 px-4">
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                      <div className="bg-rose-600 h-2 rounded-full" style={{ width: "89%" }}></div>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="py-3 px-4">Hardware</td>
+                                  <td className="py-3 px-4">-1.16</td>
+                                  <td className="py-3 px-4">$24.99</td>
+                                  <td className="py-3 px-4">5,450</td>
+                                  <td className="py-3 px-4">
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                      <div className="bg-rose-600 h-2 rounded-full" style={{ width: "100%" }}></div>
                                     </div>
                                   </td>
                                 </tr>
@@ -609,6 +691,7 @@ const PriceElasticityDashboard = () => {
                                 <SelectContent>
                                   <SelectItem value="baby">Baby Products</SelectItem>
                                   <SelectItem value="books">Books</SelectItem>
+                                  <SelectItem value="tools">Tools & Home Improvement</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -628,11 +711,17 @@ const PriceElasticityDashboard = () => {
                                       <SelectItem value="toys">Toys</SelectItem>
                                       <SelectItem value="diapers">Diapers</SelectItem>
                                     </>
-                                  ) : (
+                                  ) : selectedProduct === 'books' ? (
                                     <>
                                       <SelectItem value="business">Business</SelectItem>
                                       <SelectItem value="fiction">Fiction</SelectItem>
                                       <SelectItem value="children">Children's Books</SelectItem>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <SelectItem value="paint">Paint & Wall Treatments</SelectItem>
+                                      <SelectItem value="power">Power & Hand Tools</SelectItem>
+                                      <SelectItem value="hardware">Hardware</SelectItem>
                                     </>
                                   )}
                                 </SelectContent>
@@ -790,14 +879,18 @@ const PriceElasticityDashboard = () => {
                               <ul className="text-sm space-y-2 text-dashboard-secondaryText">
                                 <li className="flex items-start">
                                   <span className="mr-2">•</span>
-                                  {selectedProduct === 'baby' ? 'Baby products' : 'Books'} show relatively inelastic demand (elasticity {'\u003E'} -1).
+                                  {selectedProduct === 'baby' 
+                                    ? 'Baby products show relatively inelastic demand (elasticity > -1).' 
+                                    : (selectedProduct === 'books' 
+                                      ? 'Books show relatively inelastic demand (elasticity > -1).' 
+                                      : 'Tools & Home Improvement show elastic demand (elasticity < -1).')}
                                 </li>
                                 <li className="flex items-start">
                                   <span className="mr-2">•</span>
                                   {selectedSubcategory !== 'all' ? (
                                     <>
                                       {selectedSubcategory.charAt(0).toUpperCase() + selectedSubcategory.slice(1)} have 
-                                      {selectedSubcategory === 'strollers' ? ' higher' : ' lower'} price sensitivity than other subcategories.
+                                      {(selectedSubcategory === 'strollers' || selectedSubcategory === 'hardware') ? ' higher' : ' lower'} price sensitivity than other subcategories.
                                     </>
                                   ) : (
                                     <>
@@ -807,7 +900,9 @@ const PriceElasticityDashboard = () => {
                                 </li>
                                 <li className="flex items-start">
                                   <span className="mr-2">•</span>
-                                  Small price adjustments can significantly impact overall revenue.
+                                  {selectedProduct === 'tools' 
+                                    ? 'Tools & Home Improvement products show seasonal elasticity patterns with peaks in April and August.' 
+                                    : 'Small price adjustments can significantly impact overall revenue.'}
                                 </li>
                               </ul>
                             </div>
@@ -873,7 +968,11 @@ const PriceElasticityDashboard = () => {
                               </li>
                               <li className="flex items-start">
                                 <span className="mr-2">•</span>
-                                Specialty retailers (Buy Buy Baby, Barnes & Noble) show moderate elasticity, positioned between mass merchants and Amazon.
+                                In Tools & Home Improvement, Amazon (-1.06) shows slightly less elasticity than Walmart (-1.15) and Target (-1.08).
+                              </li>
+                              <li className="flex items-start">
+                                <span className="mr-2">•</span>
+                                Specialty retailers (Buy Buy Baby, Barnes & Noble, Home Depot, Lowe's) show moderate elasticity, positioned between mass merchants and Amazon.
                               </li>
                             </ul>
                           </div>
@@ -891,11 +990,15 @@ const PriceElasticityDashboard = () => {
                               </li>
                               <li className="flex items-start">
                                 <span className="mr-2">•</span>
+                                <strong>Tools & Home:</strong> During peak seasons (April-June), maintain competitive pricing due to increased elasticity (-2.20).
+                              </li>
+                              <li className="flex items-start">
+                                <span className="mr-2">•</span>
                                 <strong>Competitive Edge:</strong> Focus on non-price differentiation against more elastic competitors like Walmart.
                               </li>
                               <li className="flex items-start">
                                 <span className="mr-2">•</span>
-                                <strong>Pricing Strategy:</strong> Maintain competitive pricing on highly elastic items (strollers, furniture) while optimizing less elastic categories.
+                                <strong>Pricing Strategy:</strong> Maintain competitive pricing on highly elastic items (hardware, power tools) while optimizing less elastic categories.
                               </li>
                             </ul>
                           </div>
@@ -924,4 +1027,3 @@ const PriceElasticityDashboard = () => {
 };
 
 export default PriceElasticityDashboard;
-
