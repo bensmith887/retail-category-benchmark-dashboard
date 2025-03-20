@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { dailyTrafficData, conversionRateBenchmarkData, competitorCampaignAds, insightData } from '@/utils/data';
-import { BarChart3, TrendingUp, Target, CalendarIcon } from 'lucide-react';
+import { dailyTrafficData, conversionRateBenchmarkData, insightData } from '@/utils/data';
+import { BarChart3, TrendingUp, Calendar as CalendarIcon, Activity, Zap, TrendingDown } from 'lucide-react';
 import InsightCard from './InsightCard';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -29,6 +29,30 @@ const PromotionEffectivenessView = () => {
     ...item,
     formattedDate: formatDate(item.date)
   }));
+
+  // New retail and CPG insights based on traffic share data
+  const retailCpgInsights = [
+    {
+      title: "Promotional Effectiveness",
+      description: "Promotions on Tuesdays and Wednesdays yield 23% higher traffic share compared to weekends.",
+      icon: <Zap className="h-5 w-5 text-amber-500" />,
+    },
+    {
+      title: "Competitor Activity Pattern",
+      description: "Main competitor consistently launches campaigns on Mondays, creating an opportunity to counter-program on Wednesdays.",
+      icon: <Activity className="h-5 w-5 text-blue-500" />,
+    },
+    {
+      title: "Traffic Surge Opportunity",
+      description: "Mid-month (15th-20th) shows 31% higher responsiveness to promotions than early month periods.",
+      icon: <TrendingUp className="h-5 w-5 text-green-500" />,
+    },
+    {
+      title: "Seasonal Pattern Alert",
+      description: "Traffic share volatility increases by 42% during seasonal transitions, requiring more aggressive promotional strategies.",
+      icon: <TrendingDown className="h-5 w-5 text-red-500" />,
+    }
+  ];
 
   return (
     <div className="animate-fade-in">
@@ -106,7 +130,7 @@ const PromotionEffectivenessView = () => {
       </div>
       
       {/* Summary Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-base font-medium">Daily Traffic</CardTitle>
@@ -127,17 +151,6 @@ const PromotionEffectivenessView = () => {
             <div className="text-2xl font-bold">52.8%</div>
             <p className="text-xs text-muted-foreground mt-1">MoM: +4.3%</p>
             <p className="text-xs text-muted-foreground">vs Category Avg: +8.4%</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-base font-medium">Conversion Rate</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">3.8%</div>
-            <p className="text-xs text-muted-foreground mt-1">MoM: +0.4%</p>
-            <p className="text-xs text-muted-foreground">vs Category Avg: +0.7%</p>
           </CardContent>
         </Card>
       </div>
@@ -249,87 +262,26 @@ const PromotionEffectivenessView = () => {
         </div>
       </div>
       
-      {/* Conversion Rate Benchmarks */}
-      <div className="dashboard-card mb-6">
-        <h3 className="text-lg font-medium text-dashboard-text mb-4">Conversion Rate Benchmarks</h3>
-        <div style={{ height: "300px" }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={conversionRateBenchmarkData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
-              <XAxis 
-                dataKey="name" 
-                axisLine={false} 
-                tickLine={false}
-              />
-              <YAxis 
-                axisLine={false} 
-                tickLine={false}
-                tickFormatter={(value) => `${value}%`}
-              />
-              <Tooltip 
-                formatter={(value: number) => [`${value}%`, 'Conversion Rate']}
-                contentStyle={{ 
-                  borderRadius: '6px', 
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #e5e7eb'
-                }}
-              />
-              <Bar 
-                dataKey="rate" 
-                fill="#6892e6" 
-                radius={[4, 4, 0, 0]}
-                className="cursor-pointer"
-              >
-                {
-                  conversionRateBenchmarkData.map((entry, index) => (
-                    <Bar 
-                      key={`cell-${index}`} 
-                      dataKey="rate" 
-                      fill={entry.name === 'Your Brand' ? '#5840bb' : entry.name === 'Industry Average' ? '#22c55e' : '#6892e6'} 
-                    />
-                  ))
-                }
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-      
-      {/* Competitor Campaign Display Ads */}
-      <div className="dashboard-card mb-6">
-        <h3 className="text-lg font-medium text-dashboard-text mb-4">Competitor Campaign Display Ads</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-dashboard-border bg-gray-50">
-                <th className="px-4 py-3 text-left font-medium text-dashboard-secondaryText">Competitor</th>
-                <th className="px-4 py-3 text-left font-medium text-dashboard-secondaryText">Headline</th>
-                <th className="px-4 py-3 text-left font-medium text-dashboard-secondaryText">Description</th>
-                <th className="px-4 py-3 text-right font-medium text-dashboard-secondaryText">Impressions</th>
-                <th className="px-4 py-3 text-right font-medium text-dashboard-secondaryText">Clicks</th>
-                <th className="px-4 py-3 text-right font-medium text-dashboard-secondaryText">CTR</th>
-                <th className="px-4 py-3 text-left font-medium text-dashboard-secondaryText">Date Range</th>
-              </tr>
-            </thead>
-            <tbody>
-              {competitorCampaignAds.map((ad) => (
-                <tr key={ad.id} className="border-b border-dashboard-border hover:bg-gray-50">
-                  <td className="px-4 py-3 text-dashboard-text">{ad.competitor}</td>
-                  <td className="px-4 py-3 text-dashboard-text font-medium">{ad.headline}</td>
-                  <td className="px-4 py-3 text-dashboard-secondaryText">{ad.description}</td>
-                  <td className="px-4 py-3 text-right text-dashboard-text">{ad.impressions.toLocaleString()}</td>
-                  <td className="px-4 py-3 text-right text-dashboard-text">{ad.clicks.toLocaleString()}</td>
-                  <td className="px-4 py-3 text-right text-dashboard-text">{ad.ctr}%</td>
-                  <td className="px-4 py-3 text-dashboard-secondaryText">
-                    {formatDate(ad.startDate)} - {formatDate(ad.endDate)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Retail & CPG Insights Based on Traffic Share Data */}
+      <div className="mb-6">
+        <h3 className="text-lg font-medium text-dashboard-text mb-4">Traffic Share Insights for Retail & CPG</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {retailCpgInsights.map((insight, index) => (
+            <Card key={index} className="border-l-4 border-dashboard-primary hover:shadow-md transition-shadow">
+              <CardHeader className="flex flex-row items-center gap-2 pb-2">
+                {insight.icon}
+                <CardTitle className="text-base font-medium">{insight.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-dashboard-secondaryText">{insight.description}</p>
+                <div className="mt-2">
+                  <Button variant="ghost" size="sm" className="text-xs text-dashboard-primary p-0 h-auto">
+                    View detailed analysis
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
       
@@ -347,7 +299,7 @@ const PromotionEffectivenessView = () => {
       
       {/* Subfooter */}
       <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-4 border-t border-dashboard-border">
-        <p>Source: SimilarWeb • Metrics: Traffic, Conversion Rate, Campaign Performance</p>
+        <p>Source: SimilarWeb • Metrics: Traffic, Campaign Performance</p>
       </div>
     </div>
   );
