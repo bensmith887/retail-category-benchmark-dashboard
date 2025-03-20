@@ -104,7 +104,7 @@ const PromotionsV2Dashboard = () => {
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-              <h1 className="text-2xl font-bold text-dashboard-text">Promotion Effectiveness Dashboard V2</h1>
+              <h1 className="text-2xl font-bold text-dashboard-text">Promotion Effectiveness Dashboard</h1>
               
               <div className="flex flex-wrap items-center gap-2 mt-2 md:mt-0">
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -231,7 +231,7 @@ const PromotionsV2Dashboard = () => {
             {/* Top Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
               <MetricsCard
-                label="Avg. Elasticity"
+                label="Avg. sensitivity"
                 value={elasticity.toFixed(2)}
                 change="-0.2"
                 isPositive={false}
@@ -253,7 +253,7 @@ const PromotionsV2Dashboard = () => {
               <MetricsCard
                 label="Optimal Discount"
                 value={`${optimalDiscount}%`}
-                change="Based on Elasticity"
+                change="Based on sensitivity"
                 isPositive={true}
                 secondaryLabel="vs. Industry"
                 secondaryChange="Better"
@@ -323,7 +323,7 @@ const PromotionsV2Dashboard = () => {
             
             <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-6 border-t border-dashboard-border">
               <p>
-                Source: SimilarWeb • Data Period: Mar 2023 - Feb 2025 • Analysis based on 47,901 data points and 1,256 elasticity measurements
+                Source: SimilarWeb • Data Period: Mar 2023 - Feb 2025 • Analysis based on 47,901 data points and 1,256 sensitivity(psi) measurements
               </p>
               <p className="mt-1">
                 Last Updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
