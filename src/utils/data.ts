@@ -1,66 +1,77 @@
-
 import { BarChart3, PieChart, TrendingUp, Activity, LineChart, MessageSquare, DollarSign, Percent, Tag, ShoppingCart, Users, Search, Share2, Heart, ExternalLink, Radio } from 'lucide-react';
 
 export const tabsData = [
   {
     id: 'overview',
     name: 'Overview',
-    icon: 'BarChart3'
+    icon: 'BarChart3',
+    hidden: false
   },
   {
     id: 'traffic-share',
     name: 'Traffic Share',
-    icon: 'PieChart'
+    icon: 'PieChart',
+    hidden: false
   },
   {
     id: 'pricing',
     name: 'Pricing',
-    icon: 'DollarSign'
+    icon: 'DollarSign',
+    hidden: false
   },
   {
     id: 'price-elasticity',
     name: 'Price Elasticity',
-    icon: 'Percent'
+    icon: 'Percent',
+    hidden: false
   },
   {
     id: 'promotions',
     name: 'Promotions',
-    icon: 'Tag'
+    icon: 'Tag',
+    hidden: true
   },
   {
     id: 'promotions-v2',
     name: 'Promotions V2',
-    icon: 'ShoppingCart'
+    icon: 'ShoppingCart',
+    hidden: false
   },
   {
     id: 'traffic-sources',
     name: 'Traffic Sources',
-    icon: 'Share2'
+    icon: 'Share2',
+    hidden: true
   },
   {
     id: 'product-performance',
     name: 'Product Performance',
-    icon: 'TrendingUp'
+    icon: 'TrendingUp',
+    hidden: false
   },
   {
     id: 'customer-sentiment',
     name: 'Customer Sentiment',
-    icon: 'Heart'
+    icon: 'Heart',
+    hidden: true
   },
   {
     id: 'promotion-effectiveness',
     name: 'Promotion Effectiveness',
-    icon: 'Activity'
+    icon: 'Activity',
+    hidden: false
   },
   {
     id: 'keyword-category',
     name: 'Keyword Share',
-    icon: 'Search'
+    icon: 'Search',
+    hidden: true
   },
   {
     id: 'retail-media',
     name: 'Retail Media',
-    icon: 'Radio'
+    icon: 'Radio',
+    hidden: true
   }
 ];
 
@@ -87,7 +98,6 @@ export const filtersData = [
   }
 ];
 
-// Add metrics data
 export const metricsData = [
   {
     id: 'market-share',
@@ -119,7 +129,6 @@ export const metricsData = [
   }
 ];
 
-// Add insight data
 export const insightData = [
   {
     title: 'Competitor Price Drop',
@@ -143,7 +152,6 @@ export const insightData = [
   }
 ];
 
-// Adding competitor data
 export const competitorData = [
   {
     name: 'Your Brand',
@@ -187,7 +195,6 @@ export const competitorData = [
   }
 ];
 
-// Adding market share data
 export const marketShareData = [
   { month: 'Jan', yourShare: 28.4, competitorAShare: 24.1, competitorBShare: 18.9, competitorCShare: 14.5 },
   { month: 'Feb', yourShare: 29.1, competitorAShare: 23.9, competitorBShare: 18.6, competitorCShare: 14.8 },
@@ -197,7 +204,6 @@ export const marketShareData = [
   { month: 'Jun', yourShare: 32.7, competitorAShare: 24.1, competitorBShare: 18.5, competitorCShare: 14.2 }
 ];
 
-// Market Share Top Competitors
 export const marketShareTopCompetitors = [
   { name: 'Your Brand', share: 32.7, monthChange: 1.5, yearChange: 4.2 },
   { name: 'Competitor A', share: 24.1, monthChange: -0.8, yearChange: 1.3 },
@@ -205,7 +211,6 @@ export const marketShareTopCompetitors = [
   { name: 'Competitor C', share: 14.2, monthChange: -0.5, yearChange: -2.1 }
 ];
 
-// Category Market Share Data
 export const categoryMarketShareData = [
   {
     category: 'Electronics',
@@ -239,7 +244,6 @@ export const categoryMarketShareData = [
   }
 ];
 
-// Market Share Trend Data
 export const marketShareTrendData = [
   { month: 'Jan', yourShare: 28.4, competitorAShare: 24.1, competitorBShare: 18.9, competitorCShare: 14.5 },
   { month: 'Feb', yourShare: 29.1, competitorAShare: 23.9, competitorBShare: 18.6, competitorCShare: 14.8 },
@@ -255,7 +259,6 @@ export const marketShareTrendData = [
   { month: 'Dec', yourShare: 33.5, competitorAShare: 24.0, competitorBShare: 18.3, competitorCShare: 14.2 }
 ];
 
-// Pricing Data
 export const pricingData = [
   { name: 'Your Brand', price: 75.43, change: -2.18, changePercent: -2.8 },
   { name: 'Competitor A', price: 82.19, change: 1.32, changePercent: 1.6 },
@@ -264,7 +267,6 @@ export const pricingData = [
   { name: 'Industry Average', price: 72.25, change: -1.45, changePercent: -2.0 }
 ];
 
-// Product Performance Data
 export const productPerformanceData = [
   {
     id: 1,
@@ -358,7 +360,6 @@ export const productPerformanceData = [
   }
 ];
 
-// Daily Traffic Data
 export const dailyTrafficData = [
   { date: '2023-09-01', yourTraffic: 10200, competitorTraffic: 8400, yourShare: 52.8, competitorShare: 47.2 },
   { date: '2023-09-02', yourTraffic: 9800, competitorTraffic: 8200, yourShare: 51.9, competitorShare: 48.1 },
@@ -376,7 +377,6 @@ export const dailyTrafficData = [
   { date: '2023-09-14', yourTraffic: 11900, competitorTraffic: 9600, yourShare: 54.9, competitorShare: 45.1 }
 ];
 
-// Conversion Rate Benchmark Data
 export const conversionRateBenchmarkData = [
   { name: 'Your Brand', rate: 3.8 },
   { name: 'Competitor A', rate: 3.1 },
@@ -385,7 +385,6 @@ export const conversionRateBenchmarkData = [
   { name: 'Industry Average', rate: 3.2 }
 ];
 
-// Competitor Campaign Ads
 export const competitorCampaignAds = [
   {
     id: 1,
@@ -444,7 +443,6 @@ export const competitorCampaignAds = [
   }
 ];
 
-// Traffic Sources Data
 export const trafficSourcesData = [
   { name: 'Organic Search', value: 42.5, change: 3.2 },
   { name: 'Direct', value: 28.2, change: 1.5 },
@@ -454,7 +452,6 @@ export const trafficSourcesData = [
   { name: 'Paid Search', value: 1.6, change: -0.5 }
 ];
 
-// Traffic Source Trend Data
 export const trafficSourceTrendData = [
   { month: 'Jan', organic: 38.2, direct: 26.5, referral: 17.1, social: 5.5, email: 2.8, paid: 2.1 },
   { month: 'Feb', organic: 38.5, direct: 26.8, referral: 16.9, social: 5.8, email: 2.9, paid: 2.0 },
@@ -466,7 +463,6 @@ export const trafficSourceTrendData = [
   { month: 'Aug', organic: 42.5, direct: 28.2, referral: 15.8, social: 8.3, email: 3.6, paid: 1.6 }
 ];
 
-// Category Traffic Data
 export const categoryTrafficData = [
   {
     category: 'Electronics',
@@ -503,7 +499,6 @@ export const categoryTrafficData = [
   }
 ];
 
-// Competitor Source Benchmarks
 export const competitorSourceBenchmarks = [
   {
     source: 'Organic Search',
@@ -537,7 +532,6 @@ export const competitorSourceBenchmarks = [
   }
 ];
 
-// Keyword Category Data
 export const keywordGroups = [
   { id: 'electronics', name: 'Electronics' },
   { id: 'fashion', name: 'Fashion & Apparel' },
@@ -546,7 +540,6 @@ export const keywordGroups = [
   { id: 'sports', name: 'Sports & Fitness' }
 ];
 
-// Sample Keyword Share Data
 export const sampleKeywordShareData = [
   { domain: 'yourbrand.com', share: 24.5 },
   { domain: 'competitora.com', share: 19.8 },
@@ -559,4 +552,3 @@ export const sampleKeywordShareData = [
   { domain: 'competitorh.com', share: 3.2 },
   { domain: 'competitori.com', share: 2.2 }
 ];
-

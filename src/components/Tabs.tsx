@@ -11,6 +11,9 @@ interface TabsProps {
 }
 
 const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
+  // Filter out hidden tabs
+  const visibleTabs = tabsData.filter(tab => !tab.hidden);
+  
   return (
     <div className="w-16 md:w-64 h-screen bg-white border-r border-dashboard-border flex-shrink-0">
       <div className="h-16 flex items-center justify-center md:justify-start px-4 border-b border-dashboard-border">
@@ -19,7 +22,7 @@ const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
       </div>
       <div className="py-4">
         <div className="space-y-1">
-          {tabsData.map((tab) => (
+          {visibleTabs.map((tab) => (
             <Link
               key={tab.id}
               to={

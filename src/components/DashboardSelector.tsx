@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
@@ -9,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { tabsData } from "@/utils/data";
 
 interface DashboardSelectorProps {
   currentPath: string;
@@ -16,6 +16,9 @@ interface DashboardSelectorProps {
 
 const DashboardSelector: React.FC<DashboardSelectorProps> = ({ currentPath }) => {
   const navigate = useNavigate();
+  
+  // Filter out hidden tabs
+  const visibleTabs = tabsData.filter(tab => !tab.hidden);
 
   const handleDashboardChange = (value: string) => {
     navigate(value);
@@ -48,8 +51,10 @@ const DashboardSelector: React.FC<DashboardSelectorProps> = ({ currentPath }) =>
         <SelectContent>
           <SelectItem value="/">Overview</SelectItem>
           <SelectItem value="/price-elasticity">Price Elasticity</SelectItem>
-          <SelectItem value="/promotions">Promotions</SelectItem>
-          <SelectItem value="/promotions-v2">Promotions V2</SelectItem>
+          {/* Keep promotions route but hidden in sidebar */}
+          {visibleTabs.some(tab => tab.id === 'promotions-v2') && (
+            <SelectItem value="/promotions-v2">Promotions V2</SelectItem>
+          )}
         </SelectContent>
       </Select>
     </div>

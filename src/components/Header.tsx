@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Calendar, Filter, X, ChevronDown } from 'lucide-react';
+import { Calendar, Filter, X, ChevronDown, BadgeAlert } from 'lucide-react';
 import { filtersData } from '@/utils/data';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from '@/lib/utils';
@@ -32,6 +32,14 @@ const Header = () => {
           </div>
           
           <div className="flex flex-col md:flex-row items-start md:items-center gap-3 w-full md:w-auto">
+            {/* Beta badge in top right */}
+            <div className="absolute top-4 right-6 flex items-center">
+              <div className="bg-dashboard-primary text-white text-xs font-medium px-2 py-1 rounded-md flex items-center">
+                <BadgeAlert size={14} className="mr-1" />
+                BETA
+              </div>
+            </div>
+            
             <DashboardSelector currentPath={location.pathname} />
             
             <Popover>
