@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
@@ -49,7 +50,7 @@ const DashboardSelector: React.FC<DashboardSelectorProps> = ({ currentPath }) =>
           <SelectValue placeholder={getDashboardName(currentPath)} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="/">Overview</SelectItem>
+          <SelectItem value="/">Category Share of Search</SelectItem>
           <SelectItem value="/price-elasticity">Price Elasticity</SelectItem>
           {/* Keep promotions route but hidden in sidebar */}
           {visibleTabs.some(tab => tab.id === 'promotions-v2') && (
