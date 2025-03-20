@@ -136,19 +136,19 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
           <div className="flex items-center text-xs space-x-6">
             <div className="flex items-center">
               <div className="w-3 h-3 rounded-full bg-ef4444 mr-1"></div>
-              <span>Very High Elasticity (≤ -1.5)</span>
+              <span>Very High Elasticity (&lt;= -1.5)</span>
             </div>
             <div className="flex items-center">
               <div className="w-3 h-3 rounded-full bg-f97316 mr-1"></div>
-              <span>High Elasticity (≤ -1.0)</span>
+              <span>High Elasticity (&lt;= -1.0)</span>
             </div>
             <div className="flex items-center">
               <div className="w-3 h-3 rounded-full bg-facc15 mr-1"></div>
-              <span>Medium Elasticity (≤ -0.5)</span>
+              <span>Medium Elasticity (&lt;= -0.5)</span>
             </div>
             <div className="flex items-center">
               <div className="w-3 h-3 rounded-full bg-22c55e mr-1"></div>
-              <span>Low Elasticity (> -0.5)</span>
+              <span>Low Elasticity (&gt; -0.5)</span>
             </div>
           </div>
         </div>
