@@ -13,6 +13,54 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
   monthlyElasticityData,
   heatmapData 
 }) => {
+  // Custom tooltip for the heatmap
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-white p-3 border border-gray-200 rounded-md shadow-md">
+          <p className="font-medium">{data.category}</p>
+          <p className="text-sm text-gray-600">{data.month}</p>
+          <p className="text-sm font-semibold mt-1">
+            Elasticity: <span className={data.value <= -1.0 ? 'text-red-500' : 'text-amber-500'}>{data.value.toFixed(2)}</span>
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            {data.value <= -1.0 
+              ? 'Highly responsive to promotions' 
+              : 'Moderately responsive to promotions'}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Custom dot for the scatter plot
+  const renderCustomizedPoint = (props: any) => {
+    const { cx, cy, value } = props;
+    
+    // Determine color based on value
+    let fillColor = '#22c55e'; // Green for low elasticity
+    if (value <= -1.5) fillColor = '#ef4444'; // Red for very high elasticity
+    else if (value <= -1.0) fillColor = '#f97316'; // Orange for high elasticity
+    else if (value <= -0.5) fillColor = '#facc15'; // Yellow for medium elasticity
+    
+    // Size also based on value - bigger for higher sensitivity
+    const size = Math.min(Math.abs(value) * 5, 12);
+    
+    return (
+      <circle 
+        cx={cx} 
+        cy={cy} 
+        r={size} 
+        fill={fillColor} 
+        stroke="#fff"
+        strokeWidth={1}
+        opacity={0.8}
+      />
+    );
+  };
+
   return (
     <div className="animate-fade-in">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -44,76 +92,80 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
       
       <div className="dashboard-card mb-6">
         <h3 className="text-lg font-medium text-dashboard-text mb-4">Promotional Sensitivity Heat Map</h3>
+        <p className="text-sm text-dashboard-secondaryText mb-4">
+          Shows how different product categories respond to promotions across months. Darker colors indicate higher price elasticity, meaning stronger sales response to discounts.
+        </p>
         <div style={{ height: "350px" }}>
           <ResponsiveContainer width="100%" height="100%">
             <ScatterChart
-              margin={{ top: 20, right: 20, bottom: 70, left: 20 }}
+              margin={{ top: 20, right: 40, bottom: 20, left: 40 }}
             >
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis 
+                type="category" 
                 dataKey="month" 
                 name="Month" 
-                type="category"
-                axisLine={false}
-                tickLine={false}
+                allowDuplicatedCategory={false} 
+                padding={{ left: 20, right: 20 }}
               />
               <YAxis 
+                type="category" 
                 dataKey="category" 
                 name="Category" 
-                type="category" 
-                width={80}
-                axisLine={false}
-                tickLine={false}
+                allowDuplicatedCategory={false}
+                reversed={true}
               />
-              <ZAxis
-                dataKey="value"
-                range={[100, 1000]}
-                name="Elasticity"
+              <ZAxis 
+                type="number" 
+                dataKey="value" 
+                range={[50, 400]} 
+                name="Elasticity" 
               />
-              <Tooltip 
-                cursor={{ strokeDasharray: '3 3' }}
-                formatter={(value: any) => [`Elasticity: ${typeof value === 'number' ? value.toFixed(2) : value}`, 'Elasticity']}
-                contentStyle={{ 
-                  borderRadius: '6px', 
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #e5e7eb'
-                }}
-              />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend />
               <Scatter 
+                name="Price Elasticity" 
                 data={heatmapData} 
-                fill="#5840bb"
-                shape={(props: any) => {
-                  const { cx, cy, width, height, value } = props;
-                  const opacity = Math.min(value * 0.8, 0.9);
-                  return (
-                    <Rectangle
-                      x={cx - width / 2}
-                      y={cy - height / 2}
-                      width={width}
-                      height={height}
-                      fill={`rgba(88, 64, 187, ${opacity})`}
-                      strokeWidth={0}
-                    />
-                  );
-                }}
+                fill="#8884d8"
+                shape={renderCustomizedPoint}
               />
             </ScatterChart>
           </ResponsiveContainer>
         </div>
-        <div className="text-xs text-dashboard-secondaryText mt-2">
-          Darker color indicates higher promotional sensitivity (stronger elasticity)
+        <div className="mt-3 flex justify-center">
+          <div className="flex items-center text-xs space-x-6">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-ef4444 mr-1"></div>
+              <span>Very High Elasticity (≤ -1.5)</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-f97316 mr-1"></div>
+              <span>High Elasticity (≤ -1.0)</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-facc15 mr-1"></div>
+              <span>Medium Elasticity (≤ -0.5)</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-22c55e mr-1"></div>
+              <span>Low Elasticity (> -0.5)</span>
+            </div>
+          </div>
         </div>
       </div>
       
       <div className="dashboard-card mb-6">
-        <h3 className="text-lg font-medium text-dashboard-text mb-4">Monthly Promotional Elasticity Trends</h3>
+        <h3 className="text-lg font-medium text-dashboard-text mb-4">Monthly Elasticity Trends</h3>
+        <p className="text-sm text-dashboard-secondaryText mb-4">
+          Shows how price elasticity changes throughout the year. More negative values indicate higher responsiveness to promotions.
+        </p>
         <div style={{ height: "300px" }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={monthlyElasticityData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis 
                 dataKey="month" 
                 axisLine={false} 
@@ -122,11 +174,11 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
               <YAxis 
                 axisLine={false} 
                 tickLine={false}
-                domain={[-1.6, 0]}
-                tickFormatter={(value) => `${value}`}
+                domain={[-2, 0]}
+                allowDataOverflow={true}
               />
               <Tooltip 
-                formatter={(value: any) => [`${value}`, 'Elasticity']}
+                formatter={(value: number) => [`${value.toFixed(2)}`, 'Elasticity']}
                 contentStyle={{ 
                   borderRadius: '6px', 
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
@@ -137,19 +189,25 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
               <Line 
                 type="monotone" 
                 dataKey="baby" 
-                name="Baby Products"
+                name="Baby Products" 
                 stroke="#5840bb" 
                 strokeWidth={2}
-                dot={false}
                 activeDot={{ r: 6 }}
               />
               <Line 
                 type="monotone" 
                 dataKey="books" 
-                name="Books"
+                name="Books" 
                 stroke="#6892e6" 
                 strokeWidth={2}
-                dot={false}
+                activeDot={{ r: 6 }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="tools" 
+                name="Tools & Home" 
+                stroke="#22c55e" 
+                strokeWidth={2}
                 activeDot={{ r: 6 }}
               />
             </LineChart>
