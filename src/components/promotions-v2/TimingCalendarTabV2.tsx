@@ -13,6 +13,62 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
   monthlyElasticityData,
   heatmapData 
 }) => {
+  // Custom tooltip for the heatmap
+  const CustomHeatmapTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      const elasticityValue = Math.abs(data.value).toFixed(2);
+      const sensitivityLevel = data.value <= -1.2 ? 'High' : data.value <= -0.8 ? 'Medium' : 'Low';
+      const textColor = data.value <= -1.2 ? 'text-purple-700' : data.value <= -0.8 ? 'text-blue-600' : 'text-blue-400';
+      
+      return (
+        <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-100">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-semibold">{data.category}</span>
+            <span className="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full">
+              {data.month}
+            </span>
+          </div>
+          <div className="text-sm text-gray-600 mb-1">
+            Elasticity: <span className={`font-medium ${textColor}`}>{data.value}</span>
+          </div>
+          <div className="flex items-center mt-1.5">
+            <div className={`h-2 w-2 rounded-full mr-2 ${
+              data.value <= -1.2 ? 'bg-purple-600' : 
+              data.value <= -0.8 ? 'bg-blue-500' : 'bg-blue-300'
+            }`}></div>
+            <span className="text-xs text-gray-500">
+              {sensitivityLevel} sensitivity to promotions
+            </span>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Custom tooltip for the line chart
+  const CustomLineChartTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-100">
+          <p className="font-medium text-sm mb-1">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <div key={`tooltip-${index}`} className="flex items-center gap-2 text-sm">
+              <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }}></div>
+              <span>{entry.name}: </span>
+              <span className="font-medium">{entry.value}</span>
+            </div>
+          ))}
+          <p className="text-xs text-gray-500 mt-1.5">
+            Lower values indicate higher sensitivity
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="animate-fade-in">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -43,13 +99,29 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
       </div>
       
       <div className="dashboard-card mb-6">
-        <h3 className="text-lg font-medium text-dashboard-text mb-4">Promotional Sensitivity Heat Map</h3>
-        <div style={{ height: "350px" }}>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-medium text-dashboard-text">Promotional Sensitivity Heat Map</h3>
+          <div className="flex gap-1.5">
+            <div className="flex items-center gap-1">
+              <div className="h-3 w-3 rounded-sm bg-purple-900 bg-opacity-80"></div>
+              <span className="text-xs text-gray-500">High</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="h-3 w-3 rounded-sm bg-purple-700 bg-opacity-70"></div>
+              <span className="text-xs text-gray-500">Medium</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="h-3 w-3 rounded-sm bg-purple-500 bg-opacity-60"></div>
+              <span className="text-xs text-gray-500">Low</span>
+            </div>
+          </div>
+        </div>
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4" style={{ height: "380px" }}>
           <ResponsiveContainer width="100%" height="100%">
             <ScatterChart
-              margin={{ top: 20, right: 20, bottom: 70, left: 20 }}
+              margin={{ top: 30, right: 30, bottom: 80, left: 30 }}
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
               <XAxis 
                 dataKey="month" 
                 name="Month" 
@@ -67,27 +139,32 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
               />
               <ZAxis
                 dataKey="value"
-                range={[100, 1000]}
+                range={[150, 1500]}
                 name="Elasticity"
               />
-              <Tooltip 
-                cursor={{ strokeDasharray: '3 3' }}
-                formatter={(value: any) => [`Elasticity: ${typeof value === 'number' ? value.toFixed(2) : value}`, 'Elasticity']}
-                contentStyle={{ 
-                  borderRadius: '6px', 
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #e5e7eb'
-                }}
-              />
+              <Tooltip content={<CustomHeatmapTooltip />} cursor={{ strokeDasharray: '5 5', stroke: '#8884d8' }} />
               <Scatter 
                 data={heatmapData} 
-                fill="#5840bb"
                 shape={(props: any) => {
                   const { cx, cy, r } = props;
-                  const width = 45;  // Adjusted width
-                  const height = 35; // Adjusted height
+                  const width = 50;
+                  const height = 40;
                   const value = props.payload.value;
-                  const opacity = Math.min(Math.max(0.2, value * 0.8), 0.9);
+                  
+                  // More visually distinctive color mapping based on elasticity value
+                  let fillColor;
+                  let opacity;
+                  
+                  if (value <= -1.2) {
+                    fillColor = 'rgba(109, 40, 217, 0.9)'; // Deep purple for high sensitivity
+                    opacity = 0.9;
+                  } else if (value <= -0.8) {
+                    fillColor = 'rgba(124, 58, 237, 0.75)'; // Medium purple for medium sensitivity
+                    opacity = 0.75;
+                  } else {
+                    fillColor = 'rgba(139, 92, 246, 0.6)'; // Light purple for low sensitivity
+                    opacity = 0.6;
+                  }
                   
                   return (
                     <Rectangle
@@ -95,9 +172,11 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
                       y={cy - height / 2}
                       width={width}
                       height={height}
-                      fill={`rgba(88, 64, 187, ${opacity})`}
-                      stroke="rgba(88, 64, 187, 0.1)"
+                      fill={fillColor}
+                      stroke="rgba(139, 92, 246, 0.2)"
                       strokeWidth={1}
+                      rx={4}
+                      ry={4}
                     />
                   );
                 }}
@@ -107,8 +186,8 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
               {monthlyElasticityData.map((entry, index) => (
                 <text 
                   key={`month-${index}`} 
-                  x={(index * 50) + 40} // Adjusted positioning
-                  y={320} 
+                  x={(index * 55) + 50}
+                  y={330} 
                   textAnchor="middle" 
                   dominantBaseline="middle"
                   className="fill-slate-600 text-xs font-medium"
@@ -136,6 +215,15 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
               >
                 Books
               </text>
+              <text 
+                x={20} 
+                y={255} 
+                textAnchor="start" 
+                dominantBaseline="middle"
+                className="fill-slate-600 text-xs font-medium"
+              >
+                Tools
+              </text>
             </ScatterChart>
           </ResponsiveContainer>
         </div>
@@ -146,11 +234,11 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
       
       <div className="dashboard-card mb-6">
         <h3 className="text-lg font-medium text-dashboard-text mb-4">Monthly Promotional Elasticity Trends</h3>
-        <div style={{ height: "300px" }}>
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4" style={{ height: "300px" }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={monthlyElasticityData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
             >
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
               <XAxis 
@@ -164,32 +252,34 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
                 domain={[-1.6, 0]}
                 tickFormatter={(value) => `${value}`}
               />
-              <Tooltip 
-                formatter={(value: any) => [`${value}`, 'Elasticity']}
-                contentStyle={{ 
-                  borderRadius: '6px', 
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #e5e7eb'
-                }}
-              />
-              <Legend />
+              <Tooltip content={<CustomLineChartTooltip />} />
+              <Legend verticalAlign="top" height={36} />
               <Line 
                 type="monotone" 
                 dataKey="baby" 
                 name="Baby Products"
                 stroke="#5840bb" 
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 6 }}
+                strokeWidth={2.5}
+                dot={{ stroke: '#5840bb', strokeWidth: 2, r: 4, fill: 'white' }}
+                activeDot={{ r: 6, stroke: '#5840bb', strokeWidth: 1, fill: '#5840bb' }}
               />
               <Line 
                 type="monotone" 
                 dataKey="books" 
                 name="Books"
                 stroke="#6892e6" 
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 6 }}
+                strokeWidth={2.5}
+                dot={{ stroke: '#6892e6', strokeWidth: 2, r: 4, fill: 'white' }}
+                activeDot={{ r: 6, stroke: '#6892e6', strokeWidth: 1, fill: '#6892e6' }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="tools" 
+                name="Tools"
+                stroke="#22c55e" 
+                strokeWidth={2.5}
+                dot={{ stroke: '#22c55e', strokeWidth: 2, r: 4, fill: 'white' }}
+                activeDot={{ r: 6, stroke: '#22c55e', strokeWidth: 1, fill: '#22c55e' }}
               />
             </LineChart>
           </ResponsiveContainer>
