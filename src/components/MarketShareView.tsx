@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   marketShareTopCompetitors, 
@@ -84,57 +85,41 @@ const MarketShareView: React.FC = () => {
         </div>
       </div>
 
-      {/* Category Traffic Share Table - Improved Formatting */}
+      {/* Category Traffic Share Table */}
       <div className="dashboard-card mb-6 overflow-hidden">
         <h3 className="text-lg font-medium text-dashboard-text mb-4">Top Domains by Category Traffic Share</h3>
         
-        <div className="overflow-auto max-h-[600px] rounded-lg border border-dashboard-border">
-          <Table className="min-w-full">
+        <div className="overflow-auto max-h-[600px]">
+          <Table>
             <TableHeader className="bg-gray-50 sticky top-0">
               <TableRow>
-                <TableHead className="w-[200px] py-3 bg-dashboard-highlight/10 font-semibold text-dashboard-text">Category</TableHead>
-                <TableHead className="py-3 bg-dashboard-highlight/10 font-semibold text-dashboard-text">Domain</TableHead>
-                <TableHead className="text-right py-3 bg-dashboard-highlight/10 font-semibold text-dashboard-text">Traffic Share</TableHead>
-                <TableHead className="text-right py-3 bg-dashboard-highlight/10 font-semibold text-dashboard-text">MoM Change</TableHead>
-                <TableHead className="text-right py-3 bg-dashboard-highlight/10 font-semibold text-dashboard-text">YoY Change</TableHead>
+                <TableHead className="w-[200px]">Category</TableHead>
+                <TableHead>Domain</TableHead>
+                <TableHead className="text-right">Traffic Share</TableHead>
+                <TableHead className="text-right">MoM Change</TableHead>
+                <TableHead className="text-right">YoY Change</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {categoryMarketShareData.map((category) => (
                 <React.Fragment key={category.category}>
                   {category.domains.map((domain, index) => (
-                    <TableRow 
-                      key={`${category.category}-${domain.name}`} 
-                      className={index === 0 ? "bg-dashboard-highlight/5 hover:bg-dashboard-highlight/10" : "hover:bg-gray-50"}
-                    >
+                    <TableRow key={`${category.category}-${domain.name}`} className={index === 0 ? "bg-dashboard-highlight" : ""}>
                       {index === 0 ? (
-                        <TableCell 
-                          className="font-medium border-r border-dashboard-border py-3 align-middle" 
-                          rowSpan={5}
-                        >
-                          <div className="flex items-center justify-center h-full">
-                            <span className="font-semibold text-dashboard-text">{category.category}</span>
-                          </div>
+                        <TableCell className="font-medium border-r border-dashboard-border" rowSpan={5}>
+                          {category.category}
                         </TableCell>
                       ) : null}
-                      <TableCell className="font-medium py-3">
-                        {index === 0 ? (
-                          <span className="font-semibold">{domain.name}</span>
-                        ) : (
-                          domain.name
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right py-3 font-medium">
-                        {domain.share}%
-                      </TableCell>
-                      <TableCell className="text-right py-3">
-                        <div className={`inline-flex items-center justify-end rounded-full px-2 py-0.5 text-xs font-medium ${domain.monthChange > 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
+                      <TableCell className="font-medium">{domain.name}</TableCell>
+                      <TableCell className="text-right">{domain.share}%</TableCell>
+                      <TableCell className="text-right">
+                        <div className={`inline-flex items-center ${domain.monthChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
                           {domain.monthChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
                           {domain.monthChange > 0 ? '+' : ''}{domain.monthChange}%
                         </div>
                       </TableCell>
-                      <TableCell className="text-right py-3">
-                        <div className={`inline-flex items-center justify-end rounded-full px-2 py-0.5 text-xs font-medium ${domain.yearChange > 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
+                      <TableCell className="text-right">
+                        <div className={`inline-flex items-center ${domain.yearChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
                           {domain.yearChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
                           {domain.yearChange > 0 ? '+' : ''}{domain.yearChange}%
                         </div>
