@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
 import { Tabs as UITabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Info, Download, FileText, TrendingDown, Calculator, Target, Zap } from 'lucide-react';
+import { Info, Download, FileText, TrendingDown, Calculator, Target } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import MetricsCard from '@/components/MetricsCard';
 import InsightCard from '@/components/InsightCard';
@@ -229,7 +228,7 @@ const PromotionsV2Dashboard = () => {
             </div>
             
             {/* Top Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
               <MetricsCard
                 label="Avg. sensitivity"
                 value={elasticity.toFixed(2)}
@@ -259,16 +258,6 @@ const PromotionsV2Dashboard = () => {
                 secondaryChange="Better"
                 isSecondaryPositive={true}
                 icon={<Target className="text-dashboard-primary" size={20} />}
-              />
-              <MetricsCard
-                label="Optimization Score"
-                value="81"
-                change="+9"
-                isPositive={true}
-                secondaryLabel="vs Previous"
-                secondaryChange="+5"
-                isSecondaryPositive={true}
-                icon={<Zap className="text-dashboard-secondary" size={20} />}
               />
             </div>
 
