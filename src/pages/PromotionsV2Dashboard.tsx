@@ -45,7 +45,7 @@ const PromotionsV2Dashboard = () => {
   const promotionalInsights = [
     {
       title: 'Timing Opportunity',
-      description: 'April shows highest elasticity (-2.20) for Tools category. Prioritize promotions during this month.',
+      description: 'April shows highest sensitivity (-2.20) for Tools category. Prioritize promotions during this month.',
       type: 'opportunity' as const
     },
     {
@@ -60,7 +60,7 @@ const PromotionsV2Dashboard = () => {
     },
     {
       title: 'Subcategory Focus',
-      description: 'Hardware products in the Tools category show high elasticity (-1.16). Prioritize for promotions.',
+      description: 'Hardware products in the Tools category show high sensitivity (-1.16). Prioritize for promotions.',
       type: 'recommendation' as const
     }
   ];
@@ -192,7 +192,7 @@ const PromotionsV2Dashboard = () => {
                     </TooltipTrigger>
                     <TooltipContent className="max-w-sm">
                       <p className="text-sm">
-                        <strong>Price Elasticity</strong> measures how sensitive demand is to price changes. 
+                        <strong>Price Sensitivity(PSI) </strong> measures how sensitive demand is to price changes. 
                         A value of -1.0 means a 10% price reduction increases sales by 10%.
                       </p>
                     </TooltipContent>
@@ -211,17 +211,16 @@ const PromotionsV2Dashboard = () => {
               </div>
             </div>
 
-            {/* Understanding Elasticity Section */}
+            {/* Understanding Price Sensitivity Index (PSI) Section */}
             <div className="dashboard-card mb-6 bg-blue-50 border-l-4 border-dashboard-primary">
               <div className="flex items-start gap-3">
                 <Info className="h-5 w-5 text-dashboard-primary mt-0.5 flex-shrink-0" />
                 <div>
-                  <h3 className="text-lg font-medium text-dashboard-text mb-1">Understanding Price Elasticity</h3>
+                  <h3 className="text-lg font-medium text-dashboard-text mb-1">Understanding Price sensitivity index (PSI) </h3>
                   <p className="text-sm text-dashboard-secondaryText">
-                    Price elasticity measures how demand responds to price changes. A value of <strong>-1.0</strong> means a 10% price 
-                    reduction leads to 10% more sales (unit elastic). Values between <strong>0 and -1</strong> indicate 
-                    inelastic demand (less responsive), while values <strong>below -1</strong> show elastic demand 
-                    (more responsive). For example, an elasticity of <strong>-2.0</strong> means a 10% price reduction 
+                    Price sensitivity index measures how demand responds to price changes. A value of <strong>-1.0</strong> means a 10% price 
+                    reduction leads to 10% more sales (ie unit is sensitive to price). Values between <strong>0 and -1</strong> indicate 
+                    less responsive to price change, while values <strong>below -1</strong> are very responsive to price changes. For example, an PSI of <strong>-2.0</strong> means a 10% price reduction 
                     increases sales by 20%. Negative values are normal and indicate the inverse relationship 
                     between price and demand.
                   </p>
