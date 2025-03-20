@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -38,6 +37,14 @@ const PromotionsDashboard = () => {
   const { monthlyElasticityData, subcategoryElasticityData, priceSensitivityData, seasonalStrategyData } = generatePromotionData();
   const heatmapData = generateHeatmapData(monthlyElasticityData);
   const campaignCalendar = generateCampaignCalendar();
+
+  // Process the seasonalStrategyData to match the format expected by SeasonalStrategyTab
+  const formattedSeasonalStrategyData = [
+    { season: 'Q1', baby: 65, books: 75, tools: 55 },
+    { season: 'Q2', baby: 80, books: 65, tools: 85 },
+    { season: 'Q3', baby: 90, books: 70, tools: 70 },
+    { season: 'Q4', baby: 95, books: 95, tools: 60 },
+  ];
 
   useEffect(() => {
     setMounted(true);
@@ -214,7 +221,7 @@ const PromotionsDashboard = () => {
               
               <TabsContent value="strategy">
                 <SeasonalStrategyTab 
-                  seasonalStrategyData={seasonalStrategyData}
+                  seasonalStrategyData={formattedSeasonalStrategyData}
                   campaignCalendar={campaignCalendar}
                 />
               </TabsContent>

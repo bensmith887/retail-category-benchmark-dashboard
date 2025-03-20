@@ -3,7 +3,7 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 
 interface SeasonalStrategyTabProps {
-  seasonalStrategyData: any[];
+  seasonalStrategyData: any[]; // This expects an array
   campaignCalendar: any[];
 }
 
