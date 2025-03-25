@@ -30,7 +30,7 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
             </span>
           </div>
           <div className="text-sm text-gray-600 mb-1">
-            Elasticity: <span className={`font-medium ${textColor}`}>{data.value}</span>
+            Sensitivity: <span className={`font-medium ${textColor}`}>{data.value}</span>
           </div>
           <div className="flex items-center mt-1.5">
             <div className={`h-2 w-2 rounded-full mr-2 ${
@@ -81,7 +81,7 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
           icon={<Calendar className="text-dashboard-primary" />}
         />
         <MetricsCard
-          label="Peak Elasticity"
+          label="Peak Sensitivity"
           value="-1.53"
           change="-0.75"
           secondaryLabel="vs. Annual Average"
@@ -140,7 +140,7 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
               <ZAxis
                 dataKey="value"
                 range={[150, 1500]}
-                name="Elasticity"
+                name="Sensitivity"
               />
               <Tooltip content={<CustomHeatmapTooltip />} cursor={{ strokeDasharray: '5 5', stroke: '#8884d8' }} />
               <Scatter 
@@ -228,12 +228,12 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
           </ResponsiveContainer>
         </div>
         <div className="text-xs text-dashboard-secondaryText mt-2">
-          Darker color indicates higher promotional sensitivity (stronger elasticity)
+          Darker color indicates higher promotional sensitivity (stronger sensitivity)
         </div>
       </div>
       
       <div className="dashboard-card mb-6">
-        <h3 className="text-lg font-medium text-dashboard-text mb-4">Monthly Promotional Elasticity Trends</h3>
+        <h3 className="text-lg font-medium text-dashboard-text mb-4">Monthly Promotional Sensitivity Trends</h3>
         <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4" style={{ height: "300px" }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart

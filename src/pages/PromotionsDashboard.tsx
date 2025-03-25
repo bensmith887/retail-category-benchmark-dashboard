@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -190,14 +191,14 @@ const PromotionsDashboard = () => {
               
               <TabsContent value="timing">
                 <TimingCalendarTab 
-                  monthlyElasticityData={monthlyElasticityData}
+                  monthlySensitivityData={monthlyElasticityData}
                   heatmapData={heatmapData}
                 />
               </TabsContent>
               
               <TabsContent value="category">
                 <CategoryAnalysisTab 
-                  subcategoryElasticityData={subcategoryElasticityData}
+                  subcategorySensitivityData={subcategoryElasticityData}
                   priceSensitivityData={priceSensitivityData}
                 />
               </TabsContent>

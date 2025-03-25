@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -278,7 +279,7 @@ const PromotionsV2Dashboard = () => {
               
               <TabsContent value="category">
                 <CategoryAnalysisTabV2 
-                  subcategoryElasticityData={subcategoryElasticityData}
+                  subcategorySensitivityData={subcategoryElasticityData}
                   priceSensitivityData={priceSensitivityData}
                 />
               </TabsContent>
