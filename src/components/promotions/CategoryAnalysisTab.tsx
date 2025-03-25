@@ -3,12 +3,12 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 interface CategoryAnalysisTabProps {
-  subcategoryElasticityData: any[];
+  subcategorySensitivityData: any[];
   priceSensitivityData: any[];
 }
 
 const CategoryAnalysisTab: React.FC<CategoryAnalysisTabProps> = ({
-  subcategoryElasticityData,
+  subcategorySensitivityData,
   priceSensitivityData
 }) => {
   return (
@@ -16,12 +16,12 @@ const CategoryAnalysisTab: React.FC<CategoryAnalysisTabProps> = ({
       <div className="dashboard-card mb-6">
         <h3 className="text-lg font-medium text-dashboard-text mb-2">Subcategory Promotional Responsiveness</h3>
         <p className="text-sm text-dashboard-secondaryText mb-4">
-          Higher negative values indicate stronger response to promotions (higher elasticity).
+          Higher negative values indicate stronger response to promotions (higher sensitivity).
         </p>
         <div style={{ height: "300px" }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={subcategoryElasticityData}
+              data={subcategorySensitivityData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
               layout="vertical"
             >
@@ -41,7 +41,7 @@ const CategoryAnalysisTab: React.FC<CategoryAnalysisTabProps> = ({
                 width={150}
               />
               <Tooltip 
-                formatter={(value: number) => [`${value.toFixed(2)}`, 'Elasticity']}
+                formatter={(value: number) => [`${value.toFixed(2)}`, 'Sensitivity']}
                 contentStyle={{ 
                   borderRadius: '6px', 
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
@@ -54,7 +54,7 @@ const CategoryAnalysisTab: React.FC<CategoryAnalysisTabProps> = ({
                 radius={[0, 4, 4, 0]}
               >
                 {
-                  subcategoryElasticityData.map((entry, index) => (
+                  subcategorySensitivityData.map((entry, index) => (
                     <Bar 
                       key={`bar-${index}`} 
                       dataKey="elasticity" 

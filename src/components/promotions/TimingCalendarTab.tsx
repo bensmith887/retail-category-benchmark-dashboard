@@ -5,12 +5,12 @@ import MetricsCard from '@/components/MetricsCard';
 import { ScatterChart, LineChart, CartesianGrid, XAxis, YAxis, ZAxis, Tooltip, Scatter, Line, Legend, Rectangle, ResponsiveContainer } from 'recharts';
 
 interface TimingCalendarTabProps {
-  monthlyElasticityData: any[];
+  monthlySensitivityData: any[];
   heatmapData: any[];
 }
 
 const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({ 
-  monthlyElasticityData,
+  monthlySensitivityData,
   heatmapData 
 }) => {
   // Custom tooltip for the heatmap
@@ -22,7 +22,7 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
           <p className="font-medium">{data.category}</p>
           <p className="text-sm text-gray-600">{data.month}</p>
           <p className="text-sm font-semibold mt-1">
-            Elasticity: <span className={data.value <= -1.0 ? 'text-red-500' : 'text-amber-500'}>{data.value.toFixed(2)}</span>
+            Sensitivity: <span className={data.value <= -1.0 ? 'text-red-500' : 'text-amber-500'}>{data.value.toFixed(2)}</span>
           </p>
           <p className="text-xs text-gray-500 mt-1">
             {data.value <= -1.0 
@@ -40,10 +40,10 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
     const { cx, cy, value } = props;
     
     // Determine color based on value
-    let fillColor = '#22c55e'; // Green for low elasticity
-    if (value <= -1.5) fillColor = '#ef4444'; // Red for very high elasticity
-    else if (value <= -1.0) fillColor = '#f97316'; // Orange for high elasticity
-    else if (value <= -0.5) fillColor = '#facc15'; // Yellow for medium elasticity
+    let fillColor = '#22c55e'; // Green for low sensitivity
+    if (value <= -1.5) fillColor = '#ef4444'; // Red for very high sensitivity
+    else if (value <= -1.0) fillColor = '#f97316'; // Orange for high sensitivity
+    else if (value <= -0.5) fillColor = '#facc15'; // Yellow for medium sensitivity
     
     // Size also based on value - bigger for higher sensitivity
     const size = Math.min(Math.abs(value) * 5, 12);
@@ -73,7 +73,7 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
           icon={<Calendar className="text-dashboard-primary" />}
         />
         <MetricsCard
-          label="Peak Elasticity"
+          label="Peak Sensitivity"
           value="-1.53"
           change="-0.75"
           secondaryLabel="vs. Annual Average"
@@ -93,7 +93,7 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
       <div className="dashboard-card mb-6">
         <h3 className="text-lg font-medium text-dashboard-text mb-4">Promotional Sensitivity Heat Map</h3>
         <p className="text-sm text-dashboard-secondaryText mb-4">
-          Shows how different product categories respond to promotions across months. Darker colors indicate higher price elasticity, meaning stronger sales response to discounts.
+          Shows how different product categories respond to promotions across months. Darker colors indicate higher price sensitivity, meaning stronger sales response to discounts.
         </p>
         <div style={{ height: "350px" }}>
           <ResponsiveContainer width="100%" height="100%">
@@ -119,12 +119,12 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
                 type="number" 
                 dataKey="value" 
                 range={[50, 400]} 
-                name="Elasticity" 
+                name="Sensitivity" 
               />
               <Tooltip content={<CustomTooltip />} />
               <Legend />
               <Scatter 
-                name="Price Elasticity" 
+                name="Price Sensitivity" 
                 data={heatmapData} 
                 fill="#8884d8"
                 shape={renderCustomizedPoint}
@@ -136,33 +136,33 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
           <div className="flex items-center text-xs space-x-6">
             <div className="flex items-center">
               <div className="w-3 h-3 rounded-full bg-ef4444 mr-1"></div>
-              <span>Very High Elasticity (&lt;= -1.5)</span>
+              <span>Very High Sensitivity (&lt;= -1.5)</span>
             </div>
             <div className="flex items-center">
               <div className="w-3 h-3 rounded-full bg-f97316 mr-1"></div>
-              <span>High Elasticity (&lt;= -1.0)</span>
+              <span>High Sensitivity (&lt;= -1.0)</span>
             </div>
             <div className="flex items-center">
               <div className="w-3 h-3 rounded-full bg-facc15 mr-1"></div>
-              <span>Medium Elasticity (&lt;= -0.5)</span>
+              <span>Medium Sensitivity (&lt;= -0.5)</span>
             </div>
             <div className="flex items-center">
               <div className="w-3 h-3 rounded-full bg-22c55e mr-1"></div>
-              <span>Low Elasticity (&gt; -0.5)</span>
+              <span>Low Sensitivity (&gt; -0.5)</span>
             </div>
           </div>
         </div>
       </div>
       
       <div className="dashboard-card mb-6">
-        <h3 className="text-lg font-medium text-dashboard-text mb-4">Monthly Elasticity Trends</h3>
+        <h3 className="text-lg font-medium text-dashboard-text mb-4">Monthly Sensitivity Trends</h3>
         <p className="text-sm text-dashboard-secondaryText mb-4">
-          Shows how price elasticity changes throughout the year. More negative values indicate higher responsiveness to promotions.
+          Shows how price sensitivity changes throughout the year. More negative values indicate higher responsiveness to promotions.
         </p>
         <div style={{ height: "300px" }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
-              data={monthlyElasticityData}
+              data={monthlySensitivityData}
               margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
             >
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -178,7 +178,7 @@ const TimingCalendarTab: React.FC<TimingCalendarTabProps> = ({
                 allowDataOverflow={true}
               />
               <Tooltip 
-                formatter={(value: number) => [`${value.toFixed(2)}`, 'Elasticity']}
+                formatter={(value: number) => [`${value.toFixed(2)}`, 'Sensitivity']}
                 contentStyle={{ 
                   borderRadius: '6px', 
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',

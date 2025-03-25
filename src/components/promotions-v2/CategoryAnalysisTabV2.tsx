@@ -6,20 +6,20 @@ import { BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Bar, Cell, LineChart, L
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface CategoryAnalysisTabV2Props {
-  subcategoryElasticityData: any[];
+  subcategorySensitivityData: any[];
   priceSensitivityData: any[];
 }
 
 const CategoryAnalysisTabV2: React.FC<CategoryAnalysisTabV2Props> = ({ 
-  subcategoryElasticityData,
+  subcategorySensitivityData,
   priceSensitivityData
 }) => {
   const [selectedFilter, setSelectedFilter] = React.useState('all');
   
   // Filter data based on selection
   const filteredData = selectedFilter === 'all' 
-    ? subcategoryElasticityData 
-    : subcategoryElasticityData.filter(item => item.category === selectedFilter);
+    ? subcategorySensitivityData 
+    : subcategorySensitivityData.filter(item => item.category === selectedFilter);
 
   return (
     <div className="animate-fade-in">
@@ -28,12 +28,12 @@ const CategoryAnalysisTabV2: React.FC<CategoryAnalysisTabV2Props> = ({
           label="Most Responsive Subcategory"
           value="Feeding"
           change="-1.03"
-          secondaryLabel="Elasticity"
+          secondaryLabel="Sensitivity"
           isPositive={true}
           icon={<Target className="text-dashboard-primary" />}
         />
         <MetricsCard
-          label="Category Elasticity Difference"
+          label="Category Sensitivity Difference"
           value="41.8%"
           change="Baby > Books"
           secondaryLabel="Overall Difference"
@@ -88,7 +88,7 @@ const CategoryAnalysisTabV2: React.FC<CategoryAnalysisTabV2Props> = ({
                 tickLine={false}
               />
               <Tooltip
-                formatter={(value: any) => [`${value}`, 'Elasticity']}
+                formatter={(value: any) => [`${value}`, 'Sensitivity']}
                 contentStyle={{ 
                   borderRadius: '6px', 
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
@@ -107,7 +107,7 @@ const CategoryAnalysisTabV2: React.FC<CategoryAnalysisTabV2Props> = ({
           </ResponsiveContainer>
         </div>
         <div className="text-xs text-dashboard-secondaryText mt-2">
-          Higher negative values indicate stronger response to promotions (higher elasticity)
+          Higher negative values indicate stronger response to promotions (higher sensitivity)
         </div>
       </div>
       
@@ -126,12 +126,12 @@ const CategoryAnalysisTabV2: React.FC<CategoryAnalysisTabV2Props> = ({
                 tickLine={false}
               />
               <YAxis
-                label={{ value: 'Elasticity (Absolute)', angle: -90, position: 'insideLeft' }}
+                label={{ value: 'Sensitivity (Absolute)', angle: -90, position: 'insideLeft' }}
                 axisLine={false}
                 tickLine={false}
               />
               <Tooltip
-                formatter={(value: any) => [`${value}`, 'Elasticity']}
+                formatter={(value: any) => [`${value}`, 'Sensitivity']}
                 contentStyle={{ 
                   borderRadius: '6px', 
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
@@ -143,7 +143,7 @@ const CategoryAnalysisTabV2: React.FC<CategoryAnalysisTabV2Props> = ({
           </ResponsiveContainer>
         </div>
         <div className="text-xs text-dashboard-secondaryText mt-2">
-          Consumers are more sensitive to price increases (-0.89 elasticity) than promotions (-0.04 elasticity)
+          Consumers are more sensitive to price increases (-0.89 sensitivity) than promotions (-0.04 sensitivity)
         </div>
       </div>
       
@@ -153,7 +153,7 @@ const CategoryAnalysisTabV2: React.FC<CategoryAnalysisTabV2Props> = ({
           <div className="bg-white p-4 rounded-md space-y-3 border border-dashboard-border">
             <h4 className="font-medium mb-2">Baby Products Subcategories</h4>
             <div className="space-y-2">
-              {subcategoryElasticityData
+              {subcategorySensitivityData
                 .filter(item => item.category === 'Baby')
                 .map((item, index) => (
                   <div key={index} className="flex justify-between items-center py-1 border-b border-gray-200">
@@ -163,14 +163,14 @@ const CategoryAnalysisTabV2: React.FC<CategoryAnalysisTabV2Props> = ({
                 ))}
             </div>
             <div className="text-xs text-dashboard-secondaryText mt-2">
-              <p>Feeding subcategory has the highest promotional elasticity at -1.03</p>
+              <p>Feeding subcategory has the highest promotional sensitivity at -1.03</p>
               <p>Bath products have the lowest responsiveness at -0.34</p>
             </div>
           </div>
           <div className="bg-white p-4 rounded-md space-y-3 border border-dashboard-border">
             <h4 className="font-medium mb-2">Books Subcategories</h4>
             <div className="space-y-2">
-              {subcategoryElasticityData
+              {subcategorySensitivityData
                 .filter(item => item.category === 'Books')
                 .map((item, index) => (
                   <div key={index} className="flex justify-between items-center py-1 border-b border-gray-200">
@@ -180,7 +180,7 @@ const CategoryAnalysisTabV2: React.FC<CategoryAnalysisTabV2Props> = ({
                 ))}
             </div>
             <div className="text-xs text-dashboard-secondaryText mt-2">
-              <p>Fiction books show the highest promotional elasticity at -0.66</p>
+              <p>Fiction books show the highest promotional sensitivity at -0.66</p>
               <p>Children's books have the lowest responsiveness at -0.42</p>
             </div>
           </div>
@@ -188,14 +188,14 @@ const CategoryAnalysisTabV2: React.FC<CategoryAnalysisTabV2Props> = ({
       </div>
 
       <div className="dashboard-card">
-        <h3 className="text-lg font-medium text-dashboard-text mb-4">Elasticity Explanation Widget</h3>
+        <h3 className="text-lg font-medium text-dashboard-text mb-4">Sensitivity Explanation Widget</h3>
         <div className="bg-gray-50 p-6 rounded-lg border border-dashboard-border">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 bg-dashboard-primary rounded-full flex items-center justify-center text-white mb-4">
                 <span className="text-xl font-semibold">-0.5</span>
               </div>
-              <h4 className="font-medium mb-2">Low Elasticity</h4>
+              <h4 className="font-medium mb-2">Low Sensitivity</h4>
               <p className="text-sm text-dashboard-secondaryText">
                 A 10% discount results in 5% more units sold. Less responsive to promotions.
               </p>
@@ -205,7 +205,7 @@ const CategoryAnalysisTabV2: React.FC<CategoryAnalysisTabV2Props> = ({
               <div className="w-16 h-16 bg-dashboard-secondary rounded-full flex items-center justify-center text-white mb-4">
                 <span className="text-xl font-semibold">-1.0</span>
               </div>
-              <h4 className="font-medium mb-2">Unit Elasticity</h4>
+              <h4 className="font-medium mb-2">Unit Sensitivity</h4>
               <p className="text-sm text-dashboard-secondaryText">
                 A 10% discount results in 10% more units sold. Revenue remains stable.
               </p>
@@ -215,7 +215,7 @@ const CategoryAnalysisTabV2: React.FC<CategoryAnalysisTabV2Props> = ({
               <div className="w-16 h-16 bg-dashboard-danger rounded-full flex items-center justify-center text-white mb-4">
                 <span className="text-xl font-semibold">-1.5</span>
               </div>
-              <h4 className="font-medium mb-2">High Elasticity</h4>
+              <h4 className="font-medium mb-2">High Sensitivity</h4>
               <p className="text-sm text-dashboard-secondaryText">
                 A 10% discount results in 15% more units sold. Highly responsive to promotions.
               </p>
@@ -223,7 +223,7 @@ const CategoryAnalysisTabV2: React.FC<CategoryAnalysisTabV2Props> = ({
           </div>
           
           <div className="text-xs text-dashboard-secondaryText mt-6 border-t border-dashboard-border pt-4">
-            <p><strong>Formula:</strong> Price Elasticity = % Change in Quantity Demanded / % Change in Price</p>
+            <p><strong>Formula:</strong> Price Sensitivity = % Change in Quantity Demanded / % Change in Price</p>
             <p><strong>Interpretation:</strong> Negative values indicate inverse relationship between price and demand.</p>
           </div>
         </div>

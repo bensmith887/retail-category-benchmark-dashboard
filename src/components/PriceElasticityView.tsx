@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, ScatterChart, Scatter, ZAxis, Cell } from 'recharts';
@@ -8,7 +7,6 @@ import { Target, TrendingDown, Zap, Calculator, Filter } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { elasticityData, priceData, subcategoryElasticityData, competitorData, toolsMonthlyElasticityData, subcategoryMonthlyElasticityData, getAdjustedElasticity } from '@/utils/elasticityData';
 
-// Price Sensitivity Analysis Section
 const PriceElasticityView: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   
@@ -17,8 +15,8 @@ const PriceElasticityView: React.FC = () => {
     return ['all', ...elasticityData.map(item => item.category)];
   }, []);
   
-  // Filter elasticity data based on selected category
-  const filteredCategoryElasticityData = useMemo(() => {
+  // Filter sensitivity data based on selected category
+  const filteredCategorySensitivityData = useMemo(() => {
     if (selectedCategory === 'all') {
       return elasticityData.map(item => ({
         category: item.category,
@@ -43,8 +41,8 @@ const PriceElasticityView: React.FC = () => {
     }
   }, [selectedCategory]);
   
-  // Create elasticity trend data with all competitors
-  const elasticityTrendData = useMemo(() => {
+  // Create sensitivity trend data with all competitors
+  const sensitivityTrendData = useMemo(() => {
     return toolsMonthlyElasticityData.map(monthData => {
       const competitors = competitorData.slice(1, 4).map((comp, idx) => ({
         [`competitor${idx+1}`]: -(Math.abs(monthData.elasticity) * (0.8 + (Math.random() * 0.4)))
@@ -58,12 +56,12 @@ const PriceElasticityView: React.FC = () => {
     });
   }, []);
   
-  // Filter monthly elasticity data based on selected category
-  const selectedCategoryMonthlyElasticityData = useMemo(() => {
+  // Filter monthly sensitivity data based on selected category
+  const selectedCategoryMonthlySensitivityData = useMemo(() => {
     if (selectedCategory === 'Tools & Home Improvement' || selectedCategory === 'all') {
       return toolsMonthlyElasticityData;
     } else {
-      // Create placeholder monthly elasticity data for other categories
+      // Create placeholder monthly sensitivity data for other categories
       return toolsMonthlyElasticityData.map(item => ({
         month: item.month,
         elasticity: selectedCategory === 'Baby Products' ? -0.27 : -0.24 // Default values for Baby Products and Books
@@ -72,7 +70,7 @@ const PriceElasticityView: React.FC = () => {
   }, [selectedCategory]);
   
   // Get subcategory monthly data for the selected category
-  const selectedSubcategoryMonthlyElasticityData = useMemo(() => {
+  const selectedSubcategoryMonthlySensitivityData = useMemo(() => {
     if (selectedCategory === 'Tools & Home Improvement') {
       // Return the first subcategory's data as an example
       const subcategoryKey = Object.keys(subcategoryMonthlyElasticityData)[0];
@@ -115,26 +113,26 @@ const PriceElasticityView: React.FC = () => {
     { priceChange: 15, revenueImpact: -10, marketShareImpact: -3.5, profitImpact: -5 },
   ];
   
-  // Insights for Price Elasticity - Include Tools & Home Improvement
-  const priceElasticityInsights = [
+  // Insights for Price Sensitivity - Include Tools & Home Improvement
+  const priceSensitivityInsights = [
     {
       title: 'Price Opportunity',
-      description: 'Baby Products category shows elasticity of -0.27, suggesting room for price increase with minimal impact.',
+      description: 'Baby Products category shows sensitivity of -0.27, suggesting room for price increase with minimal impact.',
       type: 'opportunity' as const
     },
     {
       title: 'Competitive Threat',
-      description: 'Competitor B is lowering prices in Hardware subcategory where elasticity is high (-1.16).',
+      description: 'Competitor B is lowering prices in Hardware subcategory where sensitivity is high (-1.16).',
       type: 'threat' as const
     },
     {
       title: 'Seasonal Pattern',
-      description: 'Tools & Home Improvement shows high elasticity (-2.20) in April, indicating promotion effectiveness.',
+      description: 'Tools & Home Improvement shows high sensitivity (-2.20) in April, indicating promotion effectiveness.',
       type: 'positive' as const
     },
     {
       title: 'Recommendation',
-      description: 'Consider 5% price increases in Baby & Books categories while keeping Tools prices stable due to high elasticity.',
+      description: 'Consider 5% price increases in Baby & Books categories while keeping Tools prices stable due to high sensitivity.',
       type: 'recommendation' as const
     }
   ];
@@ -144,7 +142,7 @@ const PriceElasticityView: React.FC = () => {
       {/* Top Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <MetricsCard
-          label="Avg. Elasticity"
+          label="Avg. Sensitivity"
           value={
             (elasticityData.reduce((sum, item) => sum + item.elasticity, 0) / elasticityData.length)
             .toFixed(2)
@@ -212,12 +210,12 @@ const PriceElasticityView: React.FC = () => {
         <h3 className="text-lg font-medium text-dashboard-text mb-4">Price Sensitivity Analysis</h3>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* Elasticity Trend Chart */}
+          {/* Sensitivity Trend Chart */}
           <div className="bg-white rounded-lg p-4 border border-dashboard-border">
-            <h3 className="text-sm font-medium text-dashboard-secondaryText mb-2">Elasticity Coefficients Over Time</h3>
+            <h3 className="text-sm font-medium text-dashboard-secondaryText mb-2">Sensitivity Coefficients Over Time</h3>
             <div style={{ height: "280px" }}>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={elasticityTrendData}>
+                <LineChart data={sensitivityTrendData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
                   <XAxis dataKey="month" axisLine={false} tickLine={false} />
                   <YAxis 
@@ -227,7 +225,7 @@ const PriceElasticityView: React.FC = () => {
                     tickLine={false} 
                   />
                   <Tooltip 
-                    formatter={(value: number) => [`${value.toFixed(2)}`, 'Elasticity Coefficient']}
+                    formatter={(value: number) => [`${value.toFixed(2)}`, 'Sensitivity Coefficient']}
                     contentStyle={{ 
                       borderRadius: '6px', 
                       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
@@ -286,17 +284,17 @@ const PriceElasticityView: React.FC = () => {
               </ResponsiveContainer>
             </div>
             <p className="text-xs text-dashboard-secondaryText mt-2">
-              Bubble size indicates sales volume. A steeper slope indicates higher elasticity.
+              Bubble size indicates sales volume. A steeper slope indicates higher sensitivity.
             </p>
           </div>
         </div>
 
-        {/* Category Elasticity Chart */}
+        {/* Category Sensitivity Chart */}
         <div className="bg-white rounded-lg p-4 border border-dashboard-border">
-          <h3 className="text-sm font-medium text-dashboard-secondaryText mb-2">Elasticity by Category</h3>
+          <h3 className="text-sm font-medium text-dashboard-secondaryText mb-2">Sensitivity by Category</h3>
           <div style={{ height: "280px" }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={filteredCategoryElasticityData}>
+              <BarChart data={filteredCategorySensitivityData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
                 <XAxis dataKey="category" axisLine={false} tickLine={false} />
                 <YAxis 
@@ -306,15 +304,15 @@ const PriceElasticityView: React.FC = () => {
                   tickLine={false}
                 />
                 <Tooltip 
-                  formatter={(value: number) => [`${value.toFixed(2)}`, 'Elasticity Coefficient']}
+                  formatter={(value: number) => [`${value.toFixed(2)}`, 'Sensitivity Coefficient']}
                   contentStyle={{ 
                     borderRadius: '6px', 
                     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
                     border: '1px solid #e5e7eb'
                   }}
                 />
-                <Bar dataKey="elasticity" name="Elasticity Coefficient" radius={[4, 4, 0, 0]}>
-                  {filteredCategoryElasticityData.map((entry, index) => (
+                <Bar dataKey="elasticity" name="Sensitivity Coefficient" radius={[4, 4, 0, 0]}>
+                  {filteredCategorySensitivityData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.elasticity < -1.0 ? '#ef4444' : '#5840bb'} />
                   ))}
                 </Bar>
@@ -322,7 +320,7 @@ const PriceElasticityView: React.FC = () => {
             </ResponsiveContainer>
           </div>
           <p className="text-xs text-dashboard-secondaryText mt-2">
-            Categories with elasticity below -1.0 (red) are highly sensitive to price changes. Tools & Home Improvement is particularly sensitive.
+            Categories with sensitivity below -1.0 (red) are highly sensitive to price changes. Tools & Home Improvement is particularly sensitive.
           </p>
         </div>
       </div>
@@ -351,7 +349,7 @@ const PriceElasticityView: React.FC = () => {
                 tickLine={false}
               />
               <Tooltip
-                formatter={(value: any) => [`${value}`, 'Elasticity']}
+                formatter={(value: any) => [`${value}`, 'Sensitivity']}
                 contentStyle={{ 
                   borderRadius: '6px', 
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
@@ -370,7 +368,7 @@ const PriceElasticityView: React.FC = () => {
           </ResponsiveContainer>
         </div>
         <div className="text-xs text-dashboard-secondaryText mt-2">
-          Hardware subcategory shows the highest elasticity at -1.16, whereas Children's Books show the lowest at -0.09.
+          Hardware subcategory shows the highest sensitivity at -1.16, whereas Children's Books show the lowest at -0.09.
         </div>
       </div>
 
@@ -464,14 +462,14 @@ const PriceElasticityView: React.FC = () => {
         </div>
       </div>
       
-      {/* Monthly Elasticity Analysis for Tools & Home Improvement */}
+      {/* Monthly Sensitivity Analysis for Tools & Home Improvement */}
       <div className="dashboard-card mb-6">
         <h3 className="text-lg font-medium text-dashboard-text mb-4">
-          Monthly Elasticity Analysis - {selectedCategory === 'all' ? 'Tools & Home Improvement' : selectedCategory}
+          Monthly Sensitivity Analysis - {selectedCategory === 'all' ? 'Tools & Home Improvement' : selectedCategory}
         </h3>
         <div style={{ height: "280px" }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={selectedCategoryMonthlyElasticityData}>
+            <LineChart data={selectedCategoryMonthlySensitivityData}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
               <XAxis dataKey="month" axisLine={false} tickLine={false} />
               <YAxis 
@@ -481,7 +479,7 @@ const PriceElasticityView: React.FC = () => {
                 tickLine={false} 
               />
               <Tooltip 
-                formatter={(value: number) => [`${value.toFixed(2)}`, 'Elasticity Coefficient']}
+                formatter={(value: number) => [`${value.toFixed(2)}`, 'Sensitivity Coefficient']}
                 contentStyle={{ 
                   borderRadius: '6px', 
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
@@ -537,18 +535,18 @@ const PriceElasticityView: React.FC = () => {
         </div>
         <p className="text-xs text-dashboard-secondaryText mt-2">
           {selectedCategory === 'Tools & Home Improvement' 
-            ? 'Tools & Home Improvement shows strong seasonal elasticity patterns with peaks in April, June, and August.' 
+            ? 'Tools & Home Improvement shows strong seasonal sensitivity patterns with peaks in April, June, and August.' 
             : (selectedCategory === 'Baby Products' 
-                ? 'Baby Products show relatively stable elasticity throughout the year.' 
+                ? 'Baby Products show relatively stable sensitivity throughout the year.' 
                 : (selectedCategory === 'Books' 
-                    ? 'Books show consistent elasticity patterns with minor seasonal variations.' 
-                    : 'Monthly elasticity patterns vary by category with Tools & Home Improvement showing the highest fluctuations.'))}
+                    ? 'Books show consistent sensitivity patterns with minor seasonal variations.' 
+                    : 'Monthly sensitivity patterns vary by category with Tools & Home Improvement showing the highest fluctuations.'))}
         </p>
       </div>
       
       {/* Insights */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        {priceElasticityInsights.map((insight, index) => (
+        {priceSensitivityInsights.map((insight, index) => (
           <InsightCard
             key={index}
             title={insight.title}
@@ -560,7 +558,7 @@ const PriceElasticityView: React.FC = () => {
       
       {/* Subfooter */}
       <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-4 border-t border-dashboard-border">
-        <p>Source: SimilarWeb • Metrics: Price Elasticity, Conversion Rate, Revenue Impact</p>
+        <p>Source: SimilarWeb • Metrics: Price Sensitivity, Conversion Rate, Revenue Impact</p>
       </div>
     </div>
   );
