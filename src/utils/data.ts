@@ -1,4 +1,3 @@
-
 import { BarChart3, PieChart, TrendingUp, Activity, LineChart, MessageSquare, DollarSign, Percent, Tag, ShoppingCart, Users, Search, Share2, Heart, ExternalLink, Radio } from 'lucide-react';
 
 export const tabsData = [
@@ -16,13 +15,13 @@ export const tabsData = [
   },
   {
     id: 'pricing',
-    name: 'Pricing',
+    name: 'Product and Price Benchmark',
     icon: 'DollarSign',
     hidden: false
   },
   {
     id: 'price-elasticity',
-    name: 'Price Elasticity',
+    name: 'Price Sensitivity',
     icon: 'Percent',
     hidden: false
   },
@@ -34,7 +33,7 @@ export const tabsData = [
   },
   {
     id: 'promotions-v2',
-    name: 'Promotions V2',
+    name: 'Promotion Planning',
     icon: 'ShoppingCart',
     hidden: false
   },
@@ -546,4 +545,3 @@ export const sampleKeywordShareData = [
   { domain: 'competitorh.com', share: 3.2 },
   { domain: 'competitori.com', share: 2.2 }
 ];
-

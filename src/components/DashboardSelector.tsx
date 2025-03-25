@@ -29,11 +29,11 @@ const DashboardSelector: React.FC<DashboardSelectorProps> = ({ currentPath }) =>
       case '/':
         return 'Overview';
       case '/price-elasticity':
-        return 'Price Elasticity';
+        return 'Price Sensitivity';
       case '/promotions':
         return 'Promotions';
       case '/promotions-v2':
-        return 'Promotions V2';
+        return 'Promotion Planning';
       default:
         return 'Overview';
     }
@@ -50,10 +50,10 @@ const DashboardSelector: React.FC<DashboardSelectorProps> = ({ currentPath }) =>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="/">Overview</SelectItem>
-          <SelectItem value="/price-elasticity">Price Elasticity</SelectItem>
+          <SelectItem value="/price-elasticity">Price Sensitivity</SelectItem>
           {/* Keep promotions route but hidden in sidebar */}
           {visibleTabs.some(tab => tab.id === 'promotions-v2') && (
-            <SelectItem value="/promotions-v2">Promotions V2</SelectItem>
+            <SelectItem value="/promotions-v2">Promotion Planning</SelectItem>
           )}
         </SelectContent>
       </Select>
