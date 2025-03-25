@@ -103,13 +103,13 @@ const PricingView: React.FC = () => {
         <TabsList className="w-full bg-white border-b border-dashboard-border rounded-none p-0 h-auto justify-start">
           <TabsTrigger 
             value="pricing" 
-            className="py-3 px-4 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-dashboard-primary"
+            className="py-3 px-4 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-dashboard-primary data-[state=active]:text-dashboard-primary"
           >
             Pricing Analysis
           </TabsTrigger>
           <TabsTrigger 
             value="performance" 
-            className="py-3 px-4 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-dashboard-primary"
+            className="py-3 px-4 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-dashboard-primary data-[state=active]:text-dashboard-primary"
           >
             Product Performance
           </TabsTrigger>
