@@ -2,9 +2,8 @@
 import React, { useState } from 'react';
 import { 
   marketShareTopCompetitors, 
-  categoryMarketShareData, 
-  marketShareTrendData,
-  insightData
+  categoryMarketShareData,
+  marketShareTrendData
 } from '@/utils/data';
 import MetricsCard from './MetricsCard';
 import { 
@@ -17,7 +16,6 @@ import {
   Legend, 
   ResponsiveContainer 
 } from 'recharts';
-import InsightCard from './InsightCard';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from './ui/table';
 import { TrendingUp, TrendingDown, ChevronRight, ChevronDown } from 'lucide-react';
 import {
@@ -168,7 +166,7 @@ const MarketShareView: React.FC = () => {
                 <TableHead className="py-2 px-3 font-medium text-left w-[180px] border-r">Category</TableHead>
                 <TableHead className="py-2 px-3 font-medium text-center border-r" colSpan={3}>Rank 1</TableHead>
                 <TableHead className="py-2 px-3 font-medium text-center border-r" colSpan={3}>Rank 2</TableHead>
-                <TableHead className="py-2 px-3 font-medium text-center" colSpan={1}>Rank 3</TableHead>
+                <TableHead className="py-2 px-3 font-medium text-center" colSpan={3}>Rank 3</TableHead>
               </TableRow>
               <TableRow className="border-b text-xs">
                 <TableHead className="py-1 px-3 font-normal text-left border-r"></TableHead>
@@ -194,6 +192,12 @@ const MarketShareView: React.FC = () => {
                 {/* Rank 3 Headers */}
                 <TableHead className="py-1 px-3 font-medium text-left w-[170px]">Domain</TableHead>
                 <TableHead className="py-1 px-3 font-medium text-right w-[80px]">Share</TableHead>
+                <TableHead className="py-1 px-3 font-medium text-center w-[120px]">
+                  <div className="flex items-center justify-center space-x-4">
+                    <span>MoM</span>
+                    <span>YoY</span>
+                  </div>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -213,68 +217,36 @@ const MarketShareView: React.FC = () => {
                         </CollapsibleTrigger>
                         
                         {/* Subcategories (collapsible content) */}
-                        {expandedCategories.includes(category.category) && subcategories[category.category as keyof typeof subcategories] && (
-                          <CollapsibleContent>
-                            {subcategories[category.category as keyof typeof subcategories].map((subcat, subIndex) => (
-                              <TableRow key={`${category.category}-${subcat.category}`} className="border-b bg-gray-100">
-                                <TableCell className="py-1 px-3 text-left align-middle border-r"></TableCell>
-                                <TableCell className="py-1 px-3 text-left align-middle border-r pl-8">
-                                  <span className="text-sm text-gray-600">{subcat.category}</span>
-                                </TableCell>
-                                
-                                {/* Subcategory Rank 1 Domain */}
-                                {subcat.domains[0] && (
-                                  <>
-                                    <TableCell className="py-1 px-3 text-left align-middle">
-                                      <span className="text-sm text-dashboard-text">{subcat.domains[0].name}</span>
-                                    </TableCell>
-                                    <TableCell className="py-1 px-3 text-right align-middle text-sm">{subcat.domains[0].share}%</TableCell>
-                                    <TableCell className="py-1 px-3 text-center align-middle border-r">
-                                      <div className="flex items-center justify-center space-x-4 text-xs">
-                                        <span className={subcat.domains[0].monthChange > 0 ? 'text-green-600' : 'text-red-500'}>
-                                          {subcat.domains[0].monthChange > 0 ? '+' : ''}{subcat.domains[0].monthChange}
-                                        </span>
-                                        <span className={subcat.domains[0].yearChange > 0 ? 'text-green-600' : 'text-red-500'}>
-                                          {subcat.domains[0].yearChange > 0 ? '+' : ''}{subcat.domains[0].yearChange}
-                                        </span>
-                                      </div>
-                                    </TableCell>
-                                  </>
-                                )}
-                                
-                                {/* Subcategory Rank 2 Domain */}
-                                {subcat.domains[1] && (
-                                  <>
-                                    <TableCell className="py-1 px-3 text-left align-middle">
-                                      <span className="text-sm text-dashboard-text">{subcat.domains[1].name}</span>
-                                    </TableCell>
-                                    <TableCell className="py-1 px-3 text-right align-middle text-sm">{subcat.domains[1].share}%</TableCell>
-                                    <TableCell className="py-1 px-3 text-center align-middle border-r">
-                                      <div className="flex items-center justify-center space-x-4 text-xs">
-                                        <span className={subcat.domains[1].monthChange > 0 ? 'text-green-600' : 'text-red-500'}>
-                                          {subcat.domains[1].monthChange > 0 ? '+' : ''}{subcat.domains[1].monthChange}
-                                        </span>
-                                        <span className={subcat.domains[1].yearChange > 0 ? 'text-green-600' : 'text-red-500'}>
-                                          {subcat.domains[1].yearChange > 0 ? '+' : ''}{subcat.domains[1].yearChange}
-                                        </span>
-                                      </div>
-                                    </TableCell>
-                                  </>
-                                )}
-                                
-                                {/* Subcategory Rank 3 Domain */}
-                                {subcat.domains[2] && (
-                                  <>
-                                    <TableCell className="py-1 px-3 text-left align-middle">
-                                      <span className="text-sm text-dashboard-text">{subcat.domains[2].name}</span>
-                                    </TableCell>
-                                    <TableCell className="py-1 px-3 text-right align-middle text-sm">{subcat.domains[2].share}%</TableCell>
-                                  </>
-                                )}
-                              </TableRow>
-                            ))}
-                          </CollapsibleContent>
-                        )}
+                        <CollapsibleContent>
+                          {subcategories[category.category as keyof typeof subcategories]?.map((subcat, subIndex) => (
+                            <TableRow key={`${category.category}-${subcat.category}`} className="border-b bg-gray-100">
+                              <TableCell className="py-1 px-3 text-left align-middle border-r"></TableCell>
+                              <TableCell className="py-1 px-3 text-left align-middle border-r pl-8">
+                                <span className="text-sm text-gray-600">{subcat.category}</span>
+                              </TableCell>
+                              
+                              {/* Subcategory domains with complete format for all three ranks */}
+                              {subcat.domains.map((domain, domainIndex) => (
+                                <React.Fragment key={`${subcat.category}-${domain.name}`}>
+                                  <TableCell className="py-1 px-3 text-left align-middle">
+                                    <span className="text-sm text-dashboard-text">{domain.name}</span>
+                                  </TableCell>
+                                  <TableCell className="py-1 px-3 text-right align-middle text-sm">{domain.share}%</TableCell>
+                                  <TableCell className={`py-1 px-3 text-center align-middle ${domainIndex < 2 ? 'border-r' : ''}`}>
+                                    <div className="flex items-center justify-center space-x-4 text-xs">
+                                      <span className={domain.monthChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                                        {domain.monthChange > 0 ? '+' : ''}{domain.monthChange}
+                                      </span>
+                                      <span className={domain.yearChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                                        {domain.yearChange > 0 ? '+' : ''}{domain.yearChange}
+                                      </span>
+                                    </div>
+                                  </TableCell>
+                                </React.Fragment>
+                              ))}
+                            </TableRow>
+                          ))}
+                        </CollapsibleContent>
                       </Collapsible>
                     </TableCell>
                     
@@ -325,6 +297,16 @@ const MarketShareView: React.FC = () => {
                           <span className="font-medium text-dashboard-text">{category.domains[2].name}</span>
                         </TableCell>
                         <TableCell className="py-2 px-3 text-right align-middle">{category.domains[2].share}%</TableCell>
+                        <TableCell className="py-2 px-3 text-center align-middle">
+                          <div className="flex items-center justify-center space-x-4">
+                            <span className={category.domains[2].monthChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                              {category.domains[2].monthChange > 0 ? '+' : ''}{category.domains[2].monthChange}
+                            </span>
+                            <span className={category.domains[2].yearChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                              {category.domains[2].yearChange > 0 ? '+' : ''}{category.domains[2].yearChange}
+                            </span>
+                          </div>
+                        </TableCell>
                       </>
                     )}
                   </TableRow>
@@ -398,18 +380,6 @@ const MarketShareView: React.FC = () => {
             </LineChart>
           </ResponsiveContainer>
         </div>
-      </div>
-
-      {/* Insights */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6" style={{ animationDelay: "0.6s" }}>
-        {insightData.map((insight, index) => (
-          <InsightCard
-            key={index}
-            title={insight.title}
-            description={insight.description}
-            type={insight.type as "opportunity" | "threat" | "positive" | "recommendation"}
-          />
-        ))}
       </div>
       
       {/* Subfooter */}
