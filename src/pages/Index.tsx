@@ -8,7 +8,6 @@ import MarketGauge from '@/components/MarketGauge';
 import LineChart from '@/components/charts/LineChart';
 import BarChart from '@/components/charts/BarChart';
 import CompetitorTable from '@/components/CompetitorTable';
-import InsightCard from '@/components/InsightCard';
 import MarketShareView from '@/components/MarketShareView';
 import PricingView from '@/components/PricingView';
 import ProductPerformanceView from '@/components/ProductPerformanceView';
@@ -18,7 +17,7 @@ import PriceElasticityView from '@/components/PriceElasticityView';
 import KeywordCategoryShareView from '@/components/KeywordCategoryShareView';
 import TrafficSourcesView from '@/components/TrafficSourcesView';
 import RetailMediaBenchmarkingView from '@/components/RetailMediaBenchmarkingView';
-import { metricsData, insightData } from '@/utils/data';
+import { metricsData } from '@/utils/data';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -73,17 +72,6 @@ const Index = () => {
 
             <div className="mb-6 animate-fade-in" style={{ animationDelay: "0.5s" }}>
               <CompetitorTable />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 stagger-animate" style={{ animationDelay: "0.6s" }}>
-              {insightData.map((insight, index) => (
-                <InsightCard
-                  key={index}
-                  title={insight.title}
-                  description={insight.description}
-                  type={insight.type as "opportunity" | "threat" | "positive" | "recommendation"}
-                />
-              ))}
             </div>
             
             <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-4 border-t border-dashboard-border">

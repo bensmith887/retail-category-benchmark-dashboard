@@ -7,7 +7,7 @@ const MarketGauge: React.FC = () => {
 
   return (
     <div className="dashboard-card">
-      <h3 className="text-lg font-medium text-dashboard-text mb-3">Market Position</h3>
+      <h3 className="text-lg font-medium text-dashboard-text mb-3">Traffic Position</h3>
       
       <div className="w-full mb-2">
         <div className="relative h-7 w-full rounded-md overflow-hidden bg-gradient-to-r from-dashboard-danger via-dashboard-warning to-dashboard-success">
