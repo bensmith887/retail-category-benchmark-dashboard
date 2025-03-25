@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -203,7 +202,7 @@ const PromotionsV2Dashboard = () => {
               </div>
             </div>
             
-            {/* Top Metrics - Removed Revenue Impact */}
+            {/* Top Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <MetricsCard
                 label="Avg. sensitivity"
@@ -228,10 +227,8 @@ const PromotionsV2Dashboard = () => {
             </div>
 
             <UITabs defaultValue="timing" className="mb-6">
-              <TabsList className="grid grid-cols-4 mb-4 bg-gray-100 p-1.5 rounded-lg shadow-sm border border-gray-200">
+              <TabsList className="grid grid-cols-2 mb-4 bg-gray-100 p-1.5 rounded-lg shadow-sm border border-gray-200">
                 <TabsTrigger value="timing" className="font-semibold">Timing & Calendar</TabsTrigger>
-                <TabsTrigger value="category" className="font-semibold">Category Analysis</TabsTrigger>
-                <TabsTrigger value="optimization" className="font-semibold">Promotion Optimizer</TabsTrigger>
                 <TabsTrigger value="strategy" className="font-semibold">Seasonal Strategy</TabsTrigger>
               </TabsList>
               
@@ -239,20 +236,6 @@ const PromotionsV2Dashboard = () => {
                 <TimingCalendarTabV2 
                   monthlyElasticityData={monthlyElasticityData}
                   heatmapData={heatmapData}
-                />
-              </TabsContent>
-              
-              <TabsContent value="category">
-                <CategoryAnalysisTabV2 
-                  subcategorySensitivityData={subcategoryElasticityData}
-                  priceSensitivityData={priceSensitivityData}
-                />
-              </TabsContent>
-              
-              <TabsContent value="optimization">
-                <PromotionOptimizerTabV2 
-                  initialPrice={basePrice}
-                  initialSales={baseSales}
                 />
               </TabsContent>
               
