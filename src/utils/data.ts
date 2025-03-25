@@ -9,7 +9,7 @@ export const tabsData = [
   },
   {
     id: 'traffic-share',
-    name: 'Traffic Share',
+    name: 'Category Share of Search',
     icon: 'PieChart',
     hidden: false
   },
@@ -101,7 +101,7 @@ export const filtersData = [
 export const metricsData = [
   {
     id: 'market-share',
-    label: 'Market Share',
+    label: 'Traffic Share',
     value: '32.7%',
     change: '+1.5%',
     isPositive: true
@@ -118,13 +118,6 @@ export const metricsData = [
     label: 'Total Traffic',
     value: '1.24M',
     change: '+12.3%',
-    isPositive: true
-  },
-  {
-    id: 'conversion-rate',
-    label: 'Conversion Rate',
-    value: '4.7%',
-    change: '+0.3%',
     isPositive: true
   }
 ];
@@ -154,7 +147,7 @@ export const insightData = [
 
 export const competitorData = [
   {
-    name: 'Your Brand',
+    name: 'Your Retail Brand',
     marketShare: 32.7,
     price: 75.43,
     traffic: 1240000,
@@ -205,7 +198,7 @@ export const marketShareData = [
 ];
 
 export const marketShareTopCompetitors = [
-  { name: 'Your Brand', share: 32.7, monthChange: 1.5, yearChange: 4.2 },
+  { name: 'Your Retail Brand', share: 32.7, monthChange: 1.5, yearChange: 4.2 },
   { name: 'Competitor A', share: 24.1, monthChange: -0.8, yearChange: 1.3 },
   { name: 'Competitor B', share: 18.5, monthChange: 0.3, yearChange: -1.7 },
   { name: 'Competitor C', share: 14.2, monthChange: -0.5, yearChange: -2.1 }
@@ -215,7 +208,7 @@ export const categoryMarketShareData = [
   {
     category: 'Electronics',
     domains: [
-      { name: 'Your Brand', share: 32.7, monthChange: 1.5, yearChange: 4.2 },
+      { name: 'Your Retail Brand', share: 32.7, monthChange: 1.5, yearChange: 4.2 },
       { name: 'Competitor A', share: 24.1, monthChange: -0.8, yearChange: 1.3 },
       { name: 'Competitor B', share: 18.5, monthChange: 0.3, yearChange: -1.7 },
       { name: 'Competitor C', share: 14.2, monthChange: -0.5, yearChange: -2.1 },
@@ -225,7 +218,7 @@ export const categoryMarketShareData = [
   {
     category: 'Fashion',
     domains: [
-      { name: 'Your Brand', share: 28.4, monthChange: 2.1, yearChange: 5.3 },
+      { name: 'Your Retail Brand', share: 28.4, monthChange: 2.1, yearChange: 5.3 },
       { name: 'Competitor A', share: 26.7, monthChange: 1.2, yearChange: 2.8 },
       { name: 'Competitor B', share: 20.3, monthChange: -1.5, yearChange: -0.8 },
       { name: 'Competitor C', share: 15.1, monthChange: -0.3, yearChange: -2.5 },
@@ -235,7 +228,7 @@ export const categoryMarketShareData = [
   {
     category: 'Home Goods',
     domains: [
-      { name: 'Your Brand', share: 35.2, monthChange: 0.8, yearChange: 3.7 },
+      { name: 'Your Retail Brand', share: 35.2, monthChange: 0.8, yearChange: 3.7 },
       { name: 'Competitor A', share: 22.8, monthChange: -1.2, yearChange: 0.5 },
       { name: 'Competitor B', share: 17.9, monthChange: 0.5, yearChange: -0.9 },
       { name: 'Competitor C', share: 13.6, monthChange: -0.7, yearChange: -1.8 },
@@ -503,7 +496,7 @@ export const competitorSourceBenchmarks = [
   {
     source: 'Organic Search',
     competitors: [
-      { name: 'Your Brand', value: 42.5 },
+      { name: 'Your Retail Brand', value: 42.5 },
       { name: 'Competitor A', value: 38.2 },
       { name: 'Competitor B', value: 45.8 },
       { name: 'Competitor C', value: 35.4 },
@@ -513,7 +506,7 @@ export const competitorSourceBenchmarks = [
   {
     source: 'Direct',
     competitors: [
-      { name: 'Your Brand', value: 28.2 },
+      { name: 'Your Retail Brand', value: 28.2 },
       { name: 'Competitor A', value: 32.5 },
       { name: 'Competitor B', value: 25.3 },
       { name: 'Competitor C', value: 30.1 },
@@ -523,7 +516,7 @@ export const competitorSourceBenchmarks = [
   {
     source: 'Social',
     competitors: [
-      { name: 'Your Brand', value: 8.3 },
+      { name: 'Your Retail Brand', value: 8.3 },
       { name: 'Competitor A', value: 10.5 },
       { name: 'Competitor B', value: 6.8 },
       { name: 'Competitor C', value: 12.4 },
@@ -552,3 +545,4 @@ export const sampleKeywordShareData = [
   { domain: 'competitorh.com', share: 3.2 },
   { domain: 'competitori.com', share: 2.2 }
 ];
+

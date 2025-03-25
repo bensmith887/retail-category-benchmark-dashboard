@@ -12,24 +12,23 @@ const CompetitorTable: React.FC = () => {
           <thead>
             <tr className="border-b border-dashboard-border">
               <th className="px-4 py-3 text-sm font-medium text-dashboard-secondaryText">Competitor</th>
-              <th className="px-4 py-3 text-sm font-medium text-dashboard-secondaryText">Market Share</th>
+              <th className="px-4 py-3 text-sm font-medium text-dashboard-secondaryText">Traffic Share</th>
               <th className="px-4 py-3 text-sm font-medium text-dashboard-secondaryText">Avg. Price</th>
               <th className="px-4 py-3 text-sm font-medium text-dashboard-secondaryText">Traffic</th>
               <th className="px-4 py-3 text-sm font-medium text-dashboard-secondaryText">YoY Growth</th>
-              <th className="px-4 py-3 text-sm font-medium text-dashboard-secondaryText">Performance</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-dashboard-border">
             {competitorData.map((competitor, index) => (
               <tr 
                 key={competitor.name} 
-                className={competitor.name === 'Your Brand' 
+                className={competitor.name === 'Your Retail Brand' 
                   ? 'bg-dashboard-highlight' 
                   : index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                 }
               >
                 <td className="px-4 py-3 font-medium">
-                  {competitor.name === 'Your Brand' ? (
+                  {competitor.name === 'Your Retail Brand' ? (
                     <span className="text-dashboard-primary">{competitor.name}</span>
                   ) : (
                     competitor.name
@@ -39,17 +38,6 @@ const CompetitorTable: React.FC = () => {
                 <td className="px-4 py-3">${competitor.price}</td>
                 <td className="px-4 py-3">{(competitor.traffic / 1000).toFixed(0)}k</td>
                 <td className="px-4 py-3">{competitor.growth}%</td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="h-2 rounded-full bg-gradient-to-r from-dashboard-primary to-dashboard-secondary"
-                        style={{ width: `${competitor.performance}%` }}
-                      />
-                    </div>
-                    <span className="text-sm min-w-[32px]">{competitor.performance}%</span>
-                  </div>
-                </td>
               </tr>
             ))}
           </tbody>

@@ -36,23 +36,26 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
           
           {change && (
             <div className={`metrics-change ${isPositive ? 'positive' : 'negative'}`}>
-              {isPositive ? (
-                <ArrowUp size={14} />
-              ) : (
-                <ArrowDown size={14} />
-              )}
-              <span>{change}</span>
+              <span className="text-xs font-medium mr-1">MoM:</span>
+              <div className="flex items-center">
+                {isPositive ? (
+                  <ArrowUp size={12} className="mr-1" />
+                ) : (
+                  <ArrowDown size={12} className="mr-1" />
+                )}
+                <span>{change}</span>
+              </div>
             </div>
           )}
           
-          {secondaryChange && secondaryLabel && (
+          {secondaryChange && (
             <div className={`metrics-secondary ${isSecondaryPositive ? 'positive' : 'negative'} mt-1`}>
-              <span className="text-xs font-medium text-dashboard-secondaryText">{secondaryLabel}:</span>
-              <div className="flex items-center ml-1">
+              <span className="text-xs font-medium mr-1">YoY:</span>
+              <div className="flex items-center">
                 {isSecondaryPositive ? (
-                  <ArrowUp size={12} />
+                  <ArrowUp size={12} className="mr-1" />
                 ) : (
-                  <ArrowDown size={12} />
+                  <ArrowDown size={12} className="mr-1" />
                 )}
                 <span className="text-xs">{secondaryChange}</span>
               </div>

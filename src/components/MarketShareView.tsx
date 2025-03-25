@@ -39,7 +39,6 @@ const MarketShareView: React.FC = () => {
                 value={`${yourBrand.share}%`}
                 change={`${yourBrand.monthChange > 0 ? '+' : ''}${yourBrand.monthChange}%`}
                 isPositive={yourBrand.monthChange > 0}
-                secondaryLabel="YoY"
                 secondaryChange={`${yourBrand.yearChange > 0 ? '+' : ''}${yourBrand.yearChange}%`}
                 isSecondaryPositive={yourBrand.yearChange > 0}
               />
@@ -52,7 +51,6 @@ const MarketShareView: React.FC = () => {
                 value="Monthly"
                 change="+1.8%"
                 isPositive={true}
-                secondaryLabel="Yearly"
                 secondaryChange="+5.2%"
                 isSecondaryPositive={true}
               />
@@ -70,12 +68,14 @@ const MarketShareView: React.FC = () => {
                   </div>
                   <div className="flex flex-col items-end">
                     <div className={`text-xs flex items-center ${competitor.monthChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                      <span className="text-xs font-medium mr-1">MoM:</span>
                       {competitor.monthChange > 0 ? <TrendingUp size={12} className="mr-1" /> : <TrendingDown size={12} className="mr-1" />}
-                      <span>MoM: {competitor.monthChange > 0 ? '+' : ''}{competitor.monthChange}%</span>
+                      <span>{competitor.monthChange > 0 ? '+' : ''}{competitor.monthChange}%</span>
                     </div>
                     <div className={`text-xs flex items-center mt-1 ${competitor.yearChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                      <span className="text-xs font-medium mr-1">YoY:</span>
                       {competitor.yearChange > 0 ? <TrendingUp size={12} className="mr-1" /> : <TrendingDown size={12} className="mr-1" />}
-                      <span>YoY: {competitor.yearChange > 0 ? '+' : ''}{competitor.yearChange}%</span>
+                      <span>{competitor.yearChange > 0 ? '+' : ''}{competitor.yearChange}%</span>
                     </div>
                   </div>
                 </div>
@@ -93,11 +93,11 @@ const MarketShareView: React.FC = () => {
           <Table>
             <TableHeader className="bg-gray-50 sticky top-0">
               <TableRow>
-                <TableHead className="w-[200px] bg-dashboard-highlight text-dashboard-primary font-semibold">Category</TableHead>
-                <TableHead className="bg-dashboard-highlight text-dashboard-primary font-semibold">Domain</TableHead>
-                <TableHead className="text-right bg-dashboard-highlight text-dashboard-primary font-semibold">Traffic Share</TableHead>
-                <TableHead className="text-right bg-dashboard-highlight text-dashboard-primary font-semibold">MoM Change</TableHead>
-                <TableHead className="text-right bg-dashboard-highlight text-dashboard-primary font-semibold">YoY Change</TableHead>
+                <TableHead className="w-[180px] bg-dashboard-primary text-white font-semibold">Category</TableHead>
+                <TableHead className="bg-dashboard-primary text-white font-semibold">Domain</TableHead>
+                <TableHead className="text-right bg-dashboard-primary text-white font-semibold">Traffic Share</TableHead>
+                <TableHead className="text-right bg-dashboard-primary text-white font-semibold">MoM Change</TableHead>
+                <TableHead className="text-right bg-dashboard-primary text-white font-semibold">YoY Change</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -106,34 +106,49 @@ const MarketShareView: React.FC = () => {
                   {category.domains.map((domain, index) => (
                     <TableRow 
                       key={`${category.category}-${domain.name}`} 
-                      className={`${index === 0 ? "bg-soft-purple bg-opacity-30" : categoryIndex % 2 === 0 ? "bg-gray-50" : ""} hover:bg-dashboard-highlight hover:bg-opacity-30 transition-colors`}
+                      className={`
+                        ${index === 0 ? "bg-soft-purple bg-opacity-20" : categoryIndex % 2 === 0 ? "bg-gray-50" : ""}
+                        hover:bg-dashboard-highlight hover:bg-opacity-10 transition-colors
+                      `}
                     >
                       {index === 0 ? (
                         <TableCell 
                           className="font-medium border-r border-dashboard-border bg-gray-100 text-dashboard-primary" 
-                          rowSpan={5}
+                          rowSpan={category.domains.length}
                           style={{ position: 'relative' }}
                         >
                           <div className="py-2 font-semibold">{category.category}</div>
                         </TableCell>
                       ) : null}
                       <TableCell className={`font-medium ${index === 0 ? "text-dashboard-primary" : ""}`}>
-                        {domain.name}
-                        {index === 0 && <span className="ml-2 inline-block px-2 py-0.5 bg-dashboard-primary text-white text-xs rounded-full">Leader</span>}
+                        <div className="flex items-center">
+                          {domain.name}
+                          {index === 0 && (
+                            <span className="ml-2 inline-block px-2 py-0.5 bg-dashboard-primary text-white text-xs rounded-full">
+                              Leader
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
-                      <TableCell className={`text-right font-semibold ${index === 0 ? "text-dashboard-primary" : ""}`}>
-                        <div className="px-3 py-1 rounded inline-block min-w-[80px]">
+                      <TableCell className={`text-right ${index === 0 ? "font-bold text-dashboard-primary" : "font-semibold"}`}>
+                        <div className="px-3 py-1 rounded inline-block min-w-[70px]">
                           {domain.share}%
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className={`inline-flex items-center justify-center px-3 py-1 rounded ${domain.monthChange > 0 ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50'} min-w-[80px]`}>
+                        <div className={`inline-flex items-center justify-center px-3 py-1 rounded 
+                          ${domain.monthChange > 0 ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50'} 
+                          min-w-[90px] font-medium`
+                        }>
                           {domain.monthChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
                           {domain.monthChange > 0 ? '+' : ''}{domain.monthChange}%
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className={`inline-flex items-center justify-center px-3 py-1 rounded ${domain.yearChange > 0 ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50'} min-w-[80px]`}>
+                        <div className={`inline-flex items-center justify-center px-3 py-1 rounded 
+                          ${domain.yearChange > 0 ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50'} 
+                          min-w-[90px] font-medium`
+                        }>
                           {domain.yearChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
                           {domain.yearChange > 0 ? '+' : ''}{domain.yearChange}%
                         </div>
@@ -181,7 +196,7 @@ const MarketShareView: React.FC = () => {
                 strokeWidth={2}
                 dot={{ r: 4 }}
                 activeDot={{ r: 6 }}
-                name="Your Brand"
+                name="Your Retail Brand"
               />
               <Line
                 type="monotone"

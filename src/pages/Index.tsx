@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -49,7 +48,7 @@ const Index = () => {
       case 'overview':
         return (
           <div className="animate-fade-in">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 stagger-animate">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 stagger-animate">
               {metricsData.map((metric) => (
                 <MetricsCard
                   key={metric.id}
@@ -57,7 +56,6 @@ const Index = () => {
                   value={metric.value}
                   change={metric.change}
                   isPositive={metric.isPositive}
-                  secondaryLabel="YoY"
                   secondaryChange={`${metric.isPositive ? '+5.2' : '-3.1'}%`}
                   isSecondaryPositive={metric.isPositive}
                 />
