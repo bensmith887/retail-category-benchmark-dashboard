@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Info, Download, FileText, TrendingDown, Calculator, Target } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import MetricsCard from '@/components/MetricsCard';
-import InsightCard from '@/components/InsightCard';
 
 // Import utilities
 import { calculatePromotionImpact, generateHeatmapData, generatePromotionData, generateCampaignCalendar } from '@/utils/promotionUtils';
@@ -40,30 +39,6 @@ const PromotionsV2Dashboard = () => {
   const { monthlyElasticityData, subcategoryElasticityData, priceSensitivityData, seasonalStrategyData } = generatePromotionData();
   const heatmapData = generateHeatmapData(monthlyElasticityData);
   const campaignCalendar = generateCampaignCalendar();
-
-  // Insights data
-  const promotionalInsights = [
-    {
-      title: 'Timing Opportunity',
-      description: 'April shows highest sensitivity (-2.20) for Tools category. Prioritize promotions during this month.',
-      type: 'opportunity' as const
-    },
-    {
-      title: 'Category Insight',
-      description: 'Tools & Home products are 82.7% more responsive to promotions than Books across all time periods.',
-      type: 'positive' as const
-    },
-    {
-      title: 'Pricing Alert',
-      description: 'Customers are 22.3x more sensitive to price increases than price decreases.',
-      type: 'threat' as const
-    },
-    {
-      title: 'Subcategory Focus',
-      description: 'Hardware products in the Tools category show high sensitivity (-1.16). Prioritize for promotions.',
-      type: 'recommendation' as const
-    }
-  ];
 
   useEffect(() => {
     setMounted(true);
@@ -228,8 +203,8 @@ const PromotionsV2Dashboard = () => {
               </div>
             </div>
             
-            {/* Top Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            {/* Top Metrics - Removed Revenue Impact */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <MetricsCard
                 label="Avg. sensitivity"
                 value={elasticity.toFixed(2)}
@@ -239,16 +214,6 @@ const PromotionsV2Dashboard = () => {
                 secondaryChange="-0.3"
                 isSecondaryPositive={false}
                 icon={<TrendingDown className="text-dashboard-primary" size={20} />}
-              />
-              <MetricsCard
-                label="Revenue Impact"
-                value={`+$${(revenueImpact / 1000).toFixed(1)}K`}
-                change="+2.8%"
-                isPositive={true}
-                secondaryLabel="YoY"
-                secondaryChange="+5.4%"
-                isSecondaryPositive={true}
-                icon={<Calculator className="text-dashboard-secondary" size={20} />}
               />
               <MetricsCard
                 label="Optimal Discount"
@@ -298,18 +263,6 @@ const PromotionsV2Dashboard = () => {
                 />
               </TabsContent>
             </UITabs>
-            
-            {/* Insights */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-              {promotionalInsights.map((insight, index) => (
-                <InsightCard
-                  key={index}
-                  title={insight.title}
-                  description={insight.description}
-                  type={insight.type}
-                />
-              ))}
-            </div>
             
             <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-6 border-t border-dashboard-border">
               <p>

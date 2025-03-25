@@ -2,7 +2,7 @@
 import React from 'react';
 import { Calendar, TrendingUp, ShoppingCart } from 'lucide-react';
 import MetricsCard from '@/components/MetricsCard';
-import { ScatterChart, LineChart, CartesianGrid, XAxis, YAxis, ZAxis, Tooltip, Scatter, Line, Legend, Rectangle, ResponsiveContainer } from 'recharts';
+import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, Legend, ResponsiveContainer } from 'recharts';
 
 interface TimingCalendarTabV2Props {
   monthlyElasticityData: any[];
@@ -13,40 +13,6 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
   monthlyElasticityData,
   heatmapData 
 }) => {
-  // Custom tooltip for the heatmap
-  const CustomHeatmapTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      const elasticityValue = Math.abs(data.value).toFixed(2);
-      const sensitivityLevel = data.value <= -1.2 ? 'High' : data.value <= -0.8 ? 'Medium' : 'Low';
-      const textColor = data.value <= -1.2 ? 'text-purple-700' : data.value <= -0.8 ? 'text-blue-600' : 'text-blue-400';
-      
-      return (
-        <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-100">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-semibold">{data.category}</span>
-            <span className="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full">
-              {data.month}
-            </span>
-          </div>
-          <div className="text-sm text-gray-600 mb-1">
-            Sensitivity: <span className={`font-medium ${textColor}`}>{data.value}</span>
-          </div>
-          <div className="flex items-center mt-1.5">
-            <div className={`h-2 w-2 rounded-full mr-2 ${
-              data.value <= -1.2 ? 'bg-purple-600' : 
-              data.value <= -0.8 ? 'bg-blue-500' : 'bg-blue-300'
-            }`}></div>
-            <span className="text-xs text-gray-500">
-              {sensitivityLevel} sensitivity to promotions
-            </span>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
-
   // Custom tooltip for the line chart
   const CustomLineChartTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -96,140 +62,6 @@ const TimingCalendarTabV2: React.FC<TimingCalendarTabV2Props> = ({
           isPositive={true}
           icon={<ShoppingCart className="text-dashboard-primary" />}
         />
-      </div>
-      
-      <div className="dashboard-card mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-medium text-dashboard-text">Promotional Sensitivity Heat Map</h3>
-          <div className="flex gap-1.5">
-            <div className="flex items-center gap-1">
-              <div className="h-3 w-3 rounded-sm bg-purple-900 bg-opacity-80"></div>
-              <span className="text-xs text-gray-500">High</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="h-3 w-3 rounded-sm bg-purple-700 bg-opacity-70"></div>
-              <span className="text-xs text-gray-500">Medium</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="h-3 w-3 rounded-sm bg-purple-500 bg-opacity-60"></div>
-              <span className="text-xs text-gray-500">Low</span>
-            </div>
-          </div>
-        </div>
-        <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4" style={{ height: "380px" }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <ScatterChart
-              margin={{ top: 30, right: 30, bottom: 80, left: 30 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-              <XAxis 
-                dataKey="month" 
-                name="Month" 
-                type="category"
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis 
-                dataKey="category" 
-                name="Category" 
-                type="category" 
-                width={80}
-                axisLine={false}
-                tickLine={false}
-              />
-              <ZAxis
-                dataKey="value"
-                range={[150, 1500]}
-                name="Sensitivity"
-              />
-              <Tooltip content={<CustomHeatmapTooltip />} cursor={{ strokeDasharray: '5 5', stroke: '#8884d8' }} />
-              <Scatter 
-                data={heatmapData} 
-                shape={(props: any) => {
-                  const { cx, cy, r } = props;
-                  const width = 50;
-                  const height = 40;
-                  const value = props.payload.value;
-                  
-                  // More visually distinctive color mapping based on elasticity value
-                  let fillColor;
-                  let opacity;
-                  
-                  if (value <= -1.2) {
-                    fillColor = 'rgba(109, 40, 217, 0.9)'; // Deep purple for high sensitivity
-                    opacity = 0.9;
-                  } else if (value <= -0.8) {
-                    fillColor = 'rgba(124, 58, 237, 0.75)'; // Medium purple for medium sensitivity
-                    opacity = 0.75;
-                  } else {
-                    fillColor = 'rgba(139, 92, 246, 0.6)'; // Light purple for low sensitivity
-                    opacity = 0.6;
-                  }
-                  
-                  return (
-                    <Rectangle
-                      x={cx - width / 2}
-                      y={cy - height / 2}
-                      width={width}
-                      height={height}
-                      fill={fillColor}
-                      stroke="rgba(139, 92, 246, 0.2)"
-                      strokeWidth={1}
-                      rx={4}
-                      ry={4}
-                    />
-                  );
-                }}
-              />
-              
-              {/* Month labels */}
-              {monthlyElasticityData.map((entry, index) => (
-                <text 
-                  key={`month-${index}`} 
-                  x={(index * 55) + 50}
-                  y={330} 
-                  textAnchor="middle" 
-                  dominantBaseline="middle"
-                  className="fill-slate-600 text-xs font-medium"
-                >
-                  {entry.month}
-                </text>
-              ))}
-              
-              {/* Category labels */}
-              <text 
-                x={20} 
-                y={115} 
-                textAnchor="start" 
-                dominantBaseline="middle"
-                className="fill-slate-600 text-xs font-medium"
-              >
-                Baby
-              </text>
-              <text 
-                x={20} 
-                y={185} 
-                textAnchor="start" 
-                dominantBaseline="middle"
-                className="fill-slate-600 text-xs font-medium"
-              >
-                Books
-              </text>
-              <text 
-                x={20} 
-                y={255} 
-                textAnchor="start" 
-                dominantBaseline="middle"
-                className="fill-slate-600 text-xs font-medium"
-              >
-                Tools
-              </text>
-            </ScatterChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="text-xs text-dashboard-secondaryText mt-2">
-          Darker color indicates higher promotional sensitivity (stronger sensitivity)
-        </div>
       </div>
       
       <div className="dashboard-card mb-6">
