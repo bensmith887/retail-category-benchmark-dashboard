@@ -48,7 +48,7 @@ const MarketShareView: React.FC = () => {
             <div className="col-span-1 md:col-span-2">
               <MetricsCard
                 label="Industry Traffic Change"
-                value="Monthly"
+                value="+4.3%"
                 change="+1.8%"
                 isPositive={true}
                 secondaryChange="+5.2%"
