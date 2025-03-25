@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   marketShareTopCompetitors, 
   categoryMarketShareData, 
@@ -19,11 +19,82 @@ import {
 } from 'recharts';
 import InsightCard from './InsightCard';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from './ui/table';
-import { TrendingUp, TrendingDown, ChevronRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronRight, ChevronDown } from 'lucide-react';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+
+// Define subcategories for the table
+const subcategories = {
+  'Fashion': [
+    { category: 'Women\'s Apparel', domains: [
+      { name: 'fashion-store.com', share: 18.5, monthChange: 1.2, yearChange: 2.8 },
+      { name: 'style-hub.com', share: 12.4, monthChange: 0.9, yearChange: 1.7 },
+      { name: 'trendy-clothes.com', share: 9.1, monthChange: -0.3, yearChange: 0.5 }
+    ]},
+    { category: 'Men\'s Apparel', domains: [
+      { name: 'mensfashion.com', share: 15.2, monthChange: 0.5, yearChange: 1.4 },
+      { name: 'dapper-men.com', share: 10.8, monthChange: -0.2, yearChange: 0.8 },
+      { name: 'mens-styles.com', share: 8.3, monthChange: 0.3, yearChange: 1.1 }
+    ]},
+    { category: 'Accessories', domains: [
+      { name: 'accessory-world.com', share: 12.7, monthChange: 1.5, yearChange: 2.3 },
+      { name: 'fashion-extras.com', share: 9.5, monthChange: 0.7, yearChange: 1.9 },
+      { name: 'trendy-accessories.com', share: 7.2, monthChange: 0.3, yearChange: 1.2 }
+    ]}
+  ],
+  'Home Goods': [
+    { category: 'Furniture', domains: [
+      { name: 'modern-furniture.com', share: 16.8, monthChange: 1.4, yearChange: 2.2 },
+      { name: 'home-decor-plus.com', share: 13.2, monthChange: 0.8, yearChange: 1.9 },
+      { name: 'furniture-deals.com', share: 10.5, monthChange: 0.5, yearChange: 1.3 }
+    ]},
+    { category: 'Kitchen & Dining', domains: [
+      { name: 'kitchen-essentials.com', share: 14.2, monthChange: 1.1, yearChange: 2.0 },
+      { name: 'cooking-supplies.com', share: 11.3, monthChange: 0.6, yearChange: 1.6 },
+      { name: 'dining-solutions.com', share: 8.7, monthChange: 0.2, yearChange: 1.0 }
+    ]},
+    { category: 'Home Décor', domains: [
+      { name: 'decor-paradise.com', share: 13.5, monthChange: 1.3, yearChange: 2.5 },
+      { name: 'home-accents.com', share: 10.9, monthChange: 0.9, yearChange: 1.8 },
+      { name: 'interior-touches.com', share: 8.4, monthChange: 0.4, yearChange: 1.2 }
+    ]}
+  ],
+  'Electronics': [
+    { category: 'TVs', domains: [
+      { name: 'tv-deals.com', share: 17.3, monthChange: 1.6, yearChange: 2.4 },
+      { name: 'screen-shop.com', share: 14.1, monthChange: 1.0, yearChange: 2.1 },
+      { name: 'tv-warehouse.com', share: 11.2, monthChange: 0.7, yearChange: 1.5 }
+    ]},
+    { category: 'Laptops', domains: [
+      { name: 'laptop-world.com', share: 16.5, monthChange: 1.3, yearChange: 2.2 },
+      { name: 'computer-hub.com', share: 13.8, monthChange: 0.8, yearChange: 1.7 },
+      { name: 'tech-laptops.com', share: 10.4, monthChange: 0.5, yearChange: 1.3 }
+    ]},
+    { category: 'TV Accessories', domains: [
+      { name: 'tv-gadgets.com', share: 12.9, monthChange: 0.9, yearChange: 1.8 },
+      { name: 'screen-accessories.com', share: 10.6, monthChange: 0.6, yearChange: 1.4 },
+      { name: 'home-theater-extras.com', share: 8.1, monthChange: 0.3, yearChange: 1.0 }
+    ]}
+  ]
+};
 
 const MarketShareView: React.FC = () => {
   // Get your brand data
   const yourBrand = marketShareTopCompetitors[0];
+  // State to track which categories are expanded
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  
+  // Toggle category expansion
+  const toggleCategory = (category: string) => {
+    setExpandedCategories(prev => 
+      prev.includes(category) 
+        ? prev.filter(c => c !== category) 
+        : [...prev, category]
+    );
+  };
   
   return (
     <div className="animate-fade-in">
@@ -85,7 +156,7 @@ const MarketShareView: React.FC = () => {
         </div>
       </div>
 
-      {/* Category Traffic Share Table - NEW FORMAT */}
+      {/* Category Traffic Share Table with Dropdowns */}
       <div className="dashboard-card mb-6 overflow-hidden">
         <h3 className="text-lg font-medium text-dashboard-text mb-4">Top Domains by Category Traffic Share</h3>
         
@@ -127,65 +198,137 @@ const MarketShareView: React.FC = () => {
             </TableHeader>
             <TableBody>
               {categoryMarketShareData.map((category, index) => (
-                <TableRow key={category.category} className={`border-b ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
-                  <TableCell className="py-2 px-3 text-left align-middle border-r">{index + 1}</TableCell>
-                  <TableCell className="py-2 px-3 text-left align-middle border-r">
-                    <div className="flex items-center">
-                      <ChevronRight size={16} className="mr-1 text-gray-400" />
-                      <span className="font-medium">{category.category}</span>
-                    </div>
-                  </TableCell>
+                <React.Fragment key={category.category}>
+                  <TableRow className={`border-b ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
+                    <TableCell className="py-2 px-3 text-left align-middle border-r">{index + 1}</TableCell>
+                    <TableCell className="py-2 px-3 text-left align-middle border-r">
+                      <Collapsible>
+                        <CollapsibleTrigger asChild onClick={() => toggleCategory(category.category)}>
+                          <div className="flex items-center cursor-pointer">
+                            {expandedCategories.includes(category.category) 
+                              ? <ChevronDown size={16} className="mr-1 text-gray-400" /> 
+                              : <ChevronRight size={16} className="mr-1 text-gray-400" />}
+                            <span className="font-medium">{category.category}</span>
+                          </div>
+                        </CollapsibleTrigger>
+                      </Collapsible>
+                    </TableCell>
+                    
+                    {/* Rank 1 Domain */}
+                    {category.domains[0] && (
+                      <>
+                        <TableCell className="py-2 px-3 text-left align-middle">
+                          <span className="font-medium text-dashboard-text">{category.domains[0].name}</span>
+                        </TableCell>
+                        <TableCell className="py-2 px-3 text-right align-middle">{category.domains[0].share}%</TableCell>
+                        <TableCell className="py-2 px-3 text-center align-middle border-r">
+                          <div className="flex items-center justify-center space-x-4">
+                            <span className={category.domains[0].monthChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                              {category.domains[0].monthChange > 0 ? '+' : ''}{category.domains[0].monthChange}
+                            </span>
+                            <span className={category.domains[0].yearChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                              {category.domains[0].yearChange > 0 ? '+' : ''}{category.domains[0].yearChange}
+                            </span>
+                          </div>
+                        </TableCell>
+                      </>
+                    )}
+                    
+                    {/* Rank 2 Domain */}
+                    {category.domains[1] && (
+                      <>
+                        <TableCell className="py-2 px-3 text-left align-middle">
+                          <span className="font-medium text-dashboard-text">{category.domains[1].name}</span>
+                        </TableCell>
+                        <TableCell className="py-2 px-3 text-right align-middle">{category.domains[1].share}%</TableCell>
+                        <TableCell className="py-2 px-3 text-center align-middle border-r">
+                          <div className="flex items-center justify-center space-x-4">
+                            <span className={category.domains[1].monthChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                              {category.domains[1].monthChange > 0 ? '+' : ''}{category.domains[1].monthChange}
+                            </span>
+                            <span className={category.domains[1].yearChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                              {category.domains[1].yearChange > 0 ? '+' : ''}{category.domains[1].yearChange}
+                            </span>
+                          </div>
+                        </TableCell>
+                      </>
+                    )}
+                    
+                    {/* Rank 3 Domain */}
+                    {category.domains[2] && (
+                      <>
+                        <TableCell className="py-2 px-3 text-left align-middle">
+                          <span className="font-medium text-dashboard-text">{category.domains[2].name}</span>
+                        </TableCell>
+                        <TableCell className="py-2 px-3 text-right align-middle">{category.domains[2].share}%</TableCell>
+                      </>
+                    )}
+                  </TableRow>
                   
-                  {/* Rank 1 Domain */}
-                  {category.domains[0] && (
-                    <>
-                      <TableCell className="py-2 px-3 text-left align-middle">
-                        <span className="text-dashboard-danger font-medium">{category.domains[0].name}</span>
-                      </TableCell>
-                      <TableCell className="py-2 px-3 text-right align-middle">{category.domains[0].share}%</TableCell>
-                      <TableCell className="py-2 px-3 text-center align-middle border-r">
-                        <div className="flex items-center justify-center space-x-4">
-                          <span className={category.domains[0].monthChange > 0 ? 'text-green-600' : 'text-red-500'}>
-                            {category.domains[0].monthChange > 0 ? '+' : ''}{category.domains[0].monthChange}
-                          </span>
-                          <span className={category.domains[0].yearChange > 0 ? 'text-green-600' : 'text-red-500'}>
-                            {category.domains[0].yearChange > 0 ? '+' : ''}{category.domains[0].yearChange}
-                          </span>
-                        </div>
-                      </TableCell>
-                    </>
+                  {/* Subcategories (collapsible content) */}
+                  {expandedCategories.includes(category.category) && subcategories[category.category as keyof typeof subcategories] && (
+                    <CollapsibleContent>
+                      {subcategories[category.category as keyof typeof subcategories].map((subcat, subIndex) => (
+                        <TableRow key={`${category.category}-${subcat.category}`} className="border-b bg-gray-100">
+                          <TableCell className="py-1 px-3 text-left align-middle border-r"></TableCell>
+                          <TableCell className="py-1 px-3 text-left align-middle border-r pl-8">
+                            <span className="text-sm text-gray-600">{subcat.category}</span>
+                          </TableCell>
+                          
+                          {/* Subcategory Rank 1 Domain */}
+                          {subcat.domains[0] && (
+                            <>
+                              <TableCell className="py-1 px-3 text-left align-middle">
+                                <span className="text-sm text-dashboard-text">{subcat.domains[0].name}</span>
+                              </TableCell>
+                              <TableCell className="py-1 px-3 text-right align-middle text-sm">{subcat.domains[0].share}%</TableCell>
+                              <TableCell className="py-1 px-3 text-center align-middle border-r">
+                                <div className="flex items-center justify-center space-x-4 text-xs">
+                                  <span className={subcat.domains[0].monthChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                                    {subcat.domains[0].monthChange > 0 ? '+' : ''}{subcat.domains[0].monthChange}
+                                  </span>
+                                  <span className={subcat.domains[0].yearChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                                    {subcat.domains[0].yearChange > 0 ? '+' : ''}{subcat.domains[0].yearChange}
+                                  </span>
+                                </div>
+                              </TableCell>
+                            </>
+                          )}
+                          
+                          {/* Subcategory Rank 2 Domain */}
+                          {subcat.domains[1] && (
+                            <>
+                              <TableCell className="py-1 px-3 text-left align-middle">
+                                <span className="text-sm text-dashboard-text">{subcat.domains[1].name}</span>
+                              </TableCell>
+                              <TableCell className="py-1 px-3 text-right align-middle text-sm">{subcat.domains[1].share}%</TableCell>
+                              <TableCell className="py-1 px-3 text-center align-middle border-r">
+                                <div className="flex items-center justify-center space-x-4 text-xs">
+                                  <span className={subcat.domains[1].monthChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                                    {subcat.domains[1].monthChange > 0 ? '+' : ''}{subcat.domains[1].monthChange}
+                                  </span>
+                                  <span className={subcat.domains[1].yearChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                                    {subcat.domains[1].yearChange > 0 ? '+' : ''}{subcat.domains[1].yearChange}
+                                  </span>
+                                </div>
+                              </TableCell>
+                            </>
+                          )}
+                          
+                          {/* Subcategory Rank 3 Domain */}
+                          {subcat.domains[2] && (
+                            <>
+                              <TableCell className="py-1 px-3 text-left align-middle">
+                                <span className="text-sm text-dashboard-text">{subcat.domains[2].name}</span>
+                              </TableCell>
+                              <TableCell className="py-1 px-3 text-right align-middle text-sm">{subcat.domains[2].share}%</TableCell>
+                            </>
+                          )}
+                        </TableRow>
+                      ))}
+                    </CollapsibleContent>
                   )}
-                  
-                  {/* Rank 2 Domain */}
-                  {category.domains[1] && (
-                    <>
-                      <TableCell className="py-2 px-3 text-left align-middle">
-                        <span className="text-dashboard-danger font-medium">{category.domains[1].name}</span>
-                      </TableCell>
-                      <TableCell className="py-2 px-3 text-right align-middle">{category.domains[1].share}%</TableCell>
-                      <TableCell className="py-2 px-3 text-center align-middle border-r">
-                        <div className="flex items-center justify-center space-x-4">
-                          <span className={category.domains[1].monthChange > 0 ? 'text-green-600' : 'text-red-500'}>
-                            {category.domains[1].monthChange > 0 ? '+' : ''}{category.domains[1].monthChange}
-                          </span>
-                          <span className={category.domains[1].yearChange > 0 ? 'text-green-600' : 'text-red-500'}>
-                            {category.domains[1].yearChange > 0 ? '+' : ''}{category.domains[1].yearChange}
-                          </span>
-                        </div>
-                      </TableCell>
-                    </>
-                  )}
-                  
-                  {/* Rank 3 Domain */}
-                  {category.domains[2] && (
-                    <>
-                      <TableCell className="py-2 px-3 text-left align-middle">
-                        <span className="text-dashboard-danger font-medium">{category.domains[2].name}</span>
-                      </TableCell>
-                      <TableCell className="py-2 px-3 text-right align-middle">{category.domains[2].share}%</TableCell>
-                    </>
-                  )}
-                </TableRow>
+                </React.Fragment>
               ))}
             </TableBody>
           </Table>
