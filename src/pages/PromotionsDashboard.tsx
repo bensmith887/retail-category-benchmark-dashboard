@@ -162,7 +162,7 @@ const PromotionsDashboard = () => {
                     </TooltipTrigger>
                     <TooltipContent className="max-w-sm">
                       <p className="text-sm">
-                        <strong>Price Elasticity</strong> measures how sensitive demand is to price changes. 
+                        <strong>Price Sensitivity</strong> measures how sensitive demand is to price changes. 
                         A value of -1.0 means a 10% price reduction increases sales by 10%.
                       </p>
                     </TooltipContent>

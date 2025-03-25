@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, ScatterChart, Scatter, ZAxis, Cell } from 'recharts';
@@ -205,88 +206,51 @@ const PriceElasticityView: React.FC = () => {
         </div>
       </div>
 
-      {/* Price Sensitivity Analysis Section */}
+      {/* Price Sensitivity Analysis Section - Now Full Width */}
       <div className="dashboard-card mb-6">
         <h3 className="text-lg font-medium text-dashboard-text mb-4">Price Sensitivity Analysis</h3>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* Sensitivity Trend Chart */}
-          <div className="bg-white rounded-lg p-4 border border-dashboard-border">
-            <h3 className="text-sm font-medium text-dashboard-secondaryText mb-2">Sensitivity Coefficients Over Time</h3>
-            <div style={{ height: "280px" }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={sensitivityTrendData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} />
-                  <YAxis 
-                    domain={[-2.5, 0]} 
-                    tickFormatter={(value) => value.toFixed(1)} 
-                    axisLine={false} 
-                    tickLine={false} 
-                  />
-                  <Tooltip 
-                    formatter={(value: number) => [`${value.toFixed(2)}`, 'Sensitivity Coefficient']}
-                    contentStyle={{ 
-                      borderRadius: '6px', 
-                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                      border: '1px solid #e5e7eb'
-                    }}
-                  />
-                  <Legend />
-                  <Line type="monotone" dataKey="coefficient" name="Your Brand" stroke="#5840bb" strokeWidth={2} dot={{ r: 4 }} />
-                  <Line type="monotone" dataKey="competitor1" name="Competitor A" stroke="#6892e6" strokeWidth={1} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="competitor2" name="Competitor B" stroke="#fa9f42" strokeWidth={1} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="competitor3" name="Competitor C" stroke="#00bc8c" strokeWidth={1} dot={{ r: 3 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            <p className="text-xs text-dashboard-secondaryText mt-2">
-              More negative values indicate higher price sensitivity. Tools & Home Improvement peaks in April.
-            </p>
+        {/* Making Price vs Conversion full width */}
+        <div className="bg-white rounded-lg p-4 border border-dashboard-border mb-6">
+          <h3 className="text-sm font-medium text-dashboard-secondaryText mb-2">Price vs. Conversion Rate</h3>
+          <div style={{ height: "280px" }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <ScatterChart>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
+                <XAxis 
+                  dataKey="price" 
+                  name="Price" 
+                  axisLine={false} 
+                  tickLine={false}
+                  label={{ value: 'Price ($)', position: 'insideBottom', offset: -5 }}
+                />
+                <YAxis 
+                  dataKey="conversionRate" 
+                  name="Conversion Rate" 
+                  axisLine={false} 
+                  tickLine={false}
+                  label={{ value: 'Conversion Rate (%)', angle: -90, position: 'insideLeft' }}
+                />
+                <ZAxis dataKey="sales" range={[60, 400]} />
+                <Tooltip 
+                  cursor={{ strokeDasharray: '3 3' }} 
+                  formatter={(value: number, name: string) => [
+                    `${name === 'Price' ? '$' + value : value + '%'}`, 
+                    name
+                  ]}
+                  contentStyle={{ 
+                    borderRadius: '6px', 
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    border: '1px solid #e5e7eb'
+                  }}
+                />
+                <Scatter name="Products" data={correlationData} fill="#5840bb" />
+              </ScatterChart>
+            </ResponsiveContainer>
           </div>
-
-          {/* Correlation Chart */}
-          <div className="bg-white rounded-lg p-4 border border-dashboard-border">
-            <h3 className="text-sm font-medium text-dashboard-secondaryText mb-2">Price vs. Conversion Rate</h3>
-            <div style={{ height: "280px" }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <ScatterChart>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
-                  <XAxis 
-                    dataKey="price" 
-                    name="Price" 
-                    axisLine={false} 
-                    tickLine={false}
-                    label={{ value: 'Price ($)', position: 'insideBottom', offset: -5 }}
-                  />
-                  <YAxis 
-                    dataKey="conversionRate" 
-                    name="Conversion Rate" 
-                    axisLine={false} 
-                    tickLine={false}
-                    label={{ value: 'Conversion Rate (%)', angle: -90, position: 'insideLeft' }}
-                  />
-                  <ZAxis dataKey="sales" range={[60, 400]} />
-                  <Tooltip 
-                    cursor={{ strokeDasharray: '3 3' }} 
-                    formatter={(value: number, name: string) => [
-                      `${name === 'Price' ? '$' + value : value + '%'}`, 
-                      name
-                    ]}
-                    contentStyle={{ 
-                      borderRadius: '6px', 
-                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                      border: '1px solid #e5e7eb'
-                    }}
-                  />
-                  <Scatter name="Products" data={correlationData} fill="#5840bb" />
-                </ScatterChart>
-              </ResponsiveContainer>
-            </div>
-            <p className="text-xs text-dashboard-secondaryText mt-2">
-              Bubble size indicates sales volume. A steeper slope indicates higher sensitivity.
-            </p>
-          </div>
+          <p className="text-xs text-dashboard-secondaryText mt-2">
+            Bubble size indicates sales volume. A steeper slope indicates higher sensitivity.
+          </p>
         </div>
 
         {/* Category Sensitivity Chart */}
