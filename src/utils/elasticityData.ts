@@ -1,5 +1,4 @@
-
-// Price Elasticity Data
+// Price Sensitivity Data
 export const elasticityData = [
   {
     id: 1,
@@ -134,7 +133,7 @@ export const priceData = [
   }
 ];
 
-// Subcategory Elasticity Data
+// Subcategory Sensitivity Data
 export const subcategoryElasticityData = [
   { 
     name: 'Strollers', 
@@ -282,7 +281,7 @@ export const competitorData = [
   }
 ];
 
-// Monthly elasticity data for Tools & Home Improvement
+// Monthly sensitivity data for Tools & Home Improvement
 export const toolsMonthlyElasticityData = [
   { month: 'Jan', elasticity: -0.70 },
   { month: 'Feb', elasticity: -0.85 },
@@ -298,7 +297,7 @@ export const toolsMonthlyElasticityData = [
   { month: 'Dec', elasticity: -0.70 }
 ];
 
-// Subcategory monthly elasticity data
+// Subcategory monthly sensitivity data
 export const subcategoryMonthlyElasticityData = {
   'Paint & Wall Treatments': [
     { month: 'Jan', elasticity: -0.88 },
@@ -521,3 +520,4 @@ export const getPromotionalPeriodsForDateRange = (startDate: string, endDate: st
     );
   });
 };
+
