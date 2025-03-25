@@ -48,7 +48,7 @@ export const tabsData = [
     id: 'product-performance',
     name: 'Product Performance',
     icon: 'TrendingUp',
-    hidden: false
+    hidden: true
   },
   {
     id: 'customer-sentiment',

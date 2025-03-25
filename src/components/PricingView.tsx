@@ -1,11 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import MetricsCard from '@/components/MetricsCard';
 import { pricingData, competitorData, insightData } from '@/utils/data';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
 import { DollarSign, TrendingUp, TrendingDown, BarChart3, LineChart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import InsightCard from './InsightCard';
+import ProductPerformanceView from './ProductPerformanceView';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 // Calculate average price for all competitors
 const avgPrice = pricingData.reduce((sum, item) => sum + item.price, 0) / pricingData.length;
@@ -93,201 +95,226 @@ const priceRangeData = [
 ];
 
 const PricingView: React.FC = () => {
+  const [activeTab, setActiveTab] = useState("pricing");
+  
   return (
     <div className="animate-fade-in">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 stagger-animate">
-        <MetricsCard
-          label="Your Avg. Price"
-          value={`$${yourPrice}`}
-          change={`${priceDiff}%`}
-          isPositive={Number(priceDiff) >= 0}
-          secondaryLabel="vs Category Avg"
-          secondaryChange={`${Number(priceDiff) >= 0 ? '+' : ''}${priceDiff}%`}
-          isSecondaryPositive={Number(priceDiff) >= 0}
-          className="flex-1"
-          icon={<DollarSign className="text-dashboard-primary" />}
-        />
-        <MetricsCard
-          label="Category Avg. Price"
-          value={`$${avgPrice.toFixed(2)}`}
-          change="+2.3%"
-          isPositive={true}
-          secondaryLabel="vs Category Avg"
-          secondaryChange="0%"
-          isSecondaryPositive={true}
-          className="flex-1"
-          icon={<BarChart3 className="text-dashboard-secondary" />}
-        />
-        <MetricsCard
-          label="Price Elasticity"
-          value="0.83"
-          change="-0.05"
-          isPositive={false}
-          secondaryLabel="vs Category Avg"
-          secondaryChange="-12%"
-          isSecondaryPositive={false}
-          className="flex-1"
-          icon={<LineChart className="text-dashboard-secondary" />}
-        />
-        <MetricsCard
-          label="Price Competitiveness"
-          value="Medium"
-          secondaryLabel="vs Category Avg"
-          secondaryChange="+5%"
-          isSecondaryPositive={true}
-          className="flex-1"
-          icon={<TrendingUp className="text-dashboard-primary" />}
-        />
-      </div>
-
-      {/* Price Range Distribution - Moved above Product Pricing Benchmark */}
-      <div className="dashboard-card mb-6">
-        <h3 className="text-lg font-medium text-dashboard-text mb-4">Price Range Distribution</h3>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[180px]">Competitor</TableHead>
-                <TableHead>
-                  <div className="flex flex-col">
-                    <span>$0-50</span>
-                    <span className="text-xs font-normal text-dashboard-secondaryText">Page Views / %</span>
-                  </div>
-                </TableHead>
-                <TableHead>
-                  <div className="flex flex-col">
-                    <span>$50-100</span>
-                    <span className="text-xs font-normal text-dashboard-secondaryText">Page Views / %</span>
-                  </div>
-                </TableHead>
-                <TableHead>
-                  <div className="flex flex-col">
-                    <span>$100+</span>
-                    <span className="text-xs font-normal text-dashboard-secondaryText">Page Views / %</span>
-                  </div>
-                </TableHead>
-                <TableHead>Total Page Views</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {priceRangeData.map((competitor) => (
-                <TableRow 
-                  key={competitor.name}
-                  className={competitor.name === 'Your Brand' ? 'bg-dashboard-highlight' : ''}
-                >
-                  <TableCell className="font-medium">
-                    {competitor.name === 'Your Brand' ? (
-                      <span className="text-dashboard-primary">{competitor.name}</span>
-                    ) : (
-                      competitor.name
-                    )}
-                  </TableCell>
-                  {competitor.ranges.map((range, index) => (
-                    <TableCell key={index}>
-                      <div className="flex flex-col">
-                        <span>{(range.views / 1000).toFixed(0)}k</span>
-                        <div className="flex items-center mt-1">
-                          <div 
-                            className={cn(
-                              "h-2 rounded-full", 
-                              competitor.name === 'Your Brand'
-                                ? "bg-dashboard-primary"
-                                : "bg-dashboard-secondary"
-                            )}
-                            style={{ width: `${range.percentage}%` }}
-                          />
-                          <span className="text-xs ml-2">{range.percentage}%</span>
-                        </div>
-                      </div>
-                    </TableCell>
-                  ))}
-                  <TableCell>{(competitor.totalViews / 1000).toFixed(0)}k</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-
-      {/* Product Pricing Benchmark */}
-      <div className="dashboard-card mb-6">
-        <h3 className="text-lg font-medium text-dashboard-text mb-4">Product Pricing Benchmark</h3>
+      <Tabs defaultValue="pricing" className="w-full mb-6" onValueChange={setActiveTab}>
+        <TabsList className="w-full bg-white border-b border-dashboard-border rounded-none p-0 h-auto justify-start">
+          <TabsTrigger 
+            value="pricing" 
+            className="py-3 px-4 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-dashboard-primary"
+          >
+            Pricing Analysis
+          </TabsTrigger>
+          <TabsTrigger 
+            value="performance" 
+            className="py-3 px-4 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-dashboard-primary"
+          >
+            Product Performance
+          </TabsTrigger>
+        </TabsList>
         
-        {productBenchmarkData.map((benchmark, index) => (
-          <div key={benchmark.product} className={cn("p-4 rounded-lg", index !== productBenchmarkData.length - 1 ? "mb-4 border-b border-dashboard-border" : "")}>
-            <h4 className="font-medium text-dashboard-text mb-3">{benchmark.product}</h4>
-            
+        <TabsContent value="pricing" className="pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 stagger-animate">
+            <MetricsCard
+              label="Your Avg. Price"
+              value={`$${yourPrice}`}
+              change={`${priceDiff}%`}
+              isPositive={Number(priceDiff) >= 0}
+              secondaryLabel="vs Category Avg"
+              secondaryChange={`${Number(priceDiff) >= 0 ? '+' : ''}${priceDiff}%`}
+              isSecondaryPositive={Number(priceDiff) >= 0}
+              className="flex-1"
+              icon={<DollarSign className="text-dashboard-primary" />}
+            />
+            <MetricsCard
+              label="Category Avg. Price"
+              value={`$${avgPrice.toFixed(2)}`}
+              change="+2.3%"
+              isPositive={true}
+              secondaryLabel="vs Category Avg"
+              secondaryChange="0%"
+              isSecondaryPositive={true}
+              className="flex-1"
+              icon={<BarChart3 className="text-dashboard-secondary" />}
+            />
+            <MetricsCard
+              label="Price Elasticity"
+              value="0.83"
+              change="-0.05"
+              isPositive={false}
+              secondaryLabel="vs Category Avg"
+              secondaryChange="-12%"
+              isSecondaryPositive={false}
+              className="flex-1"
+              icon={<LineChart className="text-dashboard-secondary" />}
+            />
+            <MetricsCard
+              label="Price Competitiveness"
+              value="Medium"
+              secondaryLabel="vs Category Avg"
+              secondaryChange="+5%"
+              isSecondaryPositive={true}
+              className="flex-1"
+              icon={<TrendingUp className="text-dashboard-primary" />}
+            />
+          </div>
+
+          {/* Price Range Distribution */}
+          <div className="dashboard-card mb-6">
+            <h3 className="text-lg font-medium text-dashboard-text mb-4">Price Range Distribution</h3>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-dashboard-border">
-                    <th className="text-left py-2 font-medium text-dashboard-secondaryText">Company</th>
-                    <th className="text-right py-2 font-medium text-dashboard-secondaryText">Price</th>
-                    <th className="text-right py-2 font-medium text-dashboard-secondaryText">Page Views</th>
-                    <th className="text-right py-2 font-medium text-dashboard-secondaryText">MoM Change</th>
-                    <th className="text-right py-2 font-medium text-dashboard-secondaryText">YoY Change</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-dashboard-border bg-dashboard-highlight">
-                    <td className="py-2 font-medium text-dashboard-primary">Your Brand</td>
-                    <td className="py-2 text-right font-medium">${benchmark.yourPrice}</td>
-                    <td className="py-2 text-right">{benchmark.yourViews.toLocaleString()}</td>
-                    <td className="py-2 text-right">
-                      <div className={`inline-flex items-center ${benchmark.yourMonthChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                        {benchmark.yourMonthChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                        {benchmark.yourMonthChange > 0 ? '+' : ''}{benchmark.yourMonthChange}%
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[180px]">Competitor</TableHead>
+                    <TableHead>
+                      <div className="flex flex-col">
+                        <span>$0-50</span>
+                        <span className="text-xs font-normal text-dashboard-secondaryText">Page Views / %</span>
                       </div>
-                    </td>
-                    <td className="py-2 text-right">
-                      <div className={`inline-flex items-center ${benchmark.yourYearChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                        {benchmark.yourYearChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                        {benchmark.yourYearChange > 0 ? '+' : ''}{benchmark.yourYearChange}%
+                    </TableHead>
+                    <TableHead>
+                      <div className="flex flex-col">
+                        <span>$50-100</span>
+                        <span className="text-xs font-normal text-dashboard-secondaryText">Page Views / %</span>
                       </div>
-                    </td>
-                  </tr>
-                  
-                  {benchmark.competitors.map((competitor) => (
-                    <tr key={competitor.name} className="border-b border-dashboard-border">
-                      <td className="py-2">{competitor.name}</td>
-                      <td className="py-2 text-right">${competitor.price}</td>
-                      <td className="py-2 text-right">{competitor.views.toLocaleString()}</td>
-                      <td className="py-2 text-right">
-                        <div className={`inline-flex items-center ${competitor.monthChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                          {competitor.monthChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                          {competitor.monthChange > 0 ? '+' : ''}{competitor.monthChange}%
-                        </div>
-                      </td>
-                      <td className="py-2 text-right">
-                        <div className={`inline-flex items-center ${competitor.yearChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                          {competitor.yearChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                          {competitor.yearChange > 0 ? '+' : ''}{competitor.yearChange}%
-                        </div>
-                      </td>
-                    </tr>
+                    </TableHead>
+                    <TableHead>
+                      <div className="flex flex-col">
+                        <span>$100+</span>
+                        <span className="text-xs font-normal text-dashboard-secondaryText">Page Views / %</span>
+                      </div>
+                    </TableHead>
+                    <TableHead>Total Page Views</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {priceRangeData.map((competitor) => (
+                    <TableRow 
+                      key={competitor.name}
+                      className={competitor.name === 'Your Brand' ? 'bg-dashboard-highlight' : ''}
+                    >
+                      <TableCell className="font-medium">
+                        {competitor.name === 'Your Brand' ? (
+                          <span className="text-dashboard-primary">{competitor.name}</span>
+                        ) : (
+                          competitor.name
+                        )}
+                      </TableCell>
+                      {competitor.ranges.map((range, index) => (
+                        <TableCell key={index}>
+                          <div className="flex flex-col">
+                            <span>{(range.views / 1000).toFixed(0)}k</span>
+                            <div className="flex items-center mt-1">
+                              <div 
+                                className={cn(
+                                  "h-2 rounded-full", 
+                                  competitor.name === 'Your Brand'
+                                    ? "bg-dashboard-primary"
+                                    : "bg-dashboard-secondary"
+                                )}
+                                style={{ width: `${range.percentage}%` }}
+                              />
+                              <span className="text-xs ml-2">{range.percentage}%</span>
+                            </div>
+                          </div>
+                        </TableCell>
+                      ))}
+                      <TableCell>{(competitor.totalViews / 1000).toFixed(0)}k</TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* Insights */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        {insightData.map((insight, index) => (
-          <InsightCard
-            key={index}
-            title={insight.title}
-            description={insight.description}
-            type={insight.type as "opportunity" | "threat" | "positive" | "recommendation"}
-          />
-        ))}
-      </div>
+          {/* Product Pricing Benchmark */}
+          <div className="dashboard-card mb-6">
+            <h3 className="text-lg font-medium text-dashboard-text mb-4">Product Pricing Benchmark</h3>
+            
+            {productBenchmarkData.map((benchmark, index) => (
+              <div key={benchmark.product} className={cn("p-4 rounded-lg", index !== productBenchmarkData.length - 1 ? "mb-4 border-b border-dashboard-border" : "")}>
+                <h4 className="font-medium text-dashboard-text mb-3">{benchmark.product}</h4>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-dashboard-border">
+                        <th className="text-left py-2 font-medium text-dashboard-secondaryText">Company</th>
+                        <th className="text-right py-2 font-medium text-dashboard-secondaryText">Price</th>
+                        <th className="text-right py-2 font-medium text-dashboard-secondaryText">Page Views</th>
+                        <th className="text-right py-2 font-medium text-dashboard-secondaryText">MoM Change</th>
+                        <th className="text-right py-2 font-medium text-dashboard-secondaryText">YoY Change</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-dashboard-border bg-dashboard-highlight">
+                        <td className="py-2 font-medium text-dashboard-primary">Your Brand</td>
+                        <td className="py-2 text-right font-medium">${benchmark.yourPrice}</td>
+                        <td className="py-2 text-right">{benchmark.yourViews.toLocaleString()}</td>
+                        <td className="py-2 text-right">
+                          <div className={`inline-flex items-center ${benchmark.yourMonthChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                            {benchmark.yourMonthChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
+                            {benchmark.yourMonthChange > 0 ? '+' : ''}{benchmark.yourMonthChange}%
+                          </div>
+                        </td>
+                        <td className="py-2 text-right">
+                          <div className={`inline-flex items-center ${benchmark.yourYearChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                            {benchmark.yourYearChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
+                            {benchmark.yourYearChange > 0 ? '+' : ''}{benchmark.yourYearChange}%
+                          </div>
+                        </td>
+                      </tr>
+                      
+                      {benchmark.competitors.map((competitor) => (
+                        <tr key={competitor.name} className="border-b border-dashboard-border">
+                          <td className="py-2">{competitor.name}</td>
+                          <td className="py-2 text-right">${competitor.price}</td>
+                          <td className="py-2 text-right">{competitor.views.toLocaleString()}</td>
+                          <td className="py-2 text-right">
+                            <div className={`inline-flex items-center ${competitor.monthChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                              {competitor.monthChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
+                              {competitor.monthChange > 0 ? '+' : ''}{competitor.monthChange}%
+                            </div>
+                          </td>
+                          <td className="py-2 text-right">
+                            <div className={`inline-flex items-center ${competitor.yearChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                              {competitor.yearChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
+                              {competitor.yearChange > 0 ? '+' : ''}{competitor.yearChange}%
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Insights */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            {insightData.map((insight, index) => (
+              <InsightCard
+                key={index}
+                title={insight.title}
+                description={insight.description}
+                type={insight.type as "opportunity" | "threat" | "positive" | "recommendation"}
+              />
+            ))}
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="performance" className="pt-4">
+          <ProductPerformanceView />
+        </TabsContent>
+      </Tabs>
       
       {/* Subfooter */}
       <div className="text-xs text-center text-dashboard-secondaryText mt-6 pt-4 border-t border-dashboard-border">
-        <p>Source: SimilarWeb • Metrics: Pricing, Page Views, User Engagement</p>
+        <p>Source: SimilarWeb • Metrics: {activeTab === "pricing" ? "Pricing, Page Views, User Engagement" : "Product Page Views, User Engagement, Category Performance"}</p>
       </div>
     </div>
   );
