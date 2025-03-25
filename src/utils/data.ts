@@ -1,3 +1,4 @@
+
 import { BarChart3, PieChart, TrendingUp, Activity, LineChart, MessageSquare, DollarSign, Percent, Tag, ShoppingCart, Users, Search, Share2, Heart, ExternalLink, Radio } from 'lucide-react';
 
 export const tabsData = [
@@ -59,7 +60,7 @@ export const tabsData = [
     id: 'promotion-effectiveness',
     name: 'Promotion Effectiveness',
     icon: 'Activity',
-    hidden: false
+    hidden: true
   },
   {
     id: 'keyword-category',
