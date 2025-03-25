@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Info, Download, FileText, TrendingDown, Calculator, Target } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import MetricsCard from '@/components/MetricsCard';
+import PromotionEffectivenessView from '@/components/PromotionEffectivenessView';
 
 // Import utilities
 import { calculatePromotionImpact, generateHeatmapData, generatePromotionData, generateCampaignCalendar } from '@/utils/promotionUtils';
@@ -227,9 +229,10 @@ const PromotionsV2Dashboard = () => {
             </div>
 
             <UITabs defaultValue="timing" className="mb-6">
-              <TabsList className="grid grid-cols-2 mb-4 bg-gray-100 p-1.5 rounded-lg shadow-sm border border-gray-200">
+              <TabsList className="grid grid-cols-3 mb-4 bg-gray-100 p-1.5 rounded-lg shadow-sm border border-gray-200">
                 <TabsTrigger value="timing" className="font-semibold">Timing & Calendar</TabsTrigger>
                 <TabsTrigger value="strategy" className="font-semibold">Seasonal Strategy</TabsTrigger>
+                <TabsTrigger value="effectiveness" className="font-semibold">Promotional Effectiveness</TabsTrigger>
               </TabsList>
               
               <TabsContent value="timing">
@@ -244,6 +247,10 @@ const PromotionsV2Dashboard = () => {
                   seasonalStrategyData={seasonalStrategyData}
                   campaignCalendar={campaignCalendar}
                 />
+              </TabsContent>
+
+              <TabsContent value="effectiveness">
+                <PromotionEffectivenessView />
               </TabsContent>
             </UITabs>
             
