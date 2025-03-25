@@ -19,7 +19,7 @@ import {
 } from 'recharts';
 import InsightCard from './InsightCard';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from './ui/table';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronRight } from 'lucide-react';
 
 const MarketShareView: React.FC = () => {
   // Get your brand data
@@ -85,77 +85,107 @@ const MarketShareView: React.FC = () => {
         </div>
       </div>
 
-      {/* Category Traffic Share Table - IMPROVED FORMATTING */}
+      {/* Category Traffic Share Table - NEW FORMAT */}
       <div className="dashboard-card mb-6 overflow-hidden">
         <h3 className="text-lg font-medium text-dashboard-text mb-4">Top Domains by Category Traffic Share</h3>
         
-        <div className="overflow-auto max-h-[600px]">
-          <Table>
-            <TableHeader className="bg-gray-50 sticky top-0">
-              <TableRow>
-                <TableHead className="w-[180px] bg-dashboard-primary text-white font-semibold">Category</TableHead>
-                <TableHead className="bg-dashboard-primary text-white font-semibold">Domain</TableHead>
-                <TableHead className="text-right bg-dashboard-primary text-white font-semibold">Traffic Share</TableHead>
-                <TableHead className="text-right bg-dashboard-primary text-white font-semibold">MoM Change</TableHead>
-                <TableHead className="text-right bg-dashboard-primary text-white font-semibold">YoY Change</TableHead>
+        <div className="overflow-auto">
+          <Table className="w-full text-sm border-collapse">
+            <TableHeader className="bg-gray-50">
+              <TableRow className="border-b">
+                <TableHead className="py-2 px-3 font-medium text-left w-16 border-r">Rank</TableHead>
+                <TableHead className="py-2 px-3 font-medium text-left w-[180px] border-r">Category</TableHead>
+                <TableHead className="py-2 px-3 font-medium text-center border-r" colSpan={3}>Rank 1</TableHead>
+                <TableHead className="py-2 px-3 font-medium text-center border-r" colSpan={3}>Rank 2</TableHead>
+                <TableHead className="py-2 px-3 font-medium text-center" colSpan={1}>Rank 3</TableHead>
+              </TableRow>
+              <TableRow className="border-b text-xs">
+                <TableHead className="py-1 px-3 font-normal text-left border-r"></TableHead>
+                <TableHead className="py-1 px-3 font-normal text-left border-r"></TableHead>
+                {/* Rank 1 Headers */}
+                <TableHead className="py-1 px-3 font-medium text-left w-[170px]">Domain</TableHead>
+                <TableHead className="py-1 px-3 font-medium text-right w-[80px]">Share</TableHead>
+                <TableHead className="py-1 px-3 font-medium text-center w-[120px] border-r">
+                  <div className="flex items-center justify-center space-x-4">
+                    <span>MoM</span>
+                    <span>YoY</span>
+                  </div>
+                </TableHead>
+                {/* Rank 2 Headers */}
+                <TableHead className="py-1 px-3 font-medium text-left w-[170px]">Domain</TableHead>
+                <TableHead className="py-1 px-3 font-medium text-right w-[80px]">Share</TableHead>
+                <TableHead className="py-1 px-3 font-medium text-center w-[120px] border-r">
+                  <div className="flex items-center justify-center space-x-4">
+                    <span>MoM</span>
+                    <span>YoY</span>
+                  </div>
+                </TableHead>
+                {/* Rank 3 Headers */}
+                <TableHead className="py-1 px-3 font-medium text-left w-[170px]">Domain</TableHead>
+                <TableHead className="py-1 px-3 font-medium text-right w-[80px]">Share</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {categoryMarketShareData.map((category, categoryIndex) => (
-                <React.Fragment key={category.category}>
-                  {category.domains.map((domain, index) => (
-                    <TableRow 
-                      key={`${category.category}-${domain.name}`} 
-                      className={`
-                        ${index === 0 ? "bg-soft-purple bg-opacity-20" : categoryIndex % 2 === 0 ? "bg-gray-50" : ""}
-                        hover:bg-dashboard-highlight hover:bg-opacity-10 transition-colors
-                      `}
-                    >
-                      {index === 0 ? (
-                        <TableCell 
-                          className="font-medium border-r border-dashboard-border bg-gray-100 text-dashboard-primary" 
-                          rowSpan={category.domains.length}
-                          style={{ position: 'relative' }}
-                        >
-                          <div className="py-2 font-semibold">{category.category}</div>
-                        </TableCell>
-                      ) : null}
-                      <TableCell className={`font-medium ${index === 0 ? "text-dashboard-primary" : ""}`}>
-                        <div className="flex items-center">
-                          {domain.name}
-                          {index === 0 && (
-                            <span className="ml-2 inline-block px-2 py-0.5 bg-dashboard-primary text-white text-xs rounded-full">
-                              Leader
-                            </span>
-                          )}
+              {categoryMarketShareData.map((category, index) => (
+                <TableRow key={category.category} className={`border-b ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
+                  <TableCell className="py-2 px-3 text-left align-middle border-r">{index + 1}</TableCell>
+                  <TableCell className="py-2 px-3 text-left align-middle border-r">
+                    <div className="flex items-center">
+                      <ChevronRight size={16} className="mr-1 text-gray-400" />
+                      <span className="font-medium">{category.category}</span>
+                    </div>
+                  </TableCell>
+                  
+                  {/* Rank 1 Domain */}
+                  {category.domains[0] && (
+                    <>
+                      <TableCell className="py-2 px-3 text-left align-middle">
+                        <span className="text-dashboard-danger font-medium">{category.domains[0].name}</span>
+                      </TableCell>
+                      <TableCell className="py-2 px-3 text-right align-middle">{category.domains[0].share}%</TableCell>
+                      <TableCell className="py-2 px-3 text-center align-middle border-r">
+                        <div className="flex items-center justify-center space-x-4">
+                          <span className={category.domains[0].monthChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                            {category.domains[0].monthChange > 0 ? '+' : ''}{category.domains[0].monthChange}
+                          </span>
+                          <span className={category.domains[0].yearChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                            {category.domains[0].yearChange > 0 ? '+' : ''}{category.domains[0].yearChange}
+                          </span>
                         </div>
                       </TableCell>
-                      <TableCell className={`text-right ${index === 0 ? "font-bold text-dashboard-primary" : "font-semibold"}`}>
-                        <div className="px-3 py-1 rounded inline-block min-w-[70px]">
-                          {domain.share}%
+                    </>
+                  )}
+                  
+                  {/* Rank 2 Domain */}
+                  {category.domains[1] && (
+                    <>
+                      <TableCell className="py-2 px-3 text-left align-middle">
+                        <span className="text-dashboard-danger font-medium">{category.domains[1].name}</span>
+                      </TableCell>
+                      <TableCell className="py-2 px-3 text-right align-middle">{category.domains[1].share}%</TableCell>
+                      <TableCell className="py-2 px-3 text-center align-middle border-r">
+                        <div className="flex items-center justify-center space-x-4">
+                          <span className={category.domains[1].monthChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                            {category.domains[1].monthChange > 0 ? '+' : ''}{category.domains[1].monthChange}
+                          </span>
+                          <span className={category.domains[1].yearChange > 0 ? 'text-green-600' : 'text-red-500'}>
+                            {category.domains[1].yearChange > 0 ? '+' : ''}{category.domains[1].yearChange}
+                          </span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className={`inline-flex items-center justify-center px-3 py-1 rounded 
-                          ${domain.monthChange > 0 ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50'} 
-                          min-w-[90px] font-medium`
-                        }>
-                          {domain.monthChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                          {domain.monthChange > 0 ? '+' : ''}{domain.monthChange}%
-                        </div>
+                    </>
+                  )}
+                  
+                  {/* Rank 3 Domain */}
+                  {category.domains[2] && (
+                    <>
+                      <TableCell className="py-2 px-3 text-left align-middle">
+                        <span className="text-dashboard-danger font-medium">{category.domains[2].name}</span>
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className={`inline-flex items-center justify-center px-3 py-1 rounded 
-                          ${domain.yearChange > 0 ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50'} 
-                          min-w-[90px] font-medium`
-                        }>
-                          {domain.yearChange > 0 ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                          {domain.yearChange > 0 ? '+' : ''}{domain.yearChange}%
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </React.Fragment>
+                      <TableCell className="py-2 px-3 text-right align-middle">{category.domains[2].share}%</TableCell>
+                    </>
+                  )}
+                </TableRow>
               ))}
             </TableBody>
           </Table>
