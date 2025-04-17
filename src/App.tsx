@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import PriceElasticityDashboard from "./pages/PriceElasticityDashboard";
 import PromotionsDashboard from "./pages/PromotionsDashboard";
 import PromotionsV2Dashboard from "./pages/PromotionsV2Dashboard";
+import ProductBenchmarkV2Dashboard from "./pages/ProductBenchmarkV2Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/price-elasticity" element={<PriceElasticityDashboard />} />
           <Route path="/promotions" element={<PromotionsDashboard />} />
           <Route path="/promotions-v2" element={<PromotionsV2Dashboard />} />
+          <Route path="/product-benchmark-v2" element={<ProductBenchmarkV2Dashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
