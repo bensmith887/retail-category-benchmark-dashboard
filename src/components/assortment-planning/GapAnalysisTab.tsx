@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -46,7 +45,6 @@ const GapAnalysisTab = ({
   const [alerts, setAlerts] = useState<any[]>([]);
   const { toast } = useToast();
 
-  // Filter categories based on search term
   useEffect(() => {
     if (searchTerm) {
       setFilteredCategories(
@@ -59,7 +57,6 @@ const GapAnalysisTab = ({
     }
   }, [searchTerm, categories]);
 
-  // Mock data for new alerts
   useEffect(() => {
     const mockAlerts = [
       { 
@@ -93,7 +90,6 @@ const GapAnalysisTab = ({
     
     setAlerts(mockAlerts);
     
-    // Show toast notification for new alerts
     if (mockAlerts.length > 0 && !showAlerts) {
       toast({
         title: `${mockAlerts.length} new gap analysis alerts`,
@@ -150,13 +146,15 @@ const GapAnalysisTab = ({
             <div>
               <Label>Search Categories</Label>
               <div className="flex w-full items-center space-x-2 mt-1.5">
-                <Input 
-                  placeholder="Search..." 
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="flex-1"
-                  leftIcon={<Search className="h-4 w-4 text-muted-foreground" />}
-                />
+                <div className="relative flex-1">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input 
+                    placeholder="Search..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-8 w-full"
+                  />
+                </div>
               </div>
             </div>
             <div>
