@@ -140,32 +140,32 @@ export const sampleKeywordShareData = [
   { domain: 'wayfair.com', share: 2.1 }
 ];
 
-// Add data for ProductPerformanceView
+// Update ProductPerformanceView data with correct property names
 export const productPerformanceData = [
-  { id: 1, name: 'Wireless Headphones', category: 'Electronics', sales: 1245, views: 15600, conversion: 8.2, change: 12.5 },
-  { id: 2, name: 'Smart Watch', category: 'Electronics', sales: 980, views: 12400, conversion: 7.9, change: 8.7 },
-  { id: 3, name: 'Bluetooth Speaker', category: 'Electronics', sales: 850, views: 9200, conversion: 9.2, change: 5.3 },
-  { id: 4, name: 'Fitness Tracker', category: 'Wearables', sales: 720, views: 8900, conversion: 8.1, change: 3.2 },
-  { id: 5, name: 'Laptop Backpack', category: 'Accessories', sales: 680, views: 7500, conversion: 9.1, change: 6.9 }
+  { id: 1, name: 'Wireless Headphones', category: 'Electronics', sales: 1245, pageViews: 15600, conversion: 8.2, monthChange: 12.5, yearChange: 18.7, description: 'Premium wireless headphones with noise cancellation.' },
+  { id: 2, name: 'Smart Watch', category: 'Electronics', sales: 980, pageViews: 12400, conversion: 7.9, monthChange: 8.7, yearChange: 15.3, description: 'Feature-rich smartwatch with health tracking.' },
+  { id: 3, name: 'Bluetooth Speaker', category: 'Electronics', sales: 850, pageViews: 9200, conversion: 9.2, monthChange: 5.3, yearChange: 12.8, description: 'Portable bluetooth speaker with superior sound quality.' },
+  { id: 4, name: 'Fitness Tracker', category: 'Wearables', sales: 720, pageViews: 8900, conversion: 8.1, monthChange: 3.2, yearChange: 9.5, description: 'Fitness tracking band with sleep monitoring.' },
+  { id: 5, name: 'Laptop Backpack', category: 'Accessories', sales: 680, pageViews: 7500, conversion: 9.1, monthChange: 6.9, yearChange: 11.2, description: 'Durable laptop backpack with anti-theft features.' }
 ];
 
 // Add data for PromotionEffectivenessView
 export const dailyTrafficData = [
-  { date: '2023-09-01', traffic: 4200, promotion: false },
-  { date: '2023-09-02', traffic: 4350, promotion: false },
-  { date: '2023-09-03', traffic: 3800, promotion: false },
-  { date: '2023-09-04', traffic: 4100, promotion: false },
-  { date: '2023-09-05', traffic: 4250, promotion: false },
-  { date: '2023-09-06', traffic: 4500, promotion: false },
-  { date: '2023-09-07', traffic: 4650, promotion: false },
-  { date: '2023-09-08', traffic: 5200, promotion: true },
-  { date: '2023-09-09', traffic: 6800, promotion: true },
-  { date: '2023-09-10', traffic: 7500, promotion: true },
-  { date: '2023-09-11', traffic: 7200, promotion: true },
-  { date: '2023-09-12', traffic: 6900, promotion: true },
-  { date: '2023-09-13', traffic: 6500, promotion: true },
-  { date: '2023-09-14', traffic: 6200, promotion: true },
-  { date: '2023-09-15', traffic: 4800, promotion: false }
+  { date: '2023-09-01', yourTraffic: 4200, competitorTraffic: 3800, yourShare: 52.5, competitorShare: 47.5, promotion: false, formattedDate: '9/1' },
+  { date: '2023-09-02', yourTraffic: 4350, competitorTraffic: 3900, yourShare: 52.7, competitorShare: 47.3, promotion: false, formattedDate: '9/2' },
+  { date: '2023-09-03', yourTraffic: 3800, competitorTraffic: 3500, yourShare: 52.1, competitorShare: 47.9, promotion: false, formattedDate: '9/3' },
+  { date: '2023-09-04', yourTraffic: 4100, competitorTraffic: 3750, yourShare: 52.2, competitorShare: 47.8, promotion: false, formattedDate: '9/4' },
+  { date: '2023-09-05', yourTraffic: 4250, competitorTraffic: 3850, yourShare: 52.5, competitorShare: 47.5, promotion: false, formattedDate: '9/5' },
+  { date: '2023-09-06', yourTraffic: 4500, competitorTraffic: 4000, yourShare: 52.9, competitorShare: 47.1, promotion: false, formattedDate: '9/6' },
+  { date: '2023-09-07', yourTraffic: 4650, competitorTraffic: 4100, yourShare: 53.1, competitorShare: 46.9, promotion: false, formattedDate: '9/7' },
+  { date: '2023-09-08', yourTraffic: 5200, competitorTraffic: 4300, yourShare: 54.7, competitorShare: 45.3, promotion: true, formattedDate: '9/8' },
+  { date: '2023-09-09', yourTraffic: 6800, competitorTraffic: 4500, yourShare: 60.2, competitorShare: 39.8, promotion: true, formattedDate: '9/9' },
+  { date: '2023-09-10', yourTraffic: 7500, competitorTraffic: 4600, yourShare: 62.0, competitorShare: 38.0, promotion: true, formattedDate: '9/10' },
+  { date: '2023-09-11', yourTraffic: 7200, competitorTraffic: 4550, yourShare: 61.3, competitorShare: 38.7, promotion: true, formattedDate: '9/11' },
+  { date: '2023-09-12', yourTraffic: 6900, competitorTraffic: 4500, yourShare: 60.5, competitorShare: 39.5, promotion: true, formattedDate: '9/12' },
+  { date: '2023-09-13', yourTraffic: 6500, competitorTraffic: 4400, yourShare: 59.6, competitorShare: 40.4, promotion: true, formattedDate: '9/13' },
+  { date: '2023-09-14', yourTraffic: 6200, competitorTraffic: 4300, yourShare: 59.0, competitorShare: 41.0, promotion: true, formattedDate: '9/14' },
+  { date: '2023-09-15', yourTraffic: 4800, competitorTraffic: 4100, yourShare: 53.9, competitorShare: 46.1, promotion: false, formattedDate: '9/15' }
 ];
 
 export const conversionRateBenchmarkData = [
@@ -176,33 +176,67 @@ export const conversionRateBenchmarkData = [
   { date: 'Week 5', yourRate: 4.5, competitorAvg: 3.4, industryAvg: 3.2 }
 ];
 
-// Add data for TrafficSourcesView
+// Update TrafficSourcesView data with correct property names
 export const trafficSourcesData = [
-  { source: 'Organic Search', share: 32, change: 2.5 },
-  { source: 'Direct', share: 22, change: -1.2 },
-  { source: 'Referral', share: 18, change: 0.8 },
-  { source: 'Social', share: 15, change: 3.2 },
-  { source: 'Email', share: 8, change: 1.4 },
-  { source: 'Paid Search', share: 5, change: 0.5 }
+  { name: 'Organic Search', value: 32, change: 2.5 },
+  { name: 'Direct', value: 22, change: -1.2 },
+  { name: 'Referral', value: 18, change: 0.8 },
+  { name: 'Social', value: 15, change: 3.2 },
+  { name: 'Email', value: 8, change: 1.4 },
+  { name: 'Paid Search', value: 5, change: 0.5 }
 ];
 
 export const trafficSourceTrendData = [
-  { month: 'Apr', Organic: 30, Direct: 22, Referral: 17, Social: 12, Email: 7, Paid: 5 },
-  { month: 'May', Organic: 31, Direct: 22, Referral: 17, Social: 13, Email: 7, Paid: 5 },
-  { month: 'Jun', Organic: 31, Direct: 21, Referral: 18, Social: 14, Email: 8, Paid: 5 },
-  { month: 'Jul', Organic: 32, Direct: 21, Referral: 18, Social: 14, Email: 8, Paid: 5 },
-  { month: 'Aug', Organic: 32, Direct: 21, Referral: 18, Social: 15, Email: 8, Paid: 5 },
-  { month: 'Sep', Organic: 32, Direct: 22, Referral: 18, Social: 15, Email: 8, Paid: 5 }
+  { month: 'Apr', organic: 30, direct: 22, referral: 17, social: 12, email: 7, paid: 5 },
+  { month: 'May', organic: 31, direct: 22, referral: 17, social: 13, email: 7, paid: 5 },
+  { month: 'Jun', organic: 31, direct: 21, referral: 18, social: 14, email: 8, paid: 5 },
+  { month: 'Jul', organic: 32, direct: 21, referral: 18, social: 14, email: 8, paid: 5 },
+  { month: 'Aug', organic: 32, direct: 21, referral: 18, social: 15, email: 8, paid: 5 },
+  { month: 'Sep', organic: 32, direct: 22, referral: 18, social: 15, email: 8, paid: 5 }
 ];
 
+// Update categoryTrafficData with sources property
 export const categoryTrafficData = [
-  { category: 'Electronics', share: 28, change: 1.5 },
-  { category: 'Fashion', share: 22, change: 2.3 },
-  { category: 'Home & Garden', share: 18, change: 0.5 },
-  { category: 'Health & Beauty', share: 12, change: 1.2 },
-  { category: 'Sports & Outdoors', share: 8, change: -0.3 },
-  { category: 'Toys & Games', share: 7, change: 0.8 },
-  { category: 'Books & Media', share: 5, change: -0.5 }
+  { 
+    category: 'Electronics', 
+    sources: [
+      { name: 'Organic Search', value: 35 },
+      { name: 'Direct', value: 25 },
+      { name: 'Social', value: 20 },
+      { name: 'Referral', value: 12 },
+      { name: 'Email', value: 8 }
+    ]
+  },
+  { 
+    category: 'Fashion', 
+    sources: [
+      { name: 'Organic Search', value: 30 },
+      { name: 'Direct', value: 20 },
+      { name: 'Social', value: 28 },
+      { name: 'Referral', value: 15 },
+      { name: 'Email', value: 7 }
+    ]
+  },
+  { 
+    category: 'Home & Garden', 
+    sources: [
+      { name: 'Organic Search', value: 40 },
+      { name: 'Direct', value: 22 },
+      { name: 'Social', value: 15 },
+      { name: 'Referral', value: 18 },
+      { name: 'Email', value: 5 }
+    ]
+  },
+  { 
+    category: 'Beauty', 
+    sources: [
+      { name: 'Organic Search', value: 25 },
+      { name: 'Direct', value: 18 },
+      { name: 'Social', value: 32 },
+      { name: 'Referral', value: 15 },
+      { name: 'Email', value: 10 }
+    ]
+  }
 ];
 
 export const competitorSourceBenchmarks = [
@@ -214,7 +248,7 @@ export const competitorSourceBenchmarks = [
   { source: 'Paid Search', yourShare: 5, competitorAvg: 9, industryAvg: 13 }
 ];
 
-// Add general insight data
+// Update insightData with type property
 export const insightData = [
   {
     title: 'Category Growth',
@@ -223,7 +257,8 @@ export const insightData = [
       'Increase inventory of top-performing electronics',
       'Expand premium electronics selection',
       'Create bundle deals with accessories'
-    ]
+    ],
+    type: 'positive'
   },
   {
     title: 'Pricing Opportunity',
@@ -232,7 +267,8 @@ export const insightData = [
       'Evaluate price elasticity for margin improvement',
       'Test selective price increases',
       'Bundle complementary products'
-    ]
+    ],
+    type: 'opportunity'
   },
   {
     title: 'Traffic Insights',
@@ -241,7 +277,8 @@ export const insightData = [
       'Increase social media marketing budget',
       'Expand social shopping integration',
       'Create social-exclusive promotions'
-    ]
+    ],
+    type: 'recommendation'
   },
   {
     title: 'Competitive Edge',
@@ -250,7 +287,8 @@ export const insightData = [
       'Highlight speed advantage in marketing',
       'Continue optimizing site performance',
       'Add site speed messaging to homepage'
-    ]
+    ],
+    type: 'positive'
   }
 ];
 
@@ -290,3 +328,4 @@ export const filtersData = [
     ]
   }
 ];
+
