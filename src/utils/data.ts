@@ -72,6 +72,12 @@ export const tabsData = [
     name: 'Retail Media',
     icon: 'Radio',
     hidden: true
+  },
+  {
+    id: 'assortment-planning',
+    name: 'Assortment Planning',
+    icon: 'TreePalm',
+    hidden: false
   }
 ];
 

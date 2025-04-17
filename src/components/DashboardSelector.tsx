@@ -54,7 +54,6 @@ const DashboardSelector: React.FC<DashboardSelectorProps> = ({ currentPath }) =>
         <SelectContent>
           <SelectItem value="/">Overview</SelectItem>
           <SelectItem value="/price-elasticity">Price Sensitivity</SelectItem>
-          {/* Keep promotions route but hidden in sidebar */}
           {visibleTabs.some(tab => tab.id === 'promotions-v2') && (
             <SelectItem value="/promotions-v2">Promotion Planning</SelectItem>
           )}
