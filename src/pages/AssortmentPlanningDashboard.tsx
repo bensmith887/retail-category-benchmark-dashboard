@@ -12,7 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Tabs as UITabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { GanttChart, PieChart, BarChart3, LineChart, Filter, Calendar } from 'lucide-react';
+import { GanttChart, PieChart, BarChart3, LineChart, Filter, Calendar, BarChart } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -23,6 +23,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { assortmentData } from '@/utils/assortmentData';
+import GapAnalysisTab from '@/components/assortment-planning/GapAnalysisTab';
 
 const AssortmentPlanningDashboard = () => {
   const [activeTab, setActiveTab] = useState('assortment-planning');
@@ -182,7 +183,7 @@ const AssortmentPlanningDashboard = () => {
             
             {/* Tabs for different analysis views */}
             <UITabs value={analysisView} onValueChange={setAnalysisView} className="mb-6">
-              <TabsList className="grid grid-cols-3 w-full md:w-auto">
+              <TabsList className="grid grid-cols-4 w-full md:w-auto">
                 <TabsTrigger value="depth" className="flex items-center gap-2">
                   <BarChart3 size={16} />
                   <span>Depth Analysis</span>
@@ -195,71 +196,77 @@ const AssortmentPlanningDashboard = () => {
                   <LineChart size={16} />
                   <span>Price Distribution</span>
                 </TabsTrigger>
+                <TabsTrigger value="gaps" className="flex items-center gap-2">
+                  <BarChart size={16} />
+                  <span>Gap Analysis</span>
+                </TabsTrigger>
               </TabsList>
               
-              {/* Filters Card - Common across all tabs */}
-              <Card className="mb-6 mt-4">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                      <Filter size={18} />
-                      <span>Filters</span>
-                    </CardTitle>
-                    <Button variant="outline" size="sm" onClick={() => setSelectedCompetitors(['Your Brand', 'Amazon', 'Walmart'])}>
-                      Reset
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-4">
-                    <div className="flex flex-col gap-2">
-                      <Label className="font-medium">Competitors</Label>
-                      <div className="flex flex-wrap gap-3">
-                        {competitors.map((competitor) => (
-                          <div key={competitor.id} className="flex items-center gap-2">
-                            <Checkbox 
-                              id={competitor.id} 
-                              checked={selectedCompetitors.includes(competitor.name)} 
-                              onCheckedChange={() => handleCompetitorToggle(competitor.name)}
-                              className="border-2"
-                              style={{ 
-                                borderColor: competitorColors[competitor.name],
-                                backgroundColor: selectedCompetitors.includes(competitor.name) 
-                                  ? competitorColors[competitor.name] 
-                                  : 'transparent' 
-                              }}
-                            />
-                            <Label 
-                              htmlFor={competitor.id} 
-                              className="cursor-pointer"
-                            >
-                              {competitor.name}
-                            </Label>
-                          </div>
-                        ))}
+              {/* Filters Card - Common across all tabs except Gap Analysis */}
+              {analysisView !== 'gaps' && (
+                <Card className="mb-6 mt-4">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <Filter size={18} />
+                        <span>Filters</span>
+                      </CardTitle>
+                      <Button variant="outline" size="sm" onClick={() => setSelectedCompetitors(['Your Brand', 'Amazon', 'Walmart'])}>
+                        Reset
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-4">
+                      <div className="flex flex-col gap-2">
+                        <Label className="font-medium">Competitors</Label>
+                        <div className="flex flex-wrap gap-3">
+                          {competitors.map((competitor) => (
+                            <div key={competitor.id} className="flex items-center gap-2">
+                              <Checkbox 
+                                id={competitor.id} 
+                                checked={selectedCompetitors.includes(competitor.name)} 
+                                onCheckedChange={() => handleCompetitorToggle(competitor.name)}
+                                className="border-2"
+                                style={{ 
+                                  borderColor: competitorColors[competitor.name],
+                                  backgroundColor: selectedCompetitors.includes(competitor.name) 
+                                    ? competitorColors[competitor.name] 
+                                    : 'transparent' 
+                                }}
+                              />
+                              <Label 
+                                htmlFor={competitor.id} 
+                                className="cursor-pointer"
+                              >
+                                {competitor.name}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <Separator orientation="vertical" className="h-auto hidden md:block" />
+                      
+                      <div>
+                        <Label className="font-medium">Price Analysis</Label>
+                        <Select value={activePriceCompetitor} onValueChange={setActivePriceCompetitor}>
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select competitor" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {competitors.map((competitor) => (
+                              <SelectItem key={competitor.id} value={competitor.name}>
+                                {competitor.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
-                    
-                    <Separator orientation="vertical" className="h-auto hidden md:block" />
-                    
-                    <div>
-                      <Label className="font-medium">Price Analysis</Label>
-                      <Select value={activePriceCompetitor} onValueChange={setActivePriceCompetitor}>
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select competitor" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {competitors.map((competitor) => (
-                            <SelectItem key={competitor.id} value={competitor.name}>
-                              {competitor.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              )}
               
               <TabsContent value="depth" className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -343,6 +350,14 @@ const AssortmentPlanningDashboard = () => {
                     />
                   </CardContent>
                 </Card>
+              </TabsContent>
+              
+              <TabsContent value="gaps" className="space-y-6">
+                <GapAnalysisTab 
+                  competitors={competitors} 
+                  categories={categories}
+                  selectedCompetitors={selectedCompetitors}
+                />
               </TabsContent>
             </UITabs>
             
