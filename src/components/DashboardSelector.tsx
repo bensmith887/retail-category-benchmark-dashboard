@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
@@ -34,6 +35,8 @@ const DashboardSelector: React.FC<DashboardSelectorProps> = ({ currentPath }) =>
         return 'Promotions';
       case '/promotions-v2':
         return 'Promotion Planning';
+      case '/assortment-planning':
+        return 'Assortment Planning';
       default:
         return 'Overview';
     }
@@ -55,6 +58,7 @@ const DashboardSelector: React.FC<DashboardSelectorProps> = ({ currentPath }) =>
           {visibleTabs.some(tab => tab.id === 'promotions-v2') && (
             <SelectItem value="/promotions-v2">Promotion Planning</SelectItem>
           )}
+          <SelectItem value="/assortment-planning">Assortment Planning</SelectItem>
         </SelectContent>
       </Select>
     </div>

@@ -2,7 +2,8 @@
 import React from 'react';
 import { 
   BarChart3, PieChart, TrendingUp, Activity, LineChart, MessageSquare, 
-  DollarSign, Percent, Tag, ShoppingCart, Users, Search, Share2, Heart, ExternalLink, Radio
+  DollarSign, Percent, Tag, ShoppingCart, Users, Search, Share2, Heart, ExternalLink, Radio,
+  FolderTree, Grid2X2
 } from 'lucide-react';
 
 interface TabIconProps {
@@ -45,6 +46,10 @@ export const TabIcon: React.FC<TabIconProps> = ({ name, size = 16, className }) 
       return <ExternalLink size={size} className={className} />;
     case 'Radio':
       return <Radio size={size} className={className} />;
+    case 'FolderTree':
+      return <FolderTree size={size} className={className} />;
+    case 'Grid2X2':
+      return <Grid2X2 size={size} className={className} />;
     default:
       return <BarChart3 size={size} className={className} />;
   }
