@@ -176,8 +176,8 @@ export const AssortmentHeatmap: React.FC<AssortmentHeatmapProps> = ({ competitor
             </ScatterChart>
           </ResponsiveContainer>
         </div>
-        <CustomizedLegend />
       </ChartContainer>
+      <CustomizedLegend />
     </div>
   );
 };
