@@ -1,11 +1,5 @@
 
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import { 
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent
-} from '@/components/ui/chart';
 import { 
   ResponsiveContainer, 
   Tooltip, 
@@ -14,8 +8,10 @@ import {
   ScatterChart, 
   Scatter, 
   Cell,
-  ZAxis
+  ZAxis,
+  Legend
 } from 'recharts';
+import { ChartContainer } from '@/components/ui/chart';
 
 // Sample data for the heatmap
 const generateHeatmapData = (competitors, categories) => {
@@ -62,84 +58,126 @@ export const AssortmentHeatmap: React.FC<AssortmentHeatmapProps> = ({ competitor
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
+      
+      const getColorClass = (value: number) => {
+        if (value >= 80) return 'text-green-500';
+        if (value >= 50) return 'text-blue-500';
+        if (value >= 20) return 'text-orange-500';
+        return 'text-red-500';
+      };
+      
       return (
-        <div className="rounded-md bg-white p-3 shadow-md border border-gray-200">
-          <p className="font-medium">{data.category}</p>
+        <div className="bg-white p-3 shadow-lg border border-gray-200 rounded-md">
+          <p className="font-medium text-sm">{data.category}</p>
           <p className="text-sm text-gray-600">{data.competitor}</p>
-          <p className={`text-sm font-semibold ${data.z >= 50 ? 'text-green-500' : data.z >= 20 ? 'text-blue-500' : 'text-orange-500'}`}>
+          <p className={`text-sm font-semibold ${getColorClass(data.z)}`}>
             Coverage: {data.coverage}
           </p>
+          <div className="mt-1 text-xs text-gray-500">
+            {data.z >= 80 ? 'Excellent coverage' : 
+              data.z >= 50 ? 'Good coverage' : 
+              data.z >= 20 ? 'Fair coverage' : 
+              'Poor coverage'}
+          </div>
         </div>
       );
     }
     return null;
   };
 
+  const legendItems = [
+    { value: 'Excellent (80-100%)', color: '#22c55e' },
+    { value: 'Good (50-79%)', color: '#0EA5E9' },
+    { value: 'Fair (20-49%)', color: '#F97316' },
+    { value: 'Poor (0-19%)', color: '#ef4444' }
+  ];
+
+  const CustomizedLegend = () => (
+    <div className="flex flex-wrap justify-center gap-4 mt-4">
+      {legendItems.map((item, index) => (
+        <div key={index} className="flex items-center gap-2">
+          <div 
+            className="w-3 h-3 rounded-sm" 
+            style={{ backgroundColor: item.color }}
+          />
+          <span className="text-xs">{item.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
-    <ChartContainer config={config} className="h-full w-full">
-      <ScatterChart
-        margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-      >
-        <XAxis 
-          type="number" 
-          dataKey="x" 
-          name="Competitor" 
-          tick={false}
-          tickLine={false}
-          axisLine={false}
-        />
-        <YAxis 
-          type="number" 
-          dataKey="y" 
-          name="Category" 
-          tick={false}
-          tickLine={false}
-          axisLine={false}
-        />
-        <ZAxis 
-          type="number" 
-          dataKey="z" 
-          range={[100, 500]}
-        />
-        <Tooltip content={<CustomTooltip />} />
-        <Scatter data={data}>
-          {data.map((entry, index) => (
-            <Cell
-              key={`cell-${index}`}
-              fill={getColorByValue(entry.z)}
-              strokeWidth={1}
-            />
-          ))}
-        </Scatter>
-        
-        {/* Competitor labels */}
-        {competitors.map((competitor, index) => (
-          <text 
-            key={`competitor-${index}`} 
-            x={(index * 100) + 45} 
-            y={20} 
-            textAnchor="middle" 
-            dominantBaseline="middle"
-            className="fill-slate-600 text-xs font-medium"
-          >
-            {competitor.name}
-          </text>
-        ))}
-        
-        {/* Category labels */}
-        {categories.map((category, index) => (
-          <text 
-            key={`category-${index}`} 
-            x={20} 
-            y={(index * 70) + 50} 
-            textAnchor="start" 
-            dominantBaseline="middle"
-            className="fill-slate-600 text-xs font-medium"
-          >
-            {category.name}
-          </text>
-        ))}
-      </ScatterChart>
-    </ChartContainer>
+    <div className="h-full w-full">
+      <ChartContainer config={config} className="h-full w-full">
+        <div className="h-[450px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <ScatterChart
+              margin={{ top: 50, right: 30, bottom: 30, left: 20 }}
+            >
+              <XAxis 
+                type="number" 
+                dataKey="x" 
+                name="Competitor" 
+                tick={false}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis 
+                type="number" 
+                dataKey="y" 
+                name="Category" 
+                tick={false}
+                tickLine={false}
+                axisLine={false}
+              />
+              <ZAxis 
+                type="number" 
+                dataKey="z" 
+                range={[100, 500]}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Scatter data={data}>
+                {data.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={getColorByValue(entry.z)}
+                    strokeWidth={1}
+                  />
+                ))}
+              </Scatter>
+              
+              {/* Competitor labels */}
+              {competitors.map((competitor, index) => (
+                <text 
+                  key={`competitor-${index}`} 
+                  x={(index * 100) + 45} 
+                  y={20} 
+                  textAnchor="middle" 
+                  dominantBaseline="middle"
+                  className="fill-slate-600 text-xs font-medium"
+                >
+                  {competitor.name}
+                </text>
+              ))}
+              
+              {/* Category labels */}
+              {categories.map((category, index) => (
+                <text 
+                  key={`category-${index}`} 
+                  x={20} 
+                  y={(index * 70) + 50} 
+                  textAnchor="start" 
+                  dominantBaseline="middle"
+                  className="fill-slate-600 text-xs font-medium"
+                >
+                  {category.name}
+                </text>
+              ))}
+            </ScatterChart>
+          </ResponsiveContainer>
+        </div>
+        <CustomizedLegend />
+      </ChartContainer>
+    </div>
   );
 };
