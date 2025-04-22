@@ -1,4 +1,4 @@
-import { BarChart3, PieChart, TrendingUp, Activity, LineChart, MessageSquare, DollarSign, Percent, Tag, ShoppingCart, Users, Search, Share2, Heart, ExternalLink, Radio } from 'lucide-react';
+import { BarChart3, PieChart, TrendingUp, Activity, LineChart, MessageSquare, DollarSign, Percent, Tag, ShoppingCart, Users, Search, Share2, Heart, ExternalLink, Radio, LayoutDashboard } from 'lucide-react';
 
 export const tabsData = [
   {
@@ -77,6 +77,12 @@ export const tabsData = [
     id: 'assortment-planning',
     name: 'Assortment Planning',
     icon: 'TreePalm',
+    hidden: false
+  },
+  {
+    id: 'range-building',
+    name: 'Range Building',
+    icon: 'LayoutDashboard',
     hidden: false
   }
 ];
