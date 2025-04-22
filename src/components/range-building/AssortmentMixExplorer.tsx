@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -44,7 +45,10 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   categories, 
   priceRanges 
 }) => {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(['jeans_skinny', 'jeans_slim', 'jeans_straight']);
+  // Use the first 3 categories from the passed categories prop instead of hardcoded values
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    categories.slice(0, 3).map(cat => cat.id)
+  );
   const [displayType, setDisplayType] = useState<'percentage' | 'count'>('percentage');
   const [priceInterval, setPriceInterval] = useState<string>('5');
   const [dateRange, setDateRange] = useState<string>('3');
@@ -101,16 +105,21 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   };
 
   const getBubbleColor = (value: number, catId: string): string => {
-    if (catId.includes('skinny')) {
+    // Update color logic to work with the new category IDs
+    if (catId.includes('mens_')) {
       return 'bg-blue-100 text-blue-800';
-    } else if (catId.includes('slim')) {
+    } else if (catId.includes('womens_')) {
       return 'bg-green-100 text-green-800';
-    } else if (catId.includes('straight')) {
+    } else if (catId.includes('junior_')) {
       return 'bg-pink-100 text-pink-800';
-    } else if (catId.includes('tshirt')) {
+    } else if (catId.includes('replica_')) {
       return 'bg-purple-100 text-purple-800';
-    } else if (catId.includes('blouse')) {
+    } else if (catId.includes('accessories')) {
       return 'bg-orange-100 text-orange-800';
+    } else if (catId.includes('infant_')) {
+      return 'bg-yellow-100 text-yellow-800';
+    } else if (catId.includes('childrens_')) {
+      return 'bg-indigo-100 text-indigo-800';
     } else {
       return 'bg-gray-100 text-gray-800';
     }
