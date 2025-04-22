@@ -164,19 +164,6 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     cat.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getBubbleSize = (value: number): string => {
-    if (value === 0) return 'hidden';
-    if (value < 2) return 'w-3 h-3';
-    if (value < 5) return 'w-4 h-4';
-    if (value < 10) return 'w-5 h-5';
-    if (value < 15) return 'w-6 h-6';
-    if (value < 25) return 'w-7 h-7';
-    if (value < 35) return 'w-8 h-8';
-    if (value < 45) return 'w-9 h-9';
-    if (value < 60) return 'w-10 h-10';
-    return 'w-11 h-11';
-  };
-
   const getBarColor = (value: number) => {
     if (value >= 15) return 'bg-blue-600';
     if (value >= 10) return 'bg-blue-500';

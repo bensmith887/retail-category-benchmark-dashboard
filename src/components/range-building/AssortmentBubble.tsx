@@ -1,5 +1,7 @@
 
 import React from 'react';
+import { pickSize } from './bubbleSizing';
+import { pickColor } from './bubblePalette';
 
 interface AssortmentBubbleProps {
   value: number; // 0-100, main percentage value
@@ -7,57 +9,30 @@ interface AssortmentBubbleProps {
   categoryId?: string | null;
 }
 
-const sizeSteps = [
-  { limit: 2, size: 14 },
-  { limit: 5, size: 18 },
-  { limit: 10, size: 24 },
-  { limit: 15, size: 30 },
-  { limit: 25, size: 36 },
-  { limit: 40, size: 42 },
-  { limit: 60, size: 52 },
-  { limit: 80, size: 60 },
-  { limit: 100, size: 72 }
-];
-
-const pickSize = (value: number): number => {
-  for (const s of sizeSteps) {
-    if (value < s.limit) return s.size;
-  }
-  return 72;
-};
-
-const colorPalette = [
-  { limit: 2, className: "bg-gray-200 text-gray-600 border-gray-300" },
-  { limit: 5, className: "bg-sky-100 text-sky-700 border-sky-300" },
-  { limit: 10, className: "bg-blue-200 text-blue-800 border-blue-300" },
-  { limit: 20, className: "bg-blue-300 text-blue-900 border-blue-400" },
-  { limit: 40, className: "bg-purple-200 text-purple-800 border-purple-300" },
-  { limit: 60, className: "bg-violet-300 text-violet-900 border-violet-400" },
-  { limit: 80, className: "bg-pink-300 text-pink-900 border-pink-400" },
-  { limit: 100, className: "bg-orange-400 text-white border-orange-500" }
-];
-
-const pickColor = (value: number): string => {
-  for (const c of colorPalette) {
-    if (value < c.limit) return c.className;
-  }
-  return "bg-orange-500 text-white border-orange-600";
-};
-
-export const AssortmentBubble: React.FC<AssortmentBubbleProps> = ({ value, secondary, categoryId }) => {
+/**
+ * Visually enhanced bubble to maximize perceived differences.
+ */
+export const AssortmentBubble: React.FC<AssortmentBubbleProps> = ({ value, secondary }) => {
   if (!value || value < 0.01) return null;
   const size = pickSize(value);
   const color = pickColor(value);
 
   return (
     <div
-      style={{ width: size, height: size, fontSize: size >= 42 ? 13 : 11, minWidth: 14, minHeight: 14 }}
-      className={`flex flex-col items-center justify-center rounded-full border-2 shadow-lg transition-all duration-200 ${color}
-        font-semibold relative z-10 select-none`}
+      style={{
+        width: size,
+        height: size,
+        fontSize: size >= 70 ? 20 : size > 40 ? 15 : 12,
+        minWidth: 16,
+        minHeight: 16,
+        boxShadow: '0 2px 16px 4px rgba(120, 48, 210, 0.13)' // more "pop"
+      }}
+      className={`flex flex-col items-center justify-center rounded-full border-2 transition-all duration-200 ${color}
+        font-semibold relative z-10 select-none ring-2 ring-purple-200 ring-opacity-80`}
     >
-      <span className="leading-none">{value.toFixed(1)}%</span>
+      <span className="leading-none" style={{ letterSpacing: 0.5 }}>{value.toFixed(1)}%</span>
       {secondary && (
-        <span className="text-[9px] leading-none opacity-90 font-normal">{secondary}</span>
+        <span className="text-[10px] leading-none opacity-90 font-normal mt-0.5">{secondary}</span>
       )}
     </div>
   );
