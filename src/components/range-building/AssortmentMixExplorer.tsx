@@ -41,7 +41,7 @@ interface SkuData {
 
 type AssortmentData = Record<string, Record<string, Record<string, SkuData>>>;
 
-type DisplayMetric = 'percentage' | 'pdvs' | 'count';
+type DisplayMetric = 'range-percentage' | 'pdv-percentage';
 
 export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({ 
   retailers, 
@@ -51,7 +51,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     categories.slice(0, 3).map(cat => cat.id)
   );
-  const [displayMetric, setDisplayMetric] = useState<DisplayMetric>('percentage');
+  const [displayMetric, setDisplayMetric] = useState<DisplayMetric>('range-percentage');
   const [priceInterval, setPriceInterval] = useState<string>('5');
   const [dateRange, setDateRange] = useState<string>('3');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -148,27 +148,34 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     });
   };
 
-  const getDisplayValue = (data: SkuData | undefined): number => {
-    if (!data) return 0;
+  const getDisplayValue = (data: SkuData | undefined): { primary: string; secondary: string } => {
+    if (!data) return { primary: '', secondary: '' };
+    
     switch (displayMetric) {
-      case 'pdvs':
-        return data.pdvs;
-      case 'count':
-        return data.count;
-      default:
-        return data.percentage;
+      case 'pdv-percentage':
+        const pdvPercentage = ((data.pdvs / getTotalPDVs()) * 100).toFixed(1);
+        return {
+          primary: `${pdvPercentage}%`,
+          secondary: data.pdvs.toLocaleString()
+        };
+      default: // range-percentage
+        return {
+          primary: `${data.percentage.toFixed(1)}%`,
+          secondary: data.count.toString()
+        };
     }
   };
 
-  const getDisplaySuffix = (metric: DisplayMetric): string => {
-    switch (metric) {
-      case 'pdvs':
-        return '';
-      case 'count':
-        return '';
-      default:
-        return '%';
-    }
+  const getTotalPDVs = () => {
+    let total = 0;
+    Object.values(assortmentData).forEach(retailerData => {
+      Object.values(retailerData).forEach(categoryData => {
+        Object.values(categoryData).forEach(data => {
+          total += data.pdvs;
+        });
+      });
+    });
+    return total;
   };
 
   return (
@@ -189,14 +196,11 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                 if (value) setDisplayMetric(value as DisplayMetric);
               }}
             >
-              <ToggleGroupItem value="percentage" aria-label="Show percentages">
+              <ToggleGroupItem value="range-percentage" aria-label="Show range percentages">
                 % of Range
               </ToggleGroupItem>
-              <ToggleGroupItem value="pdvs" aria-label="Show PDVs">
-                PDVs
-              </ToggleGroupItem>
-              <ToggleGroupItem value="count" aria-label="Show SKU count">
-                SKU Count
+              <ToggleGroupItem value="pdv-percentage" aria-label="Show PDV percentages">
+                PDV %
               </ToggleGroupItem>
             </ToggleGroup>
           </div>
@@ -304,19 +308,21 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                         {priceRanges.map(priceRange => {
                           const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
                           const value = getDisplayValue(data);
-                          const displayValue = `${value}${getDisplaySuffix(displayMetric)}`;
+                          const bubbleSize = getBubbleSize(parseFloat(value.primary));
+                          const bubbleColor = getBubbleColor(parseFloat(value.primary), catId);
                           
                           return (
                             <TableCell 
                               key={`${retailer.id}-${catId}-${priceRange.id}`} 
                               className="text-center p-4"
                             >
-                              {value > 0 && (
+                              {value.primary && (
                                 <div className="flex justify-center items-center">
                                   <div 
-                                    className={`${getBubbleSize(value)} ${getBubbleColor(value, catId)} rounded-full flex items-center justify-center text-xs font-medium`}
+                                    className={`${bubbleSize} ${bubbleColor} rounded-full flex flex-col items-center justify-center text-xs font-medium`}
                                   >
-                                    {displayValue}
+                                    <span>{value.primary}</span>
+                                    <span className="text-[10px] opacity-75">{value.secondary}</span>
                                   </div>
                                 </div>
                               )}
