@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Button } from "../ui/button";
 
 interface ProductDetail {
@@ -30,69 +30,108 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
   priceRange,
 }) => {
   const [expanded, setExpanded] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+
   // Show top 5 by default, or top 50 when expanded
   const shownProducts = expanded
     ? products.slice(0, 50)
     : products.slice(0, 5);
 
+  const handleRowClick = (id: string) => {
+    setSelectedProductId(id);
+  };
+
+  const handleClear = () => {
+    setSelectedProductId(null);
+  };
+
   return (
     <div className="border rounded-lg bg-white mt-8 mb-4 shadow-md animate-fade-in">
       <div className="flex items-center justify-between px-4 py-2 border-b bg-muted-100 rounded-t-lg">
         <div>
-          <span className="text-base font-semibold text-dashboard-primary">Product Details</span>
+          <span className="text-base font-semibold text-[#5840bb]">Product Details</span>
           <span className="ml-3 text-xs text-muted-foreground">
             ({retailer} / {category} / {priceRange})
           </span>
         </div>
-        {onClose && (
-          <button
-            className="text-xs px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium ml-2"
-            onClick={onClose}
-            aria-label="Close product detail"
-          >
-            Close
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {selectedProductId && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs px-3 py-1 h-8"
+              onClick={handleClear}
+              aria-label="Clear selection"
+            >
+              Clear
+            </Button>
+          )}
+          {onClose && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="ml-1 rounded-lg border h-8 w-8 p-0"
+              onClick={onClose}
+              aria-label="Close product detail"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          )}
+        </div>
       </div>
       <div className="overflow-x-auto" style={{ maxHeight: 440 }}>
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-muted">
             <tr>
-              <th className="px-4 py-2 text-left text-xs font-bold text-gray-700">Image</th>
-              <th className="px-4 py-2 text-left text-xs font-bold text-gray-700">Product</th>
-              <th className="px-4 py-2 text-xs font-bold text-gray-700">Price</th>
-              <th className="px-4 py-2 text-xs font-bold text-gray-700">PDV%</th>
-              <th className="px-4 py-2 text-xs font-bold text-gray-700">Views</th>
-              <th className="px-4 py-2 text-xs font-bold text-gray-700">MoM%</th>
-              <th className="px-4 py-2 text-xs font-bold text-gray-700">YoY%</th>
+              <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 bg-[#f6f7fc]">Image</th>
+              <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 bg-[#f6f7fc]">Product</th>
+              <th className="px-4 py-2 text-xs font-bold text-gray-700 bg-[#f6f7fc]">Price</th>
+              <th className="px-4 py-2 text-xs font-bold text-gray-700 bg-[#f6f7fc]">PDV%</th>
+              <th className="px-4 py-2 text-xs font-bold text-gray-700 bg-[#f6f7fc]">Views</th>
+              <th className="px-4 py-2 text-xs font-bold text-gray-700 bg-[#f6f7fc]">MoM%</th>
+              <th className="px-4 py-2 text-xs font-bold text-gray-700 bg-[#f6f7fc]">YoY%</th>
             </tr>
           </thead>
           <tbody>
             {shownProducts.map((p) => (
-              <tr key={p.id} className="hover:bg-muted/50 transition">
-                <td className="px-4 py-1">
+              <tr
+                key={p.id}
+                onClick={() => handleRowClick(p.id)}
+                className={`
+                  cursor-pointer transition 
+                  ${selectedProductId === p.id
+                    ? "bg-[#f1f0fb] ring-2 ring-[#9b87f5] border-l-4 border-[#9b87f5]"
+                    : "hover:bg-muted/50"}
+                  `}
+                style={{ fontWeight: selectedProductId === p.id ? 600 : undefined }}
+              >
+                <td className="px-4 py-2">
                   <img
                     src={p.image}
                     alt={p.name}
-                    className="w-10 h-10 object-cover rounded border"
+                    className="w-11 h-11 object-cover rounded border"
                   />
                 </td>
-                <td className="px-4 py-1 text-xs font-medium text-gray-900">{p.name}</td>
-                <td className="px-4 py-1 text-xs text-center">£{p.price.toFixed(2)}</td>
-                <td className="px-4 py-1 text-xs text-center">
-                  <span className="inline-block px-2 rounded bg-purple-100 text-purple-700">
+                <td className="px-4 py-2 text-sm font-medium text-gray-900">
+                  {p.name}
+                </td>
+                <td className="px-4 py-2 text-sm text-center font-semibold text-[#25293c]">
+                  £{p.price.toFixed(2)}
+                </td>
+                <td className="px-4 py-2 text-sm text-center">
+                  <span className="inline-block px-2 py-0.5 rounded bg-[#ede7fa] text-[#6E59A5] font-semibold">
                     {p.pdvPercent.toFixed(1)}%
                   </span>
                 </td>
-                <td className="px-4 py-1 text-xs text-center">{p.views.toLocaleString()}</td>
-                <td className="px-4 py-1 text-xs text-center">
-                  <span className={p.momChange >= 0 ? "text-green-600" : "text-red-500"}>
+                <td className="px-4 py-2 text-sm text-center text-[#25293c]">{p.views.toLocaleString()}</td>
+                <td className="px-4 py-2 text-sm text-center">
+                  <span className={p.momChange >= 0 ? "text-green-600 font-semibold" : "text-red-500 font-semibold"}>
                     {p.momChange >= 0 ? "+" : ""}
                     {p.momChange.toFixed(1)}%
                   </span>
                 </td>
-                <td className="px-4 py-1 text-xs text-center">
-                  <span className={p.yoyChange >= 0 ? "text-green-600" : "text-red-500"}>
+                <td className="px-4 py-2 text-sm text-center">
+                  <span className={p.yoyChange >= 0 ? "text-green-600 font-semibold" : "text-red-500 font-semibold"}>
                     {p.yoyChange >= 0 ? "+" : ""}
                     {p.yoyChange.toFixed(1)}%
                   </span>
@@ -128,3 +167,4 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
 };
 
 export default ProductDetailTable;
+
