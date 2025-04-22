@@ -198,64 +198,6 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     }
   };
 
-  const getBarColor = (
-    value: number,
-    catId: string | null
-  ): string => {
-    if (!catId) return 'bg-gray-200';
-    if (catId.includes('mens_')) {
-      return 'bg-blue-100';
-    } else if (catId.includes('womens_')) {
-      return 'bg-green-100';
-    } else if (catId.includes('junior_')) {
-      return 'bg-pink-100';
-    } else if (catId.includes('replica_')) {
-      return 'bg-purple-100';
-    } else if (catId.includes('accessories')) {
-      return 'bg-orange-100';
-    } else if (catId.includes('infant_')) {
-      return 'bg-yellow-100';
-    } else if (catId.includes('childrens_')) {
-      return 'bg-indigo-100';
-    } else {
-      return 'bg-gray-200';
-    }
-  };
-
-  const VerticalBarCell = ({
-    value,
-    colorClass,
-    secondary = "",
-    showValue = true,
-  }: {
-    value: number;
-    colorClass: string;
-    secondary?: string;
-    showValue?: boolean;
-  }) => {
-    return (
-      <div className="flex flex-col items-center justify-end min-w-[36px] py-1 h-[48px] relative">
-        <div className="relative h-full w-5 flex flex-col justify-end">
-          <div className="absolute bottom-0 left-0 w-full h-full rounded-full bg-gray-100" />
-          <div
-            className={`absolute left-0 w-full rounded-full transition-all duration-300 ${colorClass}`}
-            style={{
-              bottom: 0,
-              height: `${Math.min(Math.max(value, 0), 100)}%`,
-              maxHeight: '100%',
-            }}
-          />
-        </div>
-        {showValue && (
-          <div className="text-[10px] font-medium text-gray-900 mt-0.5 leading-tight">
-            {value > 0 ? `${value.toFixed(1)}%` : ""}
-            <div className="block text-[9px] text-gray-500 font-normal">{secondary}</div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
   const handleCategoryChange = (categoryIds: string[]) => {
     setSelectedCategories(categoryIds);
   };
@@ -345,8 +287,8 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-xs">Assortment Mix Explorer</CardTitle>
-        <CardDescription className="text-[10px]">
+        <CardTitle className="text-lg">Assortment Mix Explorer</CardTitle>
+        <CardDescription className="text-xs">
           Compare SKU distribution across retailers, categories, and price points
         </CardDescription>
         
@@ -502,24 +444,30 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                       {generatedPriceRanges.map(priceRange => {
                         const totals = calculateRetailerTotals(retailer.id);
                         const data = totals[priceRange.id];
-                        const valueNum =
-                          displayMetric === 'pdv-percentage'
-                            ? data?.pdvPercentage ?? 0
-                            : data?.percentage ?? 0;
-                        const secondary =
-                          displayMetric === 'pdv-percentage'
+                        const value = {
+                          primary: displayMetric === 'pdv-percentage' 
+                            ? `${data?.pdvPercentage?.toFixed(1)}%` 
+                            : `${data?.percentage?.toFixed(1)}%`,
+                          secondary: displayMetric === 'pdv-percentage'
                             ? data?.pdvs?.toLocaleString()
-                            : data?.count?.toString();
+                            : data?.count?.toString()
+                        };
+                        
+                        const bubbleSize = getBubbleSize(parseFloat(value.primary || '0'));
+                        
                         return (
-                          <TableCell
-                            key={`${retailer.id}-total-${priceRange.id}`}
-                            className="text-center p-1 align-middle"
+                          <TableCell 
+                            key={`${retailer.id}-total-${priceRange.id}`} 
+                            className="text-center p-1"
                           >
-                            <VerticalBarCell
-                              value={valueNum}
-                              colorClass="bg-gray-400"
-                              secondary={secondary}
-                            />
+                            {value.primary && (
+                              <div className="flex justify-center items-center">
+                                <div className={`${bubbleSize} bg-gray-100 text-gray-800 rounded-full flex flex-col items-center justify-center text-[10px] font-medium`}>
+                                  <span>{value.primary}</span>
+                                  <span className="text-[8px] opacity-75">{value.secondary}</span>
+                                </div>
+                              </div>
+                            )}
                           </TableCell>
                         );
                       })}
@@ -527,14 +475,15 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                   )}
                   {selectedCategories.map((catId, index) => {
                     const category = categories.find(c => c.id === catId);
+                    
                     return (
-                      <TableRow
-                        key={`${retailer.id}-${catId}`}
+                      <TableRow 
+                        key={`${retailer.id}-${catId}`} 
                         className={index === 0 ? 'border-t-2' : ''}
                       >
                         {index === 0 && (
-                          <TableCell
-                            rowSpan={selectedCategories.length + (showTotalRange ? 1 : 0)}
+                          <TableCell 
+                            rowSpan={selectedCategories.length + (showTotalRange ? 1 : 0)} 
                             className="sticky left-0 bg-white font-medium border-r py-1 align-top text-xs"
                           >
                             {retailer.name}
@@ -545,20 +494,23 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                         </TableCell>
                         {generatedPriceRanges.map(priceRange => {
                           const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
-                          const valueObj = getDisplayValue(data);
-                          const valueNum = parseFloat(valueObj.primary.replace('%', '')) || 0;
-                          const barColor = getBarColor(valueNum, catId);
-
+                          const value = getDisplayValue(data);
+                          const bubbleSize = getBubbleSize(parseFloat(value.primary || '0'));
+                          const bubbleColor = getBubbleColor(parseFloat(value.primary || '0'), catId);
+                          
                           return (
-                            <TableCell
-                              key={`${retailer.id}-${catId}-${priceRange.id}`}
-                              className="text-center p-1 align-middle"
+                            <TableCell 
+                              key={`${retailer.id}-${catId}-${priceRange.id}`} 
+                              className="text-center p-1"
                             >
-                              <VerticalBarCell
-                                value={valueNum}
-                                colorClass={barColor}
-                                secondary={valueObj.secondary}
-                              />
+                              {value.primary && (
+                                <div className="flex justify-center items-center">
+                                  <div className={`${bubbleSize} ${bubbleColor} rounded-full flex flex-col items-center justify-center text-[10px] font-medium`}>
+                                    <span>{value.primary}</span>
+                                    <span className="text-[8px] opacity-75">{value.secondary}</span>
+                                  </div>
+                                </div>
+                              )}
                             </TableCell>
                           );
                         })}
