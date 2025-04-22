@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -29,14 +28,17 @@ export const RangeBuildingTabs = () => {
   ];
 
   const categories = [
-    { id: 'jeans_skinny', name: 'Jeans > Skinny' },
-    { id: 'jeans_slim', name: 'Jeans > Slim' },
-    { id: 'jeans_straight', name: 'Jeans > Straight' },
-    { id: 'tops_tshirts', name: 'Tops > T-Shirts' },
-    { id: 'tops_blouses', name: 'Tops > Blouses' },
-    { id: 'dresses_mini', name: 'Dresses > Mini' },
-    { id: 'dresses_midi', name: 'Dresses > Midi' },
-    { id: 'dresses_maxi', name: 'Dresses > Maxi' }
+    { id: 'mens_textiles', name: 'Mens Textiles' },
+    { id: 'mens_footwear', name: 'Mens Footwear' },
+    { id: 'womens_footwear', name: 'Womens Footwear' },
+    { id: 'junior_footwear', name: 'Junior Footwear' },
+    { id: 'womens_textiles', name: 'Womens Textiles' },
+    { id: 'junior_textiles', name: 'Junior Textiles' },
+    { id: 'replica_textiles', name: 'Replica Textiles' },
+    { id: 'accessories', name: 'Accessories' },
+    { id: 'infant_textiles', name: 'Infant Textiles' },
+    { id: 'childrens_footwear', name: 'Childrens Footwear' },
+    { id: 'infant_footwear', name: 'Infant Footwear' }
   ];
 
   const priceRanges = [
