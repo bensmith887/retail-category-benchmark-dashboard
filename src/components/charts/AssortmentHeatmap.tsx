@@ -18,11 +18,26 @@ interface AssortmentHeatmapProps {
   categories: { id: string; name: string }[];
 }
 
+interface CellData {
+  coverage: number;
+  skuCount: number;
+  variantCount: number;
+  marketShare: number;
+  searchShare: number;
+  growthRate: number;
+  competitor: string;
+}
+
+interface CoverageRowData {
+  category: { id: string; name: string };
+  data: Record<string, CellData>;
+}
+
 export const AssortmentHeatmap: React.FC<AssortmentHeatmapProps> = ({ competitors, categories }) => {
   const [sortBy, setSortBy] = useState<string>('coverage');
   const [filterThreshold, setFilterThreshold] = useState<string>('0');
   
-  const generateCoverageData = () => {
+  const generateCoverageData = (): CoverageRowData[] => {
     return categories.map(category => {
       const rowData = competitors.reduce((acc, competitor) => {
         const coverage = Math.round(Math.random() * 100);
@@ -42,7 +57,7 @@ export const AssortmentHeatmap: React.FC<AssortmentHeatmapProps> = ({ competitor
           competitor: competitor.name
         };
         return acc;
-      }, {});
+      }, {} as Record<string, CellData>);
 
       return {
         category,
@@ -68,9 +83,9 @@ export const AssortmentHeatmap: React.FC<AssortmentHeatmapProps> = ({ competitor
       }
       
       // Get average value for the sort field
-      const getAvgValue = (row) => {
-        const values = Object.values(row.data).map(d => d[sortBy] || 0);
-        return values.reduce((sum, val) => sum + val, 0) / values.length;
+      const getAvgValue = (row: CoverageRowData) => {
+        const values = Object.values(row.data).map(d => d[sortBy as keyof CellData] || 0);
+        return values.reduce((sum, val) => sum + (typeof val === 'number' ? val : 0), 0) / values.length;
       };
       
       return getAvgValue(b) - getAvgValue(a); // Descending order

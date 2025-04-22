@@ -31,6 +31,28 @@ interface GapMatrixProps {
   };
 }
 
+interface CellData {
+  gapType: number;
+  score: number;
+  marketSize: number;
+  growthRate: number;
+  competitor: string;
+  competitorSkuCount: number;
+  ourSkuCount: number;
+  competitorSales: number;
+  pdpViews: number;
+  searchDemand: number;
+  gapReason: string;
+  implementationTime: number;
+  resourceCost: number;
+  totalRevenuePotential: number;
+}
+
+interface MatrixRowData {
+  category: { id: string; name: string };
+  data: Record<string, CellData>;
+}
+
 export const GapMatrix: React.FC<GapMatrixProps> = ({ 
   competitors, 
   categories,
@@ -40,7 +62,7 @@ export const GapMatrix: React.FC<GapMatrixProps> = ({
   const [selectedCell, setSelectedCell] = useState<{
     category: string;
     competitor: string;
-    data: any;
+    data: CellData;
   } | null>(null);
   
   const [sortOption, setSortOption] = useState<string>(sortBy);
@@ -49,7 +71,7 @@ export const GapMatrix: React.FC<GapMatrixProps> = ({
   const [filterGapType, setFilterGapType] = useState<string>(filterBy.gapType?.toString() || '');
   
   // Generate more detailed matrix data
-  const generateMatrixData = () => {
+  const generateMatrixData = (): MatrixRowData[] => {
     return categories.map(category => {
       const rowData = competitors.reduce((acc, competitor) => {
         // Generate random data about product presence
@@ -99,7 +121,7 @@ export const GapMatrix: React.FC<GapMatrixProps> = ({
           totalRevenuePotential: marketSize * (growthRate > 0 ? 1 + (growthRate/100) : 1)
         };
         return acc;
-      }, {});
+      }, {} as Record<string, CellData>);
 
       return {
         category,
@@ -108,7 +130,7 @@ export const GapMatrix: React.FC<GapMatrixProps> = ({
     });
   };
 
-  const rawMatrixData = useMemo(() => generateMatrixData(), [categories, competitors]);
+  const rawMatrixData = useMemo<MatrixRowData[]>(() => generateMatrixData(), [categories, competitors]);
   
   // Apply filters and sorting
   const matrixData = useMemo(() => {
@@ -129,7 +151,7 @@ export const GapMatrix: React.FC<GapMatrixProps> = ({
         if (filterCompetitor) {
           // Filter by specific competitor
           const compId = competitors.find(c => c.name.toLowerCase().includes(filterCompetitor.toLowerCase()))?.id;
-          if (compId && row.data[compId]?.gapType.toString() !== filterGapType) {
+          if (compId && filteredRowData.data[compId]?.gapType.toString() !== filterGapType) {
             delete filteredRowData.data[compId];
           }
         } else {
@@ -149,11 +171,11 @@ export const GapMatrix: React.FC<GapMatrixProps> = ({
     if (sortOption) {
       filteredData.sort((a, b) => {
         // Get average or max value for the sort option across all competitors
-        const getRowValue = (row) => {
-          const values = Object.values(row.data).map(d => d[sortOption] || 0);
+        const getRowValue = (row: MatrixRowData) => {
+          const values = Object.values(row.data).map(d => d[sortOption as keyof CellData] || 0);
           return sortOption === 'marketSize' || sortOption === 'opportunityScore' || sortOption === 'totalRevenuePotential'
             ? Math.max(...values)
-            : values.reduce((sum, v) => sum + v, 0) / values.length;
+            : values.reduce((sum, v) => sum + (typeof v === 'number' ? v : 0), 0) / values.length;
         };
         
         return getRowValue(b) - getRowValue(a); // Descending order

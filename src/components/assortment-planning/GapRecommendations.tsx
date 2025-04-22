@@ -16,7 +16,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { ArrowRight, ChevronUp, ChevronDown, TrendingUp, ListTodo, FileText } from 'lucide-react';
 
-interface Recommendation {
+export interface Recommendation {
   id: number;
   category: string;
   subCategory: string;

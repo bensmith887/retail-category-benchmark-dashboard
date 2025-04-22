@@ -29,7 +29,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 
 // Import recommendation component
-import { GapRecommendations } from './GapRecommendations';
+import { GapRecommendations, Recommendation } from './GapRecommendations';
 
 const GapAnalysisTab = ({ 
   competitors, 
@@ -108,7 +108,7 @@ const GapAnalysisTab = ({
   };
 
   // Generate mock recommendations
-  const recommendations = [
+  const recommendations: Recommendation[] = [
     {
       id: 1,
       category: 'Beauty',
