@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Card, 
@@ -30,6 +29,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Switch } from "@/components/ui/switch";
 import AssortmentBubble from "./AssortmentBubble";
 import SizingCell from "./SizingCell";
+import ProductDetailTable from "./ProductDetailTable";
 
 interface AssortmentMixExplorerProps {
   retailers: { id: string; name: string }[];
@@ -75,6 +75,11 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   const [selectedRetailers, setSelectedRetailers] = useState<string[]>(
     retailers.map(r => r.id)
   );
+  const [selectedCell, setSelectedCell] = useState<{
+    retailerId: string;
+    categoryId: string;
+    priceRangeId: string;
+  } | null>(null);
   const { toast } = useToast();
 
   const generatePriceRanges = () => {
@@ -304,6 +309,39 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
 
   const filteredRetailers = retailers.filter(r => selectedRetailers.includes(r.id));
 
+  const getDemoProducts = (
+    retailerId: string,
+    categoryId: string,
+    priceRangeId: string
+  ) => {
+    const demoImages = [
+      "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?auto=format&fit=facearea&w=64&h=64&q=80",
+      "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?auto=format&fit=facearea&w=64&h=64&q=80",
+      "https://images.unsplash.com/photo-1501286353178-1ec881214838?auto=format&fit=facearea&w=64&h=64&q=80",
+    ];
+    const base = retailerId.length + categoryId.length + priceRangeId.length;
+    return Array.from({ length: 4 + (base % 3) }).map((_, ix) => ({
+      id: `p_${retailerId}_${categoryId}_${priceRangeId}_${ix}`,
+      name: "Demo Product " + (ix + 1),
+      image: demoImages[(ix + base) % demoImages.length],
+      price: 14.99 + (ix * 3) + ((base * 7 + ix * 4) % 5),
+      pdvPercent: 5 + ((base + ix * 3) % 25),
+      views: 100 + ((base * (ix + 1)) % 3200),
+      momChange: (ix % 2 === 0 ? 1 : -1) * ((base * ix) % 20),
+      yoyChange: ((base + ix * 2) % 2 === 0 ? 1 : -1) * ((base * ix * 2) % 14),
+    }));
+  };
+
+  const handleCellClick = (retailerId: string, categoryId: string, priceRangeId: string) => {
+    setSelectedCell({ retailerId, categoryId, priceRangeId });
+    setTimeout(() => {
+      const el = document.getElementById("product-detail-table-anchor");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 175);
+  };
+
+  const handleCloseProductTable = () => setSelectedCell(null);
+
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -511,7 +549,9 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                           return (
                             <TableCell 
                               key={`${retailer.id}-total-${priceRange.id}`} 
-                              className="text-center p-1 align-bottom bg-purple-50"
+                              className="text-center p-1 align-bottom bg-purple-50 cursor-pointer hover:ring-2 ring-purple-300"
+                              onClick={() => handleCellClick(retailer.id, "TOTAL", priceRange.id)}
+                              tabIndex={0}
                             >
                               <div className="flex flex-col justify-end items-center h-16 relative">
                                 <SizingCell 
@@ -554,11 +594,12 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                             const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
                             const display = getDisplayValue(data);
                             const percent = parseFloat(display.primary);
-
                             return (
                               <TableCell 
                                 key={`${retailer.id}-${catId}-${priceRange.id}`} 
-                                className="text-center p-1 align-bottom"
+                                className="text-center p-1 align-bottom cursor-pointer hover:ring-2 ring-blue-300"
+                                onClick={() => handleCellClick(retailer.id, catId, priceRange.id)}
+                                tabIndex={0}
                               >
                                 <div className="flex flex-col justify-end items-center h-16 relative">
                                   <SizingCell percent={percent} secondary={display.secondary} categoryId={catId} />
@@ -575,6 +616,19 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
             </TableBody>
           </Table>
         </div>
+        <div id="product-detail-table-anchor" />
+        {selectedCell && (
+          <ProductDetailTable
+            retailer={retailers.find(r => r.id === selectedCell.retailerId)?.name || selectedCell.retailerId}
+            category={selectedCell.categoryId === "TOTAL" 
+              ? "Total Range"
+              : categories.find(c => c.id === selectedCell.categoryId)?.name || selectedCell.categoryId
+            }
+            priceRange={generatedPriceRanges.find(p => p.id === selectedCell.priceRangeId)?.name || selectedCell.priceRangeId}
+            products={getDemoProducts(selectedCell.retailerId, selectedCell.categoryId, selectedCell.priceRangeId)}
+            onClose={handleCloseProductTable}
+          />
+        )}
       </CardContent>
     </Card>
   );
