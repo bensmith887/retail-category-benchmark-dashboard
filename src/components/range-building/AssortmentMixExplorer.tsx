@@ -28,6 +28,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Switch } from "@/components/ui/switch";
 import AssortmentBubble from "./AssortmentBubble";
+import SizingCell from "./SizingCell";
 
 interface AssortmentMixExplorerProps {
   retailers: { id: string; name: string }[];
@@ -64,7 +65,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   const [displayMetric, setDisplayMetric] = useState<DisplayMetric>('range-percentage');
   const [minPrice, setMinPrice] = useState<string>("10");
   const [maxPrice, setMaxPrice] = useState<string>("100");
-  const [priceInterval, setPriceInterval] = useState<string>("5");
+  const [priceInterval, setPriceInterval] = useState<string>("10");
   const [generatedPriceRanges, setGeneratedPriceRanges] = useState<PriceRange[]>([]);
   const [dateRange, setDateRange] = useState<string>('3');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -300,60 +301,6 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     }
   };
 
-  const SizingCell = ({ 
-    percent, 
-    secondary, 
-    categoryId
-  }: { 
-    percent: number, 
-    secondary: string, 
-    categoryId?: string 
-  }) => {
-    const cellRef = useRef<HTMLDivElement>(null);
-    const [cellSize, setCellSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
-
-    useEffect(() => {
-      if (!cellRef.current) return;
-      const handleResize = () => {
-        if (!cellRef.current) return;
-        const rect = cellRef.current.getBoundingClientRect();
-        setCellSize({ width: rect.width, height: rect.height });
-      };
-
-      handleResize();
-
-      const resizeObserver = new window.ResizeObserver(() => {
-        handleResize();
-      });
-      resizeObserver.observe(cellRef.current);
-
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }, []);
-
-    if (!percent || percent < 0.01) {
-      return <div ref={cellRef} className="w-full h-full" />;
-    }
-
-    const bubbleContainerSize = Math.min(cellSize.width, cellSize.height);
-
-    return (
-      <div ref={cellRef} className="flex items-center justify-center w-full h-full relative min-h-[50px] min-w-[40px]">
-        {bubbleContainerSize > 0 && (
-          <div style={{ width: bubbleContainerSize, height: bubbleContainerSize, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <AssortmentBubble
-              value={percent}
-              secondary={secondary}
-              categoryId={categoryId}
-              containerClassName=""
-            />
-          </div>
-        )}
-      </div>
-    );
-  };
-
   const filteredRetailers = retailers.filter(r => selectedRetailers.includes(r.id));
 
   return (
@@ -364,13 +311,14 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
           Compare SKU distribution across retailers, categories, and price points
         </CardDescription>
         
-        <div className="flex flex-wrap gap-1 mb-2">
-          <label className="text-xs font-medium mr-2">Select Retailers:</label>
+        <div className="flex flex-wrap gap-2 mb-2">
+          <label className="text-xs font-medium mr-2">Retailers:</label>
           <Button
             size="sm"
             variant={selectedRetailers.length === retailers.length ? "default" : "outline"}
             className="text-xs px-2 h-6"
             onClick={toggleAllRetailers}
+            type="button"
           >
             {selectedRetailers.length === retailers.length ? "Unselect All" : "Select All"}
           </Button>
@@ -381,6 +329,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
               variant={selectedRetailers.includes(retailer.id) ? "default" : "outline"}
               className="text-xs px-2 h-6"
               onClick={() => toggleRetailerSelection(retailer.id)}
+              type="button"
             >
               {retailer.name}
             </Button>
@@ -489,6 +438,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
               size="sm"
               onClick={() => toggleCategorySelection(category.id)}
               className="text-xs h-6 px-2"
+              type="button"
             >
               {category.name}
             </Button>
