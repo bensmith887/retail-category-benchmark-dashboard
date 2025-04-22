@@ -7,15 +7,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-// Utility for new filter colors (soft purple/blue glassy look)
-const filterColors = [
-  "bg-[#ede7ff] text-[#5840bb]",    // Primary purple
-  "bg-[#d7f2ff] text-[#2f80ed]",    // Soft blue
-  "bg-[#f9e8ef] text-[#ec4899]",    // Pink
-  "bg-[#f1f7ee] text-[#509d49]",    // Green
-  "bg-[#fff5e6] text-[#fa9f42]",    // Orange
-];
-
 const Header = () => {
   const location = useLocation();
   const [filters, setFilters] = useState([
@@ -63,15 +54,16 @@ const Header = () => {
                 <Button
                   variant="outline"
                   className={cn(
-                    "h-12 w-[215px] px-5 text-[#5840bb] border-[#dfd7f6] rounded-xl shadow-sm font-semibold mr-2 flex items-center gap-2 hover:border-[#a18aff] active:scale-95 transition-all"
+                    "h-12 w-[215px] px-5 border border-dashboard-border rounded-xl shadow-sm font-medium mr-2 flex items-center gap-2 bg-white/55 backdrop-blur-[3px] text-dashboard-text hover:border-dashboard-primary active:scale-95 transition-all",
+                    "hover:bg-white/80",
                   )}
                 >
-                  <Calendar size={20} className="text-[#9b87f5]" />
-                  <span className="flex-1 text-lg text-[#5840bb] font-semibold">Apr 1 - Sep 30, 2023</span>
-                  <ChevronDown size={18} className="text-[#a69fd6]" />
+                  <Calendar size={20} className="text-dashboard-secondaryText" />
+                  <span className="flex-1 text-base font-semibold text-dashboard-text">Apr 1 - Sep 30, 2023</span>
+                  <ChevronDown size={18} className="text-dashboard-neutral" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 z-[99] pointer-events-auto bg-white rounded-xl shadow-2xl border-[#e5e4fa]" align="start">
+              <PopoverContent className="w-auto p-0 z-[99] pointer-events-auto bg-white rounded-xl shadow-2xl border-dashboard-border" align="start">
                 <div className="p-4">
                   <div className="font-semibold text-dashboard-text mb-2">Select Date Range</div>
                   <div className="flex flex-col gap-1">
@@ -80,7 +72,7 @@ const Header = () => {
                     <button className="w-full text-left px-2 py-1.5 text-sm rounded-lg hover:bg-dashboard-bg font-medium transition">Last 3 months</button>
                     <button className="w-full text-left px-2 py-1.5 text-sm rounded-lg bg-dashboard-bg font-medium text-dashboard-primary">Last 6 months</button>
                     <button className="w-full text-left px-2 py-1.5 text-sm rounded-lg hover:bg-dashboard-bg font-medium transition">Last 12 months</button>
-                    <button className="w-full text-left px-2 py-1.5 text-sm rounded-lg hover:bg-dashboard-bg font-semibold text-[#5840bb] transition">Custom range...</button>
+                    <button className="w-full text-left px-2 py-1.5 text-sm rounded-lg hover:bg-dashboard-bg font-semibold text-dashboard-primary transition">Custom range...</button>
                   </div>
                 </div>
               </PopoverContent>
@@ -88,20 +80,21 @@ const Header = () => {
 
             {/* Filters & Add Filter */}
             <div className="flex flex-wrap flex-row gap-2 items-center ml-0 md:ml-4 w-full md:w-auto">
-              {filters.map((filter, idx) => (
+              {filters.map((filter) => (
                 <span
                   key={filter.id}
                   className={cn(
-                    "px-4 py-2 rounded-full font-semibold text-base shadow-sm flex items-center gap-2 cursor-pointer border border-transparent transition-all",
-                    filterColors[idx % filterColors.length], // rotate colors for fun!
-                    "hover:shadow-md hover:scale-105 active:scale-95"
+                    // Neutral monochrome glassy style:
+                    "px-4 py-2 rounded-full font-medium text-base shadow-sm flex items-center gap-2 cursor-pointer border border-dashboard-border bg-white/60 backdrop-blur-[2px] text-dashboard-text transition-all",
+                    "hover:shadow-md hover:bg-white/80 hover:border-dashboard-primary active:scale-95"
                   )}
                   tabIndex={0}
                 >
                   <span>{filter.label}</span>
                   <button
-                    className="ml-1 text-[#5840bb] hover:bg-white/50 rounded-full p-1 transition-all"
+                    className="ml-1 text-dashboard-neutral hover:bg-white/70 rounded-full p-1 transition-all"
                     onClick={() => removeFilter(filter.id)}
+                    aria-label="Remove filter"
                   >
                     <X size={15} />
                   </button>
@@ -111,15 +104,15 @@ const Header = () => {
               <Popover>
                 <PopoverTrigger asChild>
                   <button
-                    className="flex items-center gap-2 px-4 py-2 rounded-full border-2 border-dashed border-[#dfd7f6] text-[#b4a3e9] font-semibold bg-white hover:border-[#a18aff] hover:text-[#5840bb] shadow-sm active:scale-95 transition-all"
+                    className="flex items-center gap-2 px-4 py-2 rounded-full border border-dashed border-dashboard-border text-dashboard-neutral font-semibold bg-white/60 backdrop-blur-[2px] hover:border-dashboard-primary hover:text-dashboard-text shadow-sm active:scale-95 transition-all"
                   >
                     <Filter size={15} />
                     <span>Add Filter</span>
                   </button>
                 </PopoverTrigger>
-                <PopoverContent className="w-56 p-0 z-[80] bg-white rounded-xl shadow-2xl border-[#e5e4fa]" align="end">
+                <PopoverContent className="w-56 p-0 z-[80] bg-white rounded-xl shadow-2xl border-dashboard-border" align="end">
                   <div className="p-3">
-                    <div className="font-bold text-[#5840bb] mb-1">Filter by:</div>
+                    <div className="font-bold text-dashboard-text mb-1">Filter by:</div>
                     <button className="block w-full text-left px-2 py-1.5 text-base rounded hover:bg-dashboard-bg transition-colors">Categories</button>
                     <button className="block w-full text-left px-2 py-1.5 text-base rounded hover:bg-dashboard-bg transition-colors">Traffic Domains</button>
                     <button className="block w-full text-left px-2 py-1.5 text-base rounded hover:bg-dashboard-bg transition-colors">Retail IQ Domains</button>
@@ -136,4 +129,3 @@ const Header = () => {
 };
 
 export default Header;
-
