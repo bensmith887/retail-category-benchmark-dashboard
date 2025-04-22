@@ -27,6 +27,7 @@ import { FileText, Filter, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Switch } from "@/components/ui/switch";
+import AssortmentBubble from "./AssortmentBubble";
 
 interface AssortmentMixExplorerProps {
   retailers: { id: string; name: string }[];
@@ -455,23 +456,21 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                         const data = totals[priceRange.id];
                         const value = {
                           primary: displayMetric === 'pdv-percentage' 
-                            ? `${data?.pdvPercentage?.toFixed(1)}%` 
-                            : `${data?.percentage?.toFixed(1)}%`,
+                            ? Number(data?.pdvPercentage ?? 0)
+                            : Number(data?.percentage ?? 0),
                           secondary: displayMetric === 'pdv-percentage'
                             ? data?.pdvs?.toLocaleString()
                             : data?.count?.toString()
                         };
-                        const percent = parseFloat(value.primary);
+                        const percent = value.primary;
                         const barHeight = percent > 0 ? Math.min(percent, 100) : 0;
-
-                        const bubbleSize = getBubbleSize(percent);
 
                         return (
                           <TableCell 
                             key={`${retailer.id}-total-${priceRange.id}`} 
                             className="text-center p-1 align-bottom"
                           >
-                            <div className="flex flex-col justify-end items-center h-14 relative">
+                            <div className="flex flex-col justify-end items-center h-16 relative">
                               <div className="w-4 bg-gray-100 rounded-sm absolute left-1/2 -translate-x-1/2 bottom-0 h-full" />
                               <div
                                 className={`${getBarColor(barHeight)} absolute left-1/2 -translate-x-1/2 rounded-sm`}
@@ -483,10 +482,9 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                                   transition: 'height 0.3s'
                                 }}
                               />
-                              {value.primary && (
-                                <div className={`relative z-10 mt-0 mb-1 ${bubbleSize} bg-white text-blue-800 flex flex-col items-center justify-center border border-blue-200 shadow-sm rounded-full text-[10px] font-semibold`}>
-                                  <span>{value.primary}</span>
-                                  <span className="text-[8px] font-normal opacity-70">{value.secondary}</span>
+                              {percent > 0 && (
+                                <div className="absolute bottom-1 flex items-center justify-center w-full">
+                                  <AssortmentBubble value={percent} secondary={value.secondary} />
                                 </div>
                               )}
                             </div>
@@ -516,19 +514,17 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                         </TableCell>
                         {generatedPriceRanges.map(priceRange => {
                           const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
-                          const value = getDisplayValue(data);
-                          const percent = parseFloat(value.primary);
-                          const barHeight = percent > 0 ? Math.min(percent, 100) : 0;
+                          const display = getDisplayValue(data);
+                          const percent = parseFloat(display.primary);
 
-                          const bubbleSize = getBubbleSize(percent);
-                          const bubbleColor = getBubbleColor(percent, catId);
+                          const barHeight = percent > 0 ? Math.min(percent, 100) : 0;
 
                           return (
                             <TableCell 
                               key={`${retailer.id}-${catId}-${priceRange.id}`} 
                               className="text-center p-1 align-bottom"
                             >
-                              <div className="flex flex-col justify-end items-center h-14 relative">
+                              <div className="flex flex-col justify-end items-center h-16 relative">
                                 <div className="w-4 bg-gray-100 rounded-sm absolute left-1/2 -translate-x-1/2 bottom-0 h-full" />
                                 <div
                                   className={`${getBarColor(barHeight)} absolute left-1/2 -translate-x-1/2 rounded-sm`}
@@ -540,10 +536,9 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                                     transition: 'height 0.3s'
                                   }}
                                 />
-                                {value.primary && (
-                                  <div className={`relative z-10 mt-0 mb-1 ${bubbleSize} ${bubbleColor} border shadow-sm rounded-full text-[10px] font-semibold`}>
-                                    <span>{value.primary}</span>
-                                    <span className="text-[8px] font-normal opacity-70">{value.secondary}</span>
+                                {percent > 0 && (
+                                  <div className="absolute bottom-1 flex items-center justify-center w-full">
+                                    <AssortmentBubble value={percent} secondary={display.secondary} categoryId={catId} />
                                   </div>
                                 )}
                               </div>
