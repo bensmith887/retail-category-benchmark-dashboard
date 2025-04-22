@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { 
@@ -42,17 +41,15 @@ interface MatrixRowData {
   data: Record<string, CellData>;
 }
 
-const GapMatrix: React.FC<GapMatrixProps> = ({ competitors, categories }) => {
+export const GapMatrix: React.FC<GapMatrixProps> = ({ competitors, categories }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('opportunityScore');
   const [minOpportunityScore, setMinOpportunityScore] = useState('0');
   const [gapFilter, setGapFilter] = useState('all');
   
-  // Generate gap analysis data
   const generateGapData = (): MatrixRowData[] => {
     return categories.map(category => {
       const rowData = competitors.reduce((acc, competitor) => {
-        // Random gap data
         const hasGap = Math.random() > 0.4;
         const opportunityScore = Math.round(Math.random() * 100);
         const marketSize = Math.floor(Math.random() * 10000000) + 100000;
@@ -156,15 +153,12 @@ const GapMatrix: React.FC<GapMatrixProps> = ({ competitors, categories }) => {
     }
   };
   
-  // Filter and sort the data
   const filteredData = matrixData
     .filter(row => {
-      // Search filter
       if (searchTerm && !row.category.name.toLowerCase().includes(searchTerm.toLowerCase())) {
         return false;
       }
       
-      // Opportunity score filter
       if (minOpportunityScore !== '0') {
         const minScore = parseInt(minOpportunityScore, 10);
         const hasHighOpportunity = Object.values(row.data).some(d => 
@@ -174,7 +168,6 @@ const GapMatrix: React.FC<GapMatrixProps> = ({ competitors, categories }) => {
         if (!hasHighOpportunity) return false;
       }
       
-      // Gap type filter
       if (gapFilter !== 'all') {
         const matchesGapType = Object.values(row.data).some(d => 
           d.gapType === gapFilter
@@ -190,20 +183,18 @@ const GapMatrix: React.FC<GapMatrixProps> = ({ competitors, categories }) => {
         return a.category.name.localeCompare(b.category.name);
       }
       
-      // Get average or max value for the sort option across all competitors
       const getRowValue = (row: MatrixRowData) => {
         const values = Object.values(row.data).map(d => {
-          // Fixed: Explicitly convert to number if needed
           const value = d[sortOption as keyof CellData];
           return typeof value === 'number' ? value : 0;
         });
         
         return sortOption === 'marketSize' || sortOption === 'opportunityScore' || sortOption === 'totalRevenuePotential'
           ? Math.max(...values)
-          : values.reduce((sum, v) => sum + v, 0) / values.length; // Fixed: Sum of numbers
+          : values.reduce((sum, v) => sum + v, 0) / values.length;
       };
       
-      return getRowValue(b) - getRowValue(a); // Descending order
+      return getRowValue(b) - getRowValue(a);
     });
 
   return (
