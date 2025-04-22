@@ -336,8 +336,8 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Assortment Mix Explorer</CardTitle>
-        <CardDescription className="text-xs">
+        <CardTitle className="text-xs">Assortment Mix Explorer</CardTitle>
+        <CardDescription className="text-[10px]">
           Compare SKU distribution across retailers, categories, and price points
         </CardDescription>
         
