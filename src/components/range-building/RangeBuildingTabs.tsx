@@ -27,29 +27,7 @@ export const RangeBuildingTabs: React.FC<RangeBuildingTabsProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState('assortment-mix');
 
-  // Mock data for retailers and categories
-  const retailers = [
-    { id: 'h&m', name: 'H&M (UK)' },
-    { id: 'mango', name: 'Mango (UK)' },
-    { id: 'monki', name: 'Monki (UK)' },
-    { id: 'nakd', name: 'NA-KD (UK)' },
-    { id: 'river_island', name: 'River Island (UK)' }
-  ];
-
-  const categories = [
-    { id: 'mens_textiles', name: 'Mens Textiles' },
-    { id: 'mens_footwear', name: 'Mens Footwear' },
-    { id: 'womens_footwear', name: 'Womens Footwear' },
-    { id: 'junior_footwear', name: 'Junior Footwear' },
-    { id: 'womens_textiles', name: 'Womens Textiles' },
-    { id: 'junior_textiles', name: 'Junior Textiles' },
-    { id: 'replica_textiles', name: 'Replica Textiles' },
-    { id: 'accessories', name: 'Accessories' },
-    { id: 'infant_textiles', name: 'Infant Textiles' },
-    { id: 'childrens_footwear', name: 'Childrens Footwear' },
-    { id: 'infant_footwear', name: 'Infant Footwear' }
-  ];
-
+  // Mock data for price ranges
   const priceRanges = [
     { id: '5-10', name: '£5-10', min: 5, max: 10 },
     { id: '10-15', name: '£10-15', min: 10, max: 15 },
