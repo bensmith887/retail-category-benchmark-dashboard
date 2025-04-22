@@ -30,9 +30,10 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
   priceRange,
 }) => {
   const [expanded, setExpanded] = useState(false);
+  // Show top 5 by default, or top 50 when expanded
   const shownProducts = expanded
     ? products.slice(0, 50)
-    : products.slice(0, 10);
+    : products.slice(0, 5);
 
   return (
     <div className="border rounded-lg bg-white mt-8 mb-4 shadow-md animate-fade-in">
@@ -106,7 +107,8 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
           </tbody>
         </table>
       </div>
-      {products.length > 10 && !expanded && (
+      {/* Show + button if more than 5 products */}
+      {products.length > 5 && !expanded && (
         <div className="flex items-center justify-center gap-2 px-4 py-2">
           <Button variant="outline" size="sm" onClick={() => setExpanded(true)}>
             <Plus className="w-4 h-4 mr-1" />
@@ -114,15 +116,15 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
           </Button>
         </div>
       )}
-      {products.length > 10 && expanded && (
+      {/* Show current product display count info */}
+      {products.length > 5 && expanded && (
         <div className="px-4 pb-3 text-xs text-muted-foreground text-center">Showing top {Math.min(50, products.length)} of {products.length} products</div>
       )}
-      {products.length > 10 && !expanded && (
-        <div className="px-4 pb-3 text-xs text-muted-foreground text-center">Showing top 10 of {products.length} products</div>
+      {products.length > 5 && !expanded && (
+        <div className="px-4 pb-3 text-xs text-muted-foreground text-center">Showing top 5 of {products.length} products</div>
       )}
     </div>
   );
 };
 
 export default ProductDetailTable;
-
