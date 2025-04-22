@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -23,13 +24,7 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { FileText, Filter, Download } from 'lucide-react';
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface AssortmentMixExplorerProps {
@@ -41,20 +36,33 @@ interface AssortmentMixExplorerProps {
 interface SkuData {
   count: number;
   percentage: number;
+  trend?: {
+    mom: number;  // Month over Month
+    yoy: number;  // Year over Year
+  };
 }
 
 type AssortmentData = Record<string, Record<string, Record<string, SkuData>>>;
+
+const predefinedCategories = [
+  "Mens Textiles",
+  "Mens Footwear",
+  "Womens Footwear",
+  "Junior Footwear",
+  "Womens Textiles",
+  "Junior Textiles",
+  "Replica Textiles",
+  "Accessories",
+  "Infant Textiles",
+  "Childrens Footwear"
+];
 
 export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({ 
   retailers, 
   categories, 
   priceRanges 
 }) => {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(['jeans_skinny', 'jeans_slim', 'jeans_straight']);
   const [displayType, setDisplayType] = useState<'percentage' | 'count'>('percentage');
-  const [priceInterval, setPriceInterval] = useState<string>('5');
-  const [dateRange, setDateRange] = useState<string>('3');
-  const [searchTerm, setSearchTerm] = useState<string>('');
   const [assortmentData, setAssortmentData] = useState<AssortmentData>({});
   const { toast } = useToast();
 
@@ -65,51 +73,27 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     retailers.forEach(retailer => {
       data[retailer.id] = {};
       
-      selectedCategories.forEach(catId => {
-        data[retailer.id][catId] = {};
+      predefinedCategories.forEach(catName => {
+        data[retailer.id][catName] = {};
         
         priceRanges.forEach(priceRange => {
-          // Generate random data - higher chance of data in middle price ranges
-          const isPricePointActive = Math.random() > 0.4 || 
-            (priceRange.min >= 15 && priceRange.max <= 50); // More likely to have products in mid-range
+          const skuCount = Math.floor(Math.random() * 300) + 10;
+          const percentage = parseFloat((Math.random() * 35).toFixed(1));
           
-          if (isPricePointActive) {
-            const skuCount = Math.floor(Math.random() * 300) + 10;
-            const percentage = parseFloat((Math.random() * 25).toFixed(1));
-            
-            data[retailer.id][catId][priceRange.id] = {
-              count: skuCount,
-              percentage
-            };
-          } else {
-            data[retailer.id][catId][priceRange.id] = {
-              count: 0,
-              percentage: 0
-            };
-          }
+          data[retailer.id][catName][priceRange.id] = {
+            count: skuCount,
+            percentage,
+            trend: {
+              mom: parseFloat((Math.random() * 4 - 2).toFixed(1)), // -2 to +2
+              yoy: parseFloat((Math.random() * 6 - 3).toFixed(1))  // -3 to +3
+            }
+          };
         });
       });
     });
     
     setAssortmentData(data);
-  }, [retailers, selectedCategories, priceRanges]);
-
-  // Filter categories based on search term
-  const filteredCategories = categories.filter(cat => 
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleCategoryChange = (categoryIds: string[]) => {
-    setSelectedCategories(categoryIds);
-  };
-
-  const toggleCategorySelection = (categoryId: string) => {
-    if (selectedCategories.includes(categoryId)) {
-      setSelectedCategories(selectedCategories.filter(id => id !== categoryId));
-    } else {
-      setSelectedCategories([...selectedCategories, categoryId]);
-    }
-  };
+  }, [retailers, priceRanges]);
 
   const handleExport = () => {
     toast({
@@ -118,168 +102,88 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     });
   };
 
-  // Function to determine bubble size class based on percentage value
-  const getBubbleSize = (value: number): string => {
-    if (value === 0) return 'hidden';
-    if (value < 5) return 'w-6 h-6';
-    if (value < 10) return 'w-8 h-8';
-    return 'w-10 h-10';
-  };
-
-  // Function to determine color class based on percentage value
-  const getBubbleColor = (value: number): string => {
-    if (value === 0) return 'bg-gray-50 text-gray-400';
-    if (value < 25) return 'bg-red-50 text-red-600';
-    if (value < 50) return 'bg-orange-50 text-orange-600';
-    if (value < 75) return 'bg-blue-50 text-blue-600';
-    return 'bg-green-50 text-green-600';
+  const getTrendColor = (value: number): string => {
+    if (value > 0) return 'text-green-600';
+    if (value < 0) return 'text-red-600';
+    return 'text-gray-600';
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold text-gray-900">Assortment Mix Explorer</CardTitle>
-        <CardDescription className="text-sm text-gray-500">
-          Compare SKU distribution across retailers, categories, and price points
-        </CardDescription>
-        
-        <div className="flex flex-wrap items-end gap-4 mt-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Display</label>
-            <Select 
-              value={displayType} 
-              onValueChange={(val) => setDisplayType(val as 'percentage' | 'count')}
-            >
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Percentage" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="percentage">Percentage</SelectItem>
-                <SelectItem value="count">SKU Count</SelectItem>
-              </SelectContent>
-            </Select>
+    <Card className="shadow-sm">
+      <CardHeader className="border-b pb-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle className="text-xl font-semibold text-gray-900">Assortment Mix Explorer</CardTitle>
+            <CardDescription className="text-sm text-gray-500">
+              Compare SKU distribution across retailers and categories
+            </CardDescription>
           </div>
-          
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Price Interval</label>
-            <Select 
-              value={priceInterval} 
-              onValueChange={setPriceInterval}
-            >
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="£5" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="5">£5</SelectItem>
-                <SelectItem value="10">£10</SelectItem>
-                <SelectItem value="15">£15</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Date Range</label>
-            <Select 
-              value={dateRange} 
-              onValueChange={setDateRange}
-            >
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Last 3 months" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="3">Last 3 months</SelectItem>
-                <SelectItem value="6">Last 6 months</SelectItem>
-                <SelectItem value="12">Last 12 months</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="flex flex-col gap-1.5 grow">
-            <label className="text-sm font-medium">Search Categories</label>
-            <Input 
-              placeholder="Search categories..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
-            />
-          </div>
-          
           <Button 
             variant="outline" 
-            size="icon" 
-            className="flex items-center" 
+            size="icon"
             onClick={handleExport}
           >
-            <Download size={16} />
+            <Download className="h-4 w-4" />
           </Button>
         </div>
       </CardHeader>
       
-      <CardContent className="px-0">
-        <div className="overflow-x-auto border-t">
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
           <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-50">
-                <TableHead className="font-medium w-[200px]">Category / Retailer</TableHead>
+            <TableHeader className="bg-gray-50">
+              <TableRow>
+                <TableHead className="font-medium text-gray-700 w-[260px]">Retailer / Category</TableHead>
                 {priceRanges.map((range) => (
-                  <TableHead key={range.id} className="text-center font-medium">
+                  <TableHead 
+                    key={range.id} 
+                    className="text-center font-medium text-gray-700 min-w-[200px]"
+                  >
                     {range.name}
                   </TableHead>
                 ))}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {categories.map((category, categoryIndex) => (
-                <React.Fragment key={category.id}>
-                  {retailers.map((retailer, retailerIndex) => (
+              {retailers.map((retailer) => (
+                <React.Fragment key={retailer.id}>
+                  {predefinedCategories.map((category, categoryIndex) => (
                     <TableRow 
-                      key={`${category.id}-${retailer.id}`}
-                      className={retailerIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                      key={`${retailer.id}-${category}`}
+                      className={categoryIndex % 2 === 0 ? 'bg-white hover:bg-gray-50' : 'bg-gray-50 hover:bg-gray-100'}
                     >
-                      <TableCell className="font-medium border-r">
-                        {retailerIndex === 0 && (
-                          <div className="font-semibold text-gray-900 mb-2">{category.name}</div>
-                        )}
-                        <span className="text-gray-600">{retailer.name}</span>
+                      <TableCell className="font-medium border-r bg-white">
+                        <div className="flex items-center gap-1">
+                          {categoryIndex === 0 && (
+                            <div className="font-semibold text-gray-900 mb-2">{retailer.name}</div>
+                          )}
+                          <span className="text-gray-600 text-sm pl-4">{category}</span>
+                        </div>
                       </TableCell>
                       {priceRanges.map((priceRange) => {
-                        const data = assortmentData?.[retailer.id]?.[category.id]?.[priceRange.id];
+                        const data = assortmentData?.[retailer.id]?.[category]?.[priceRange.id];
                         const value = displayType === 'percentage' ? data?.percentage || 0 : data?.count || 0;
-                        const displayValue = displayType === 'percentage' ? `${value}%` : value;
+                        const mom = data?.trend?.mom || 0;
+                        const yoy = data?.trend?.yoy || 0;
                         
                         return (
                           <TableCell 
-                            key={`${retailer.id}-${category.id}-${priceRange.id}`} 
-                            className="text-center p-4"
+                            key={`${retailer.id}-${category}-${priceRange.id}`} 
+                            className="text-center p-3"
                           >
-                            {value > 0 && (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <div className="flex justify-center items-center">
-                                      <div className={`
-                                        ${getBubbleSize(value)} 
-                                        ${getBubbleColor(value)}
-                                        rounded-full flex items-center justify-center 
-                                        text-xs font-medium
-                                      `}>
-                                        {displayValue}
-                                      </div>
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent className="bg-white p-3 shadow-lg border">
-                                    <div className="space-y-2">
-                                      <div className="font-semibold">{category.name}</div>
-                                      <div className="text-sm text-gray-600">{retailer.name}</div>
-                                      <div className="text-sm">Price Range: {priceRange.name}</div>
-                                      <div className="font-medium">
-                                        {displayType === 'percentage' ? `${value}% Coverage` : `${value} SKUs`}
-                                      </div>
-                                    </div>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            )}
+                            <div className="flex flex-col items-center gap-1">
+                              <span className="font-medium text-gray-900">
+                                {displayType === 'percentage' ? `${value}%` : value}
+                              </span>
+                              <div className="flex gap-2 text-xs">
+                                <span className={getTrendColor(mom)}>
+                                  {mom > 0 ? '+' : ''}{mom}
+                                </span>
+                                <span className={getTrendColor(yoy)}>
+                                  {yoy > 0 ? '+' : ''}{yoy}
+                                </span>
+                              </div>
+                            </div>
                           </TableCell>
                         );
                       })}
