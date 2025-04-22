@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -53,7 +52,6 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   const [assortmentData, setAssortmentData] = useState<AssortmentData>({});
   const { toast } = useToast();
 
-  // Generate mock data
   useEffect(() => {
     const data: AssortmentData = {};
     
@@ -64,9 +62,8 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
         data[retailer.id][catId] = {};
         
         priceRanges.forEach(priceRange => {
-          // Generate random data - higher chance of data in middle price ranges
           const isPricePointActive = Math.random() > 0.4 || 
-            (priceRange.min >= 15 && priceRange.max <= 50); // More likely to have products in mid-range
+            (priceRange.min >= 15 && priceRange.max <= 50);
           
           if (isPricePointActive) {
             const skuCount = Math.floor(Math.random() * 300) + 10;
@@ -89,12 +86,10 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     setAssortmentData(data);
   }, [retailers, selectedCategories, priceRanges]);
 
-  // Filter categories based on search term
   const filteredCategories = categories.filter(cat => 
     cat.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Function to determine bubble size class based on percentage value
   const getBubbleSize = (value: number): string => {
     if (value === 0) return 'hidden';
     if (value < 1) return 'w-6 h-6';
@@ -105,7 +100,6 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     return 'w-16 h-16';
   };
 
-  // Function to determine color class based on percentage value
   const getBubbleColor = (value: number, catId: string): string => {
     if (catId.includes('skinny')) {
       return 'bg-blue-100 text-blue-800';
@@ -240,60 +234,58 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="sticky left-0 bg-white font-medium w-[150px]">
-                  Price points GBP
+                <TableHead className="sticky left-0 bg-white font-medium w-[250px] border-r">
+                  Retailer / Category
                 </TableHead>
-                {retailers.map(retailer => (
-                  <TableHead key={retailer.id} colSpan={selectedCategories.length} className="text-center">
-                    {retailer.name}
+                {priceRanges.map(priceRange => (
+                  <TableHead 
+                    key={priceRange.id} 
+                    className="text-center font-medium px-6"
+                  >
+                    {priceRange.name}
                   </TableHead>
-                ))}
-              </TableRow>
-              <TableRow>
-                <TableHead className="sticky left-0 bg-white"></TableHead>
-                {retailers.map(retailer => (
-                  selectedCategories.map(catId => {
-                    const category = categories.find(c => c.id === catId);
-                    return (
-                      <TableHead key={`${retailer.id}-${catId}`} className="text-center">
-                        {category?.name || catId}
-                      </TableHead>
-                    );
-                  })
                 ))}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {priceRanges.map(priceRange => (
-                <TableRow key={priceRange.id}>
-                  <TableCell className="sticky left-0 bg-white font-medium">
-                    {priceRange.name}
-                  </TableCell>
-                  {retailers.map(retailer => (
-                    selectedCategories.map(catId => {
-                      const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
-                      const value = displayType === 'percentage' ? data?.percentage || 0 : data?.count || 0;
-                      const displayValue = displayType === 'percentage' ? `${value}%` : value;
-                      
-                      return (
-                        <TableCell 
-                          key={`${retailer.id}-${catId}-${priceRange.id}`} 
-                          className="text-center p-4"
-                        >
-                          {value > 0 ? (
-                            <div className="flex justify-center items-center">
-                              <div 
-                                className={`${getBubbleSize(value)} ${getBubbleColor(value, catId)} rounded-full flex items-center justify-center text-xs font-medium`}
-                              >
-                                {displayValue}
-                              </div>
-                            </div>
-                          ) : null}
+              {retailers.map(retailer => (
+                <React.Fragment key={retailer.id}>
+                  {selectedCategories.map((catId, index) => {
+                    const category = categories.find(c => c.id === catId);
+                    return (
+                      <TableRow key={`${retailer.id}-${catId}`} className={index === 0 ? 'border-t-2' : ''}>
+                        <TableCell className="sticky left-0 bg-white font-medium border-r">
+                          {index === 0 && (
+                            <div className="font-bold mb-2">{retailer.name}</div>
+                          )}
+                          <div className="pl-4">{category?.name || catId}</div>
                         </TableCell>
-                      );
-                    })
-                  ))}
-                </TableRow>
+                        {priceRanges.map(priceRange => {
+                          const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
+                          const value = displayType === 'percentage' ? data?.percentage || 0 : data?.count || 0;
+                          const displayValue = displayType === 'percentage' ? `${value}%` : value;
+                          
+                          return (
+                            <TableCell 
+                              key={`${retailer.id}-${catId}-${priceRange.id}`} 
+                              className="text-center p-4"
+                            >
+                              {value > 0 && (
+                                <div className="flex justify-center items-center">
+                                  <div 
+                                    className={`${getBubbleSize(value)} ${getBubbleColor(value, catId)} rounded-full flex items-center justify-center text-xs font-medium`}
+                                  >
+                                    {displayValue}
+                                  </div>
+                                </div>
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+                </React.Fragment>
               ))}
             </TableBody>
           </Table>
