@@ -31,6 +31,7 @@ import AssortmentBubble from "./AssortmentBubble";
 import SizingCell from "./SizingCell";
 import ProductDetailTable from "./ProductDetailTable";
 import CompetitorProductTables from "./CompetitorProductTables";
+import { X } from "lucide-react";
 
 interface AssortmentMixExplorerProps {
   retailers: { id: string; name: string }[];
@@ -343,6 +344,16 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
 
   const handleCloseProductTable = () => setSelectedCell(null);
 
+  const isCellSelected = (
+    retailerId: string,
+    categoryId: string,
+    priceRangeId: string
+  ) =>
+    selectedCell &&
+    selectedCell.retailerId === retailerId &&
+    selectedCell.categoryId === categoryId &&
+    selectedCell.priceRangeId === priceRangeId;
+
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -519,18 +530,18 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
               {filteredRetailers.map((retailer) => {
                 const hasMultipleCategories = selectedCategories.length > 0;
                 const showRetailerRow = showTotalRange && hasMultipleCategories;
-                
+
                 return (
                   <React.Fragment key={retailer.id}>
                     {showRetailerRow ? (
                       <TableRow className="border-t-2">
-                        <TableCell 
-                          rowSpan={selectedCategories.length + 1} 
+                        <TableCell
+                          rowSpan={selectedCategories.length + 1}
                           className="sticky left-0 bg-white font-medium border-r py-1 text-xs"
                         >
                           {retailer.name}
                         </TableCell>
-                        
+
                         <TableCell className="sticky left-[120px] bg-purple-50 border-r py-1 text-xs font-bold text-purple-900">
                           Total Range
                         </TableCell>
@@ -538,7 +549,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                           const totals = calculateRetailerTotals(retailer.id);
                           const data = totals[priceRange.id];
                           const value = {
-                            primary: displayMetric === 'pdv-percentage' 
+                            primary: displayMetric === 'pdv-percentage'
                               ? Number(data?.pdvPercentage ?? 0)
                               : Number(data?.percentage ?? 0),
                             secondary: displayMetric === 'pdv-percentage'
@@ -547,18 +558,23 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                           };
                           const percent = value.primary;
 
+                          const selected = isCellSelected(retailer.id, "TOTAL", priceRange.id);
+
                           return (
-                            <TableCell 
-                              key={`${retailer.id}-total-${priceRange.id}`} 
-                              className="text-center p-1 align-bottom bg-purple-50 cursor-pointer hover:ring-2 ring-purple-300"
+                            <TableCell
+                              key={`${retailer.id}-total-${priceRange.id}`}
+                              className={`text-center p-1 align-bottom bg-purple-50 cursor-pointer hover:ring-2 ring-purple-300
+                                ${selected ? "ring-2 ring-blue-600 bg-blue-50" : ""}
+                              `}
                               onClick={() => handleCellClick(retailer.id, "TOTAL", priceRange.id)}
                               tabIndex={0}
+                              aria-label={`Show details for ${retailer.name}, Total Range, Price ${priceRange.name}${selected ? " (selected)" : ""}`}
                             >
                               <div className="flex flex-col justify-end items-center h-16 relative">
-                                <SizingCell 
-                                  percent={percent} 
-                                  secondary={value.secondary} 
-                                  isTotal={true} 
+                                <SizingCell
+                                  percent={percent}
+                                  secondary={value.secondary}
+                                  isTotal={true}
                                 />
                               </div>
                             </TableCell>
@@ -566,41 +582,48 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                         })}
                       </TableRow>
                     ) : null}
-                    
+
                     {selectedCategories.map((catId, index) => {
                       const category = categories.find(c => c.id === catId);
-                      
+
                       return (
-                        <TableRow 
+                        <TableRow
                           key={`${retailer.id}-${catId}`}
                           className={
-                            (showTotalRange && index === 0) ? "" : 
+                            (showTotalRange && index === 0) ? "" :
                             index === 0 ? "border-t-2" : ""
                           }
                         >
                           {(!showTotalRange || !showRetailerRow) && index === 0 && (
-                            <TableCell 
+                            <TableCell
                               rowSpan={selectedCategories.length}
                               className="sticky left-0 bg-white font-medium border-r py-1 text-xs"
                             >
                               {retailer.name}
                             </TableCell>
                           )}
-                          
+
                           <TableCell className="sticky left-[120px] bg-white border-r py-1 text-xs">
                             {category?.name}
                           </TableCell>
-                          
+
                           {generatedPriceRanges.map(priceRange => {
                             const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
                             const display = getDisplayValue(data);
                             const percent = parseFloat(display.primary);
+
+                            const selected = isCellSelected(retailer.id, catId, priceRange.id);
+
                             return (
-                              <TableCell 
-                                key={`${retailer.id}-${catId}-${priceRange.id}`} 
-                                className="text-center p-1 align-bottom cursor-pointer hover:ring-2 ring-blue-300"
+                              <TableCell
+                                key={`${retailer.id}-${catId}-${priceRange.id}`}
+                                className={`
+                                  text-center p-1 align-bottom cursor-pointer hover:ring-2 ring-blue-300
+                                  ${selected ? "ring-2 ring-blue-600 bg-blue-50" : ""}
+                                `}
                                 onClick={() => handleCellClick(retailer.id, catId, priceRange.id)}
                                 tabIndex={0}
+                                aria-label={`Show details for ${retailer.name}, ${category?.name}, Price ${priceRange.name}${selected ? " (selected)" : ""}`}
                               >
                                 <div className="flex flex-col justify-end items-center h-16 relative">
                                   <SizingCell percent={percent} secondary={display.secondary} categoryId={catId} />
@@ -619,10 +642,19 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
         </div>
         <div id="product-detail-table-anchor" />
         {selectedCell && (
-          <>
+          <div className="relative">
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute right-2 top-2 z-10"
+              onClick={handleCloseProductTable}
+              aria-label="Clear selection"
+            >
+              <X className="w-4 h-4" />
+            </Button>
             <ProductDetailTable
               retailer={retailers.find(r => r.id === selectedCell.retailerId)?.name || selectedCell.retailerId}
-              category={selectedCell.categoryId === "TOTAL" 
+              category={selectedCell.categoryId === "TOTAL"
                 ? "Total Range"
                 : categories.find(c => c.id === selectedCell.categoryId)?.name || selectedCell.categoryId
               }
@@ -643,7 +675,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
               selectedPriceRangeName={generatedPriceRanges.find(p => p.id === selectedCell.priceRangeId)?.name || selectedCell.priceRangeId}
               onClose={() => {}}
             />
-          </>
+          </div>
         )}
       </CardContent>
     </Card>
