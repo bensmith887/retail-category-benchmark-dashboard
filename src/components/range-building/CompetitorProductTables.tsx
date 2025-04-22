@@ -2,14 +2,21 @@
 import React from "react";
 import ProductDetailTable from "./ProductDetailTable";
 
-// Simulate 50 demo products for a retailer/category/price
+// Fashion-related demo product images (think H&M style)
+const demoImages = [
+  // Unsplash sample people/fashion photos, square crop, high contrast
+  "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=facearea&w=64&h=64&q=80", // woman with white shirt
+  "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=facearea&w=64&h=64&q=80", // man with jacket
+  "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=facearea&w=64&h=64&q=80", // young woman in turtleneck
+  "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=facearea&w=64&h=64&q=80", // woman in black
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&w=64&h=64&q=80", // woman with curly hair
+  "https://images.unsplash.com/photo-1524253482453-3fed8d2fe12b?auto=format&fit=facearea&w=64&h=64&q=80", // man with blue shirt
+  "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=facearea&w=64&h=64&q=80", // man with patterned shirt
+  "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=facearea&w=64&h=64&q=80", // woman fashion, white background
+  "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=facearea&w=64&h=64&q=80", // man portrait
+];
+
 const getDemoProducts = (retailer: string, category: string, priceRange: string) => {
-  const demoImages = [
-    "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?auto=format&fit=facearea&w=64&h=64&q=80",
-    "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?auto=format&fit=facearea&w=64&h=64&q=80",
-    "https://images.unsplash.com/photo-1501286353178-1ec881214838?auto=format&fit=facearea&w=64&h=64&q=80",
-    "/public/lovable-uploads/5acb37f7-ec65-44ef-bc8a-fe9ced0ae03a.png",
-  ];
   return Array.from({ length: 50 }).map((_, ix) => ({
     id: `p_${retailer}_${category}_${priceRange}_${ix}`,
     name: "Demo Product " + (ix + 1),
