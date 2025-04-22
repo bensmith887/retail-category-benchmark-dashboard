@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Card, 
@@ -476,82 +477,96 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredRetailers.map(retailer => (
-                <React.Fragment key={retailer.id}>
-                  {showTotalRange && (
-                    <TableRow className="bg-muted/20 font-medium border-t-2">
-                      <TableCell className="sticky left-0 bg-muted/20 font-medium border-r py-1 text-xs">
+              {filteredRetailers.map((retailer) => {
+                const hasMultipleCategories = selectedCategories.length > 0;
+                const showRetailerRow = showTotalRange && hasMultipleCategories;
+                
+                return (
+                  <React.Fragment key={retailer.id}>
+                    <TableRow className={showRetailerRow ? "border-t-2" : ""}>
+                      <TableCell 
+                        rowSpan={showTotalRange ? selectedCategories.length + 1 : selectedCategories.length} 
+                        className="sticky left-0 bg-white font-medium border-r py-1 text-xs"
+                      >
                         {retailer.name}
                       </TableCell>
-                      <TableCell className="sticky left-[120px] bg-muted/20 border-r py-1 text-xs">
-                        Total Range
-                      </TableCell>
-                      {generatedPriceRanges.map(priceRange => {
-                        const totals = calculateRetailerTotals(retailer.id);
-                        const data = totals[priceRange.id];
-                        const value = {
-                          primary: displayMetric === 'pdv-percentage' 
-                            ? Number(data?.pdvPercentage ?? 0)
-                            : Number(data?.percentage ?? 0),
-                          secondary: displayMetric === 'pdv-percentage'
-                            ? data?.pdvs?.toLocaleString()
-                            : data?.count?.toString()
-                        };
-                        const percent = value.primary;
-
-                        return (
-                          <TableCell 
-                            key={`${retailer.id}-total-${priceRange.id}`} 
-                            className="text-center p-1 align-bottom"
-                          >
-                            <div className="flex flex-col justify-end items-center h-16 relative">
-                              <SizingCell percent={percent} secondary={value.secondary} />
-                            </div>
+                      
+                      {showTotalRange && (
+                        <>
+                          <TableCell className="sticky left-[120px] bg-muted/20 border-r py-1 text-xs font-medium">
+                            Total Range
                           </TableCell>
-                        );
-                      })}
+                          {generatedPriceRanges.map(priceRange => {
+                            const totals = calculateRetailerTotals(retailer.id);
+                            const data = totals[priceRange.id];
+                            const value = {
+                              primary: displayMetric === 'pdv-percentage' 
+                                ? Number(data?.pdvPercentage ?? 0)
+                                : Number(data?.percentage ?? 0),
+                              secondary: displayMetric === 'pdv-percentage'
+                                ? data?.pdvs?.toLocaleString()
+                                : data?.count?.toString()
+                            };
+                            const percent = value.primary;
+
+                            return (
+                              <TableCell 
+                                key={`${retailer.id}-total-${priceRange.id}`} 
+                                className="text-center p-1 align-bottom bg-muted/20"
+                              >
+                                <div className="flex flex-col justify-end items-center h-16 relative">
+                                  <SizingCell percent={percent} secondary={value.secondary} />
+                                </div>
+                              </TableCell>
+                            );
+                          })}
+                        </>
+                      )}
                     </TableRow>
-                  )}
-                  {selectedCategories.map((catId, index) => {
-                    const category = categories.find(c => c.id === catId);
                     
-                    return (
-                      <TableRow 
-                        key={`${retailer.id}-${catId}`} 
-                        className={index === 0 ? 'border-t-2' : ''}
-                      >
-                        {index === 0 && (
-                          <TableCell 
-                            rowSpan={selectedCategories.length + (showTotalRange ? 1 : 0)} 
-                            className="sticky left-0 bg-white font-medium border-r py-1 align-top text-xs"
-                          >
-                            {retailer.name}
-                          </TableCell>
-                        )}
-                        <TableCell className="sticky left-[120px] bg-white border-r py-1 text-xs">
-                          {category?.name}
-                        </TableCell>
-                        {generatedPriceRanges.map(priceRange => {
-                          const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
-                          const display = getDisplayValue(data);
-                          const percent = parseFloat(display.primary);
-
-                          return (
+                    {selectedCategories.map((catId, index) => {
+                      const category = categories.find(c => c.id === catId);
+                      
+                      return (
+                        <TableRow 
+                          key={`${retailer.id}-${catId}`}
+                          className={(showTotalRange && index === 0) ? "" : index === 0 ? "border-t-2" : ""}
+                        >
+                          {!showTotalRange && index === 0 && (
                             <TableCell 
-                              key={`${retailer.id}-${catId}-${priceRange.id}`} 
-                              className="text-center p-1 align-bottom"
+                              rowSpan={selectedCategories.length}
+                              className="sticky left-0 bg-white font-medium border-r py-1 text-xs"
                             >
-                              <div className="flex flex-col justify-end items-center h-16 relative">
-                                <SizingCell percent={percent} secondary={display.secondary} categoryId={catId} />
-                              </div>
+                              {retailer.name}
                             </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    );
-                  })}
-                </React.Fragment>
-              ))}
+                          )}
+                          
+                          <TableCell className="sticky left-[120px] bg-white border-r py-1 text-xs">
+                            {category?.name}
+                          </TableCell>
+                          
+                          {generatedPriceRanges.map(priceRange => {
+                            const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
+                            const display = getDisplayValue(data);
+                            const percent = parseFloat(display.primary);
+
+                            return (
+                              <TableCell 
+                                key={`${retailer.id}-${catId}-${priceRange.id}`} 
+                                className="text-center p-1 align-bottom"
+                              >
+                                <div className="flex flex-col justify-end items-center h-16 relative">
+                                  <SizingCell percent={percent} secondary={display.secondary} categoryId={catId} />
+                                </div>
+                              </TableCell>
+                            );
+                          })}
+                        </TableRow>
+                      );
+                    })}
+                  </React.Fragment>
+                );
+              })}
             </TableBody>
           </Table>
         </div>
