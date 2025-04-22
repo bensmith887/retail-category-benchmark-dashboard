@@ -87,7 +87,7 @@ export const RangeBuildingTabs = () => {
         <TabsList className="grid grid-cols-5 w-full">
           <TabsTrigger 
             value="assortment-mix" 
-            className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white" 
+            className="flex items-center gap-2 data-[state=active]:bg-[#5840bb] data-[state=active]:text-white" 
             disabled={false}
           >
             <Grid2X2 size={16} />
@@ -102,9 +102,9 @@ export const RangeBuildingTabs = () => {
             <span>White Space</span>
             <Badge 
               variant="secondary" 
-              className="ml-2 flex items-center gap-1 text-gray-500 bg-gray-100 border-none"
+              className="ml-1 flex items-center gap-1 text-gray-500 bg-gray-100 text-xs py-0 h-5 px-1.5"
             >
-              <Clock size={12} /> Coming soon
+              <Clock size={10} /> Coming soon
             </Badge>
           </TabsTrigger>
           <TabsTrigger 
@@ -116,9 +116,9 @@ export const RangeBuildingTabs = () => {
             <span>Price Architecture</span>
             <Badge 
               variant="secondary" 
-              className="ml-2 flex items-center gap-1 text-gray-500 bg-gray-100 border-none"
+              className="ml-1 flex items-center gap-1 text-gray-500 bg-gray-100 text-xs py-0 h-5 px-1.5"
             >
-              <Clock size={12} /> Coming soon
+              <Clock size={10} /> Coming soon
             </Badge>
           </TabsTrigger>
           <TabsTrigger 
@@ -130,9 +130,9 @@ export const RangeBuildingTabs = () => {
             <span>Discounting</span>
             <Badge 
               variant="secondary" 
-              className="ml-2 flex items-center gap-1 text-gray-500 bg-gray-100 border-none"
+              className="ml-1 flex items-center gap-1 text-gray-500 bg-gray-100 text-xs py-0 h-5 px-1.5"
             >
-              <Clock size={12} /> Coming soon
+              <Clock size={10} /> Coming soon
             </Badge>
           </TabsTrigger>
           <TabsTrigger 
@@ -144,9 +144,9 @@ export const RangeBuildingTabs = () => {
             <span>Trends</span>
             <Badge 
               variant="secondary" 
-              className="ml-2 flex items-center gap-1 text-gray-500 bg-gray-100 border-none"
+              className="ml-1 flex items-center gap-1 text-gray-500 bg-gray-100 text-xs py-0 h-5 px-1.5"
             >
-              <Clock size={12} /> Coming soon
+              <Clock size={10} /> Coming soon
             </Badge>
           </TabsTrigger>
         </TabsList>
