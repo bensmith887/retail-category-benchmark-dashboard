@@ -493,9 +493,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                       
                       {showTotalRange && (
                         <>
-                          <TableCell 
-                            className="sticky left-[120px] bg-purple-50/50 border-r py-2 text-xs font-semibold text-dashboard-primary/80 tracking-tight"
-                          >
+                          <TableCell className="sticky left-[120px] bg-muted/20 border-r py-1 text-xs font-medium">
                             Total Range
                           </TableCell>
                           {generatedPriceRanges.map(priceRange => {
@@ -514,14 +512,10 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                             return (
                               <TableCell 
                                 key={`${retailer.id}-total-${priceRange.id}`} 
-                                className="text-center p-1 align-bottom bg-purple-50/50"
+                                className="text-center p-1 align-bottom bg-muted/20"
                               >
                                 <div className="flex flex-col justify-end items-center h-16 relative">
-                                  <SizingCell 
-                                    percent={percent} 
-                                    secondary={value.secondary} 
-                                    totalRangeMode={true} 
-                                  />
+                                  <SizingCell percent={percent} secondary={value.secondary} />
                                 </div>
                               </TableCell>
                             );
