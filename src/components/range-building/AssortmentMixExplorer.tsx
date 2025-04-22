@@ -210,25 +210,39 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   const calculateRetailerTotals = (retailerId: string) => {
     const totals: Record<string, number> = {
       count: 0,
-      percentage: 0,
-      pdvs: 0,
-      pdvPercentage: 0
+      pdvs: 0
     };
-
-    if (!assortmentData[retailerId]) {
-      return totals;
-    }
-
-    selectedCategories.forEach(catId => {
-      if (assortmentData[retailerId] && assortmentData[retailerId][catId]) {
-        Object.values(assortmentData[retailerId][catId]).forEach(data => {
-          totals.count += data.count;
-          totals.pdvs += data.pdvs;
-        });
-      }
+    
+    const priceRangeTotals: Record<string, { count: number; pdvs: number }> = {};
+    
+    priceRanges.forEach(range => {
+      priceRangeTotals[range.id] = { count: 0, pdvs: 0 };
     });
 
-    return totals;
+    if (assortmentData[retailerId]) {
+      selectedCategories.forEach(catId => {
+        if (assortmentData[retailerId][catId]) {
+          Object.entries(assortmentData[retailerId][catId]).forEach(([priceRangeId, data]) => {
+            totals.count += data.count;
+            totals.pdvs += data.pdvs;
+            priceRangeTotals[priceRangeId].count += data.count;
+            priceRangeTotals[priceRangeId].pdvs += data.pdvs;
+          });
+        }
+      });
+    }
+
+    const normalizedTotals: Record<string, SkuData> = {};
+    Object.entries(priceRangeTotals).forEach(([priceRangeId, data]) => {
+      normalizedTotals[priceRangeId] = {
+        count: data.count,
+        pdvs: data.pdvs,
+        percentage: totals.count > 0 ? (data.count / totals.count) * 100 : 0,
+        pdvPercentage: totals.pdvs > 0 ? (data.pdvs / totals.pdvs) * 100 : 0
+      };
+    });
+
+    return normalizedTotals;
   };
 
   return (
@@ -359,6 +373,46 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
             <TableBody>
               {retailers.map(retailer => (
                 <React.Fragment key={retailer.id}>
+                  {showTotalRange && (
+                    <TableRow className="bg-muted/20 font-medium border-t-2">
+                      <TableCell className="sticky left-0 bg-muted/20 font-medium border-r py-1 text-xs">
+                        {retailer.name}
+                      </TableCell>
+                      <TableCell className="sticky left-[120px] bg-muted/20 border-r py-1 text-xs">
+                        Total Range
+                      </TableCell>
+                      {priceRanges.map(priceRange => {
+                        const totals = calculateRetailerTotals(retailer.id);
+                        const data = totals[priceRange.id];
+                        const value = {
+                          primary: displayMetric === 'pdv-percentage' 
+                            ? `${data?.pdvPercentage?.toFixed(1)}%` 
+                            : `${data?.percentage?.toFixed(1)}%`,
+                          secondary: displayMetric === 'pdv-percentage'
+                            ? data?.pdvs?.toLocaleString()
+                            : data?.count?.toString()
+                        };
+                        
+                        const bubbleSize = getBubbleSize(parseFloat(value.primary || '0'));
+                        
+                        return (
+                          <TableCell 
+                            key={`${retailer.id}-total-${priceRange.id}`} 
+                            className="text-center p-1"
+                          >
+                            {value.primary && (
+                              <div className="flex justify-center items-center">
+                                <div className={`${bubbleSize} bg-gray-100 text-gray-800 rounded-full flex flex-col items-center justify-center text-[10px] font-medium`}>
+                                  <span>{value.primary}</span>
+                                  <span className="text-[8px] opacity-75">{value.secondary}</span>
+                                </div>
+                              </div>
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  )}
                   {selectedCategories.map((catId, index) => {
                     const category = categories.find(c => c.id === catId);
                     
@@ -403,47 +457,6 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                       </TableRow>
                     );
                   })}
-                  {showTotalRange && (
-                    <TableRow className="bg-muted/20 font-medium">
-                      <TableCell className="sticky left-[120px] bg-white border-r py-1 text-xs">
-                        Total Range
-                      </TableCell>
-                      {priceRanges.map(priceRange => {
-                        const totals = calculateRetailerTotals(retailer.id);
-                        const totalCount = totals?.count || 0;
-                        const totalPDVs = totals?.pdvs || 0;
-                        const totalPDVPercentage = totalPDVs > 0 ? (totalPDVs / getTotalPDVs() * 100) : 0;
-                        
-                        const allRetailerSkus = Object.values(assortmentData[retailer.id] || {}).reduce((acc, cat) => 
-                          acc + Object.values(cat || {}).reduce((sum, data) => sum + data.count, 0), 0);
-                        
-                        const totalSkuPercentage = allRetailerSkus > 0 ? (totalCount / allRetailerSkus * 100) : 0;
-                        
-                        const value = {
-                          primary: displayMetric === 'pdv-percentage' 
-                            ? `${totalPDVPercentage.toFixed(1)}%`
-                            : `${totalSkuPercentage.toFixed(1)}%`,
-                          secondary: displayMetric === 'pdv-percentage' 
-                            ? totalPDVs.toLocaleString()
-                            : totalCount.toString()
-                        };
-                        
-                        return (
-                          <TableCell 
-                            key={`${retailer.id}-total-${priceRange.id}`} 
-                            className="text-center p-1"
-                          >
-                            <div className="flex justify-center items-center">
-                              <div className="w-8 h-8 bg-gray-100 text-gray-800 rounded-full flex flex-col items-center justify-center text-[10px] font-medium">
-                                <span>{value.primary}</span>
-                                <span className="text-[8px] opacity-75">{value.secondary}</span>
-                              </div>
-                            </div>
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  )}
                 </React.Fragment>
               ))}
             </TableBody>
