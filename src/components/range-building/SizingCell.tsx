@@ -9,12 +9,14 @@ interface SizingCellProps {
   percent: number;
   secondary: string;
   categoryId?: string;
+  isTotal?: boolean;
 }
 
 const SizingCell: React.FC<SizingCellProps> = ({
   percent,
   secondary,
-  categoryId
+  categoryId,
+  isTotal = false
 }) => {
   const cellRef = useRef<HTMLDivElement>(null);
   const [cellSize, setCellSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
@@ -45,7 +47,11 @@ const SizingCell: React.FC<SizingCellProps> = ({
 
   return (
     <div ref={cellRef} className="flex items-center justify-center w-full h-full relative min-h-[50px] min-w-[40px]">
-      <AssortmentBarIndicator percent={percent} secondary={secondary} />
+      <AssortmentBarIndicator 
+        percent={percent} 
+        secondary={secondary} 
+        className={isTotal ? "total-indicator" : ""} 
+      />
     </div>
   );
 };

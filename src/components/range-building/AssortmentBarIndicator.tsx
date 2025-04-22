@@ -30,18 +30,30 @@ const AssortmentBarIndicator: React.FC<AssortmentBarIndicatorProps> = ({
     Math.min(100, getBarHeightPercent(percent))
   );
 
+  // Check if this is a total indicator based on className
+  const isTotal = className.includes("total-indicator");
+
   // Use color palette based on percent for more clarity
   let fillColor = "bg-blue-300";
-  if (percent >= 15) fillColor = "bg-blue-600";
-  else if (percent >= 10) fillColor = "bg-blue-500";
-  else if (percent >= 6) fillColor = "bg-blue-400";
-  else if (percent >= 3) fillColor = "bg-blue-300";
-  else if (percent > 0) fillColor = "bg-blue-200";
-  else fillColor = "bg-gray-100";
+  let textColor = "text-blue-900";
+  let secondaryTextColor = "text-neutral-500";
+  
+  if (isTotal) {
+    fillColor = "bg-purple-600";
+    textColor = "text-purple-900";
+    secondaryTextColor = "text-purple-700";
+  } else {
+    if (percent >= 15) fillColor = "bg-blue-600";
+    else if (percent >= 10) fillColor = "bg-blue-500";
+    else if (percent >= 6) fillColor = "bg-blue-400";
+    else if (percent >= 3) fillColor = "bg-blue-300";
+    else if (percent > 0) fillColor = "bg-blue-200";
+    else fillColor = "bg-gray-100";
+  }
 
   return (
     <div className={`relative flex items-end justify-center h-16 ${className}`}>
-      <div className="absolute left-1/2 -translate-x-1/2 bottom-0 h-full w-4 bg-gray-100 rounded-sm" />
+      <div className={`absolute left-1/2 -translate-x-1/2 bottom-0 h-full w-4 ${isTotal ? "bg-purple-100" : "bg-gray-100"} rounded-sm`} />
       <div
         className={`absolute left-1/2 -translate-x-1/2 rounded-sm transition-all ${fillColor}`}
         style={{
@@ -54,26 +66,28 @@ const AssortmentBarIndicator: React.FC<AssortmentBarIndicatorProps> = ({
       {percent > 0 && (
         <div className="absolute left-0 bottom-0 w-full flex flex-col items-center justify-end text-xs z-10">
           <span
-            className="font-semibold text-blue-900"
+            className={`font-semibold ${textColor}`}
             style={{
               fontSize: percent >= 10 ? 13 : percent >= 3 ? 12 : 11,
               lineHeight: 1,
               marginBottom: 2,
-              background: "rgba(255,255,255,0.85)",
+              background: isTotal ? "rgba(243, 232, 255, 0.9)" : "rgba(255,255,255,0.85)",
               borderRadius: 4,
               padding: "0.5px 3px",
-              boxShadow: percent >= 10 ? "0 2px 6px rgba(59,130,246,0.12)" : "none",
+              boxShadow: percent >= 10 ? (isTotal ? "0 2px 6px rgba(107, 33, 168, 0.2)" : "0 2px 6px rgba(59,130,246,0.12)") : "none",
+              fontWeight: isTotal ? 700 : 600,
             }}
           >
             {percent.toFixed(1)}%
           </span>
           <span
-            className="text-neutral-500 mt-0.5"
+            className={`${secondaryTextColor} mt-0.5`}
             style={{
               fontSize: percent >= 10 ? 11 : 10,
-              background: "rgba(255,255,255,0.75)",
+              background: isTotal ? "rgba(243, 232, 255, 0.8)" : "rgba(255,255,255,0.75)",
               borderRadius: 3,
               padding: "0px 2px",
+              fontWeight: isTotal ? 500 : 400,
             }}
           >
             {secondary}
