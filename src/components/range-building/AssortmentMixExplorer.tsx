@@ -86,7 +86,6 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
       });
     }
     
-    // Add the final "plus" range
     ranges.push({
       id: `${max}+`,
       name: `£${max}+`,
@@ -287,121 +286,122 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Assortment Mix Explorer</CardTitle>
-        <CardDescription>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg">Assortment Mix Explorer</CardTitle>
+        <CardDescription className="text-xs">
           Compare SKU distribution across retailers, categories, and price points
         </CardDescription>
         
-        <div className="flex flex-wrap items-end gap-4 mt-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Display Metric</label>
+        <div className="flex flex-wrap items-end gap-2 mt-2">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-medium">Display Metric</label>
             <ToggleGroup
               type="single"
               value={displayMetric}
               onValueChange={(value) => {
                 if (value) setDisplayMetric(value as DisplayMetric);
               }}
+              className="text-xs"
             >
-              <ToggleGroupItem value="range-percentage" aria-label="Show range percentages">
+              <ToggleGroupItem value="range-percentage" aria-label="Show range percentages" className="text-xs px-2 py-1">
                 % of Range
               </ToggleGroupItem>
-              <ToggleGroupItem value="pdv-percentage" aria-label="Show PDV percentages">
+              <ToggleGroupItem value="pdv-percentage" aria-label="Show PDV percentages" className="text-xs px-2 py-1">
                 PDV %
               </ToggleGroupItem>
             </ToggleGroup>
           </div>
           
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Price Range (£)</label>
-            <div className="flex gap-2 items-center">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-medium">Price Range (£)</label>
+            <div className="flex gap-1 items-center">
               <Input
                 type="number"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
-                className="w-20"
+                className="w-16 h-8 text-xs px-2"
                 min="0"
               />
-              <span>to</span>
+              <span className="text-xs">to</span>
               <Input
                 type="number"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
-                className="w-20"
+                className="w-16 h-8 text-xs px-2"
                 min="0"
               />
             </div>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Price Interval (£)</label>
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-medium">Price Interval (£)</label>
             <Select value={priceInterval} onValueChange={setPriceInterval}>
-              <SelectTrigger className="w-24">
-                <SelectValue placeholder="£5" />
+              <SelectTrigger className="w-20 h-8 text-xs">
+                <SelectValue placeholder="£5" className="text-xs" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="5">£5</SelectItem>
-                <SelectItem value="10">£10</SelectItem>
-                <SelectItem value="15">£15</SelectItem>
-                <SelectItem value="20">£20</SelectItem>
-                <SelectItem value="25">£25</SelectItem>
+                <SelectItem value="5" className="text-xs">£5</SelectItem>
+                <SelectItem value="10" className="text-xs">£10</SelectItem>
+                <SelectItem value="15" className="text-xs">£15</SelectItem>
+                <SelectItem value="20" className="text-xs">£20</SelectItem>
+                <SelectItem value="25" className="text-xs">£25</SelectItem>
               </SelectContent>
             </Select>
           </div>
           
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Date Range</label>
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-medium">Date Range</label>
             <Select 
               value={dateRange} 
               onValueChange={setDateRange}
             >
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Last 3 months" />
+              <SelectTrigger className="w-28 h-8 text-xs">
+                <SelectValue placeholder="Last 3 months" className="text-xs" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="3">Last 3 months</SelectItem>
-                <SelectItem value="6">Last 6 months</SelectItem>
-                <SelectItem value="12">Last 12 months</SelectItem>
+                <SelectItem value="3" className="text-xs">Last 3 months</SelectItem>
+                <SelectItem value="6" className="text-xs">Last 6 months</SelectItem>
+                <SelectItem value="12" className="text-xs">Last 12 months</SelectItem>
               </SelectContent>
             </Select>
           </div>
           
-          <div className="flex flex-col gap-1.5 grow">
-            <label className="text-sm font-medium">Search Categories</label>
+          <div className="flex flex-col gap-1 grow">
+            <label className="text-xs font-medium">Search Categories</label>
             <Input 
               placeholder="Search categories..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
+              className="w-full h-8 text-xs px-2"
             />
           </div>
           
           <Button 
             variant="outline" 
             size="icon" 
-            className="flex items-center" 
+            className="flex items-center h-8 w-8" 
             onClick={handleExport}
           >
-            <Download size={16} />
+            <Download size={14} />
           </Button>
         </div>
         
-        <div className="flex flex-wrap gap-2 mt-4">
+        <div className="flex flex-wrap gap-1 mt-2">
           {filteredCategories.map(category => (
             <Button
               key={category.id}
               variant={selectedCategories.includes(category.id) ? "default" : "outline"}
               size="sm"
               onClick={() => toggleCategorySelection(category.id)}
-              className="text-xs"
+              className="text-xs h-6 px-2"
             >
               {category.name}
             </Button>
           ))}
         </div>
         
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium">Show Totals</label>
+        <div className="flex items-center gap-1 mt-1">
+          <label className="text-xs font-medium mr-1">Show Totals</label>
           <Switch
             checked={showTotalRange}
             onCheckedChange={setShowTotalRange}
@@ -414,16 +414,16 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="sticky left-0 bg-white font-medium w-[120px] border-r text-xs py-1">
+                <TableHead className="sticky left-0 bg-white font-medium w-[120px] border-r text-xs py-1 px-2">
                   Retailer
                 </TableHead>
-                <TableHead className="sticky left-[120px] bg-white font-medium w-[140px] border-r text-xs py-1">
+                <TableHead className="sticky left-[120px] bg-white font-medium w-[140px] border-r text-xs py-1 px-2">
                   Category
                 </TableHead>
                 {generatedPriceRanges.map(priceRange => (
                   <TableHead 
                     key={priceRange.id} 
-                    className="text-center font-medium px-2 text-xs py-1"
+                    className="text-center font-medium px-1 text-xs py-1"
                   >
                     {priceRange.name}
                   </TableHead>
