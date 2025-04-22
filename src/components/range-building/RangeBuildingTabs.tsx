@@ -85,35 +85,67 @@ export const RangeBuildingTabs = () => {
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
         <TabsList className="grid grid-cols-5 w-full">
-          <TabsTrigger value="assortment-mix" className="flex items-center gap-2" disabled={false}>
+          <TabsTrigger 
+            value="assortment-mix" 
+            className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white" 
+            disabled={false}
+          >
             <Grid2X2 size={16} />
             <span>Assortment Mix</span>
           </TabsTrigger>
-          <TabsTrigger value="white-space" className="flex items-center gap-2 relative cursor-not-allowed opacity-60" disabled>
+          <TabsTrigger 
+            value="white-space" 
+            className="flex items-center gap-2 relative cursor-not-allowed opacity-60" 
+            disabled
+          >
             <Search size={16} />
             <span>White Space</span>
-            <Badge variant="secondary" className="ml-2 flex items-center gap-1 text-muted-foreground bg-gray-100 border-none">
+            <Badge 
+              variant="secondary" 
+              className="ml-2 flex items-center gap-1 text-gray-500 bg-gray-100 border-none"
+            >
               <Clock size={12} /> Coming soon
             </Badge>
           </TabsTrigger>
-          <TabsTrigger value="price-architecture" className="flex items-center gap-2 relative cursor-not-allowed opacity-60" disabled>
+          <TabsTrigger 
+            value="price-architecture" 
+            className="flex items-center gap-2 relative cursor-not-allowed opacity-60" 
+            disabled
+          >
             <BarChart3 size={16} />
             <span>Price Architecture</span>
-            <Badge variant="secondary" className="ml-2 flex items-center gap-1 text-muted-foreground bg-gray-100 border-none">
+            <Badge 
+              variant="secondary" 
+              className="ml-2 flex items-center gap-1 text-gray-500 bg-gray-100 border-none"
+            >
               <Clock size={12} /> Coming soon
             </Badge>
           </TabsTrigger>
-          <TabsTrigger value="discounting" className="flex items-center gap-2 relative cursor-not-allowed opacity-60" disabled>
+          <TabsTrigger 
+            value="discounting" 
+            className="flex items-center gap-2 relative cursor-not-allowed opacity-60" 
+            disabled
+          >
             <Share2 size={16} />
             <span>Discounting</span>
-            <Badge variant="secondary" className="ml-2 flex items-center gap-1 text-muted-foreground bg-gray-100 border-none">
+            <Badge 
+              variant="secondary" 
+              className="ml-2 flex items-center gap-1 text-gray-500 bg-gray-100 border-none"
+            >
               <Clock size={12} /> Coming soon
             </Badge>
           </TabsTrigger>
-          <TabsTrigger value="trends" className="flex items-center gap-2 relative cursor-not-allowed opacity-60" disabled>
+          <TabsTrigger 
+            value="trends" 
+            className="flex items-center gap-2 relative cursor-not-allowed opacity-60" 
+            disabled
+          >
             <TrendingUp size={16} />
             <span>Trends</span>
-            <Badge variant="secondary" className="ml-2 flex items-center gap-1 text-muted-foreground bg-gray-100 border-none">
+            <Badge 
+              variant="secondary" 
+              className="ml-2 flex items-center gap-1 text-gray-500 bg-gray-100 border-none"
+            >
               <Clock size={12} /> Coming soon
             </Badge>
           </TabsTrigger>
