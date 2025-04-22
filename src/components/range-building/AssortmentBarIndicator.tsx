@@ -1,4 +1,3 @@
-
 import React from "react";
 
 // Exaggerated scaling: make difference between low and high much more visible
@@ -13,18 +12,34 @@ const getBarHeightPercent = (value: number) => {
   return 100;
 };
 
-// Color gradient: low % = red (#ea384c), high % = green (#4ADE80)
-const getGradientColor = (percent: number) => {
-  // Red: #ea384c (234,56,76), Green: #4ADE80 (74,222,128)
+// FLAT color mapping: lowest % = red, mid = orange, highest = green
+// - Red:    #EA384C  (234,56,76)
+// - Orange: #F97316  (249,115,22)
+// - Green:  #4ADE80  (74,222,128)
+const getFlatColor = (percent: number) => {
   const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
-  const norm = clamp(percent, 0, 100) / 100; // 0=red, 1=green
+  const p = clamp(percent, 0, 100);
 
-  // Interpolate from red to green
-  const r = Math.round(234 - (234 - 74) * norm);  // red decreases as percentage increases
-  const g = Math.round(56 + (222 - 56) * norm);   // green increases as percentage increases
-  const b = Math.round(76 + (128 - 76) * norm);   // blue increases slightly
+  if (p === 0) return "#f0f0f0"; // faded grey for empty bar
 
-  return `rgb(${r},${g},${b})`;
+  if (p <= 33) {
+    // RED to ORANGE (0-33)
+    const t = p / 33;
+    const r = Math.round(234 + (249 - 234) * t);
+    const g = Math.round(56 + (115 - 56) * t);
+    const b = Math.round(76 + (22 - 76) * t);
+    return `rgb(${r},${g},${b})`;
+  } else if (p < 66) {
+    // ORANGE zone (33–66) = keep flat orange
+    return "#F97316";
+  } else {
+    // ORANGE to GREEN (66-100)
+    const t = (p - 66) / (100 - 66);
+    const r = Math.round(249 + (74 - 249) * t);
+    const g = Math.round(115 + (222 - 115) * t);
+    const b = Math.round(22 + (128 - 22) * t);
+    return `rgb(${r},${g},${b})`;
+  }
 };
 
 interface AssortmentBarIndicatorProps {
@@ -42,7 +57,7 @@ const AssortmentBarIndicator: React.FC<AssortmentBarIndicatorProps> = ({
     8,
     Math.min(100, getBarHeightPercent(percent))
   );
-  const fillColor = getGradientColor(percent);
+  const fillColor = getFlatColor(percent);
 
   return (
     <div className={`relative flex items-end justify-center h-16 w-8 ${className}`}>
