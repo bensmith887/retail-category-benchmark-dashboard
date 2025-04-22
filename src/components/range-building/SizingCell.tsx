@@ -1,9 +1,9 @@
 
 import React, { useEffect, useRef, useState } from "react";
-import AssortmentBubble from "./AssortmentBubble";
+import AssortmentBarIndicator from "./AssortmentBarIndicator";
 
 /**
- * Dynamically sizes the container and bubble, so it always fits.
+ * This cell provides a dynamically sized bar chart indicator for percentage/cell value.
  */
 interface SizingCellProps {
   percent: number;
@@ -43,21 +43,9 @@ const SizingCell: React.FC<SizingCellProps> = ({
     return <div ref={cellRef} className="w-full h-full" />;
   }
 
-  // Make the bubble never exceed 90% of size, but not smaller than 28px
-  const bubbleContainerSize = Math.max(Math.min(cellSize.width, cellSize.height) * 0.95, 28);
-
   return (
     <div ref={cellRef} className="flex items-center justify-center w-full h-full relative min-h-[50px] min-w-[40px]">
-      {bubbleContainerSize > 0 && (
-        <div style={{ width: bubbleContainerSize, height: bubbleContainerSize, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <AssortmentBubble
-            value={percent}
-            secondary={secondary}
-            categoryId={categoryId}
-            containerClassName=""
-          />
-        </div>
-      )}
+      <AssortmentBarIndicator percent={percent} secondary={secondary} />
     </div>
   );
 };

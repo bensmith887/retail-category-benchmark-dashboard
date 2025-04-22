@@ -498,7 +498,6 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                             : data?.count?.toString()
                         };
                         const percent = value.primary;
-                        const barHeight = percent > 0 ? Math.min(percent, 100) : 0;
 
                         return (
                           <TableCell 
@@ -506,22 +505,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                             className="text-center p-1 align-bottom"
                           >
                             <div className="flex flex-col justify-end items-center h-16 relative">
-                              <div className="w-4 bg-gray-100 rounded-sm absolute left-1/2 -translate-x-1/2 bottom-0 h-full" />
-                              <div
-                                className={`${getBarColor(barHeight)} absolute left-1/2 -translate-x-1/2 rounded-sm`}
-                                style={{
-                                  width: '16px',
-                                  height: `${barHeight}%`,
-                                  maxHeight: '100%',
-                                  bottom: 0,
-                                  transition: 'height 0.3s'
-                                }}
-                              />
-                              {percent > 0 && (
-                                <div className="absolute bottom-1 flex items-center justify-center w-full h-[48px]">
-                                  <SizingCell percent={percent} secondary={value.secondary} />
-                                </div>
-                              )}
+                              <SizingCell percent={percent} secondary={value.secondary} />
                             </div>
                           </TableCell>
                         );
@@ -552,30 +536,13 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                           const display = getDisplayValue(data);
                           const percent = parseFloat(display.primary);
 
-                          const barHeight = percent > 0 ? Math.min(percent, 100) : 0;
-
                           return (
                             <TableCell 
                               key={`${retailer.id}-${catId}-${priceRange.id}`} 
                               className="text-center p-1 align-bottom"
                             >
                               <div className="flex flex-col justify-end items-center h-16 relative">
-                                <div className="w-4 bg-gray-100 rounded-sm absolute left-1/2 -translate-x-1/2 bottom-0 h-full" />
-                                <div
-                                  className={`${getBarColor(barHeight)} absolute left-1/2 -translate-x-1/2 rounded-sm`}
-                                  style={{
-                                    width: '16px',
-                                    height: `${barHeight}%`,
-                                    maxHeight: '100%',
-                                    bottom: 0,
-                                    transition: 'height 0.3s'
-                                  }}
-                                />
-                                {percent > 0 && (
-                                  <div className="absolute bottom-1 flex items-center justify-center w-full h-[48px]">
-                                    <SizingCell percent={percent} secondary={display.secondary} categoryId={catId} />
-                                  </div>
-                                )}
+                                <SizingCell percent={percent} secondary={display.secondary} categoryId={catId} />
                               </div>
                             </TableCell>
                           );
