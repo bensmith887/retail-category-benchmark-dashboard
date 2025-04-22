@@ -13,17 +13,18 @@ const getBarHeightPercent = (value: number) => {
   return 100;
 };
 
-// Linear interpolation between green and red, returns a CSS rgb() string.
+// Correct linear interpolation: 0% = red (#ea384c), 100% = green (#4ADE80)
 const getGradientColor = (percent: number) => {
-  // Green: #4ADE80 (74,222,128) Red: #ea384c (234,56,76)
+  // Red: #ea384c (234,56,76), Green: #4ADE80 (74,222,128)
+  // so for percent in [0, 100], 0 is red, 1 is green
   const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
-  const norm = clamp(percent, 0, 100) / 100;
-  
-  // interpolation
-  const r = Math.round(74 + (234 - 74) * norm);      // r: high% gets redder
-  const g = Math.round(222 + (56 - 222) * norm);     // g: high% gets less green
-  const b = Math.round(128 + (76 - 128) * norm);     // b: balanced interpolation
-  
+  const norm = clamp(percent, 0, 100) / 100; // 0=red, 1=green
+
+  // Interpolate from red to green
+  const r = Math.round(234 + (74 - 234) * norm);      // down as percent increases
+  const g = Math.round(56 + (222 - 56) * norm);       // up as percent increases
+  const b = Math.round(76 + (128 - 76) * norm);       // up slightly as percent increases
+
   return `rgb(${r},${g},${b})`;
 };
 
@@ -93,3 +94,4 @@ const AssortmentBarIndicator: React.FC<AssortmentBarIndicatorProps> = ({
 };
 
 export default AssortmentBarIndicator;
+
