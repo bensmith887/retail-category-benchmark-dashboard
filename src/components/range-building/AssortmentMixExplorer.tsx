@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -25,6 +24,12 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import { FileText, Filter, Download } from 'lucide-react';
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from '@/hooks/use-toast';
 
 interface AssortmentMixExplorerProps {
@@ -94,34 +99,6 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     cat.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Function to determine bubble size class based on percentage value
-  const getBubbleSize = (value: number): string => {
-    if (value === 0) return 'hidden';
-    if (value < 1) return 'w-6 h-6';
-    if (value < 5) return 'w-8 h-8';
-    if (value < 10) return 'w-10 h-10';
-    if (value < 15) return 'w-12 h-12';
-    if (value < 20) return 'w-14 h-14';
-    return 'w-16 h-16';
-  };
-
-  // Function to determine color class based on percentage value
-  const getBubbleColor = (value: number, catId: string): string => {
-    if (catId.includes('skinny')) {
-      return 'bg-blue-100 text-blue-800';
-    } else if (catId.includes('slim')) {
-      return 'bg-green-100 text-green-800';
-    } else if (catId.includes('straight')) {
-      return 'bg-pink-100 text-pink-800';
-    } else if (catId.includes('tshirt')) {
-      return 'bg-purple-100 text-purple-800';
-    } else if (catId.includes('blouse')) {
-      return 'bg-orange-100 text-orange-800';
-    } else {
-      return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   const handleCategoryChange = (categoryIds: string[]) => {
     setSelectedCategories(categoryIds);
   };
@@ -141,11 +118,28 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     });
   };
 
+  // Function to determine bubble size class based on percentage value
+  const getBubbleSize = (value: number): string => {
+    if (value === 0) return 'hidden';
+    if (value < 5) return 'w-6 h-6';
+    if (value < 10) return 'w-8 h-8';
+    return 'w-10 h-10';
+  };
+
+  // Function to determine color class based on percentage value
+  const getBubbleColor = (value: number): string => {
+    if (value === 0) return 'bg-gray-50 text-gray-400';
+    if (value < 25) return 'bg-red-50 text-red-600';
+    if (value < 50) return 'bg-orange-50 text-orange-600';
+    if (value < 75) return 'bg-blue-50 text-blue-600';
+    return 'bg-green-50 text-green-600';
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Assortment Mix Explorer</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-xl font-semibold text-gray-900">Assortment Mix Explorer</CardTitle>
+        <CardDescription className="text-sm text-gray-500">
           Compare SKU distribution across retailers, categories, and price points
         </CardDescription>
         
@@ -219,81 +213,79 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
             <Download size={16} />
           </Button>
         </div>
-        
-        <div className="flex flex-wrap gap-2 mt-4">
-          {filteredCategories.map(category => (
-            <Button
-              key={category.id}
-              variant={selectedCategories.includes(category.id) ? "default" : "outline"}
-              size="sm"
-              onClick={() => toggleCategorySelection(category.id)}
-              className="text-xs"
-            >
-              {category.name}
-            </Button>
-          ))}
-        </div>
       </CardHeader>
       
-      <CardContent className="px-0 pb-0">
+      <CardContent className="px-0">
         <div className="overflow-x-auto border-t">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead className="sticky left-0 bg-white font-medium w-[150px]">
-                  Price points GBP
-                </TableHead>
-                {retailers.map(retailer => (
-                  <TableHead key={retailer.id} colSpan={selectedCategories.length} className="text-center">
-                    {retailer.name}
+              <TableRow className="bg-gray-50">
+                <TableHead className="font-medium w-[200px]">Category / Retailer</TableHead>
+                {priceRanges.map((range) => (
+                  <TableHead key={range.id} className="text-center font-medium">
+                    {range.name}
                   </TableHead>
-                ))}
-              </TableRow>
-              <TableRow>
-                <TableHead className="sticky left-0 bg-white"></TableHead>
-                {retailers.map(retailer => (
-                  selectedCategories.map(catId => {
-                    const category = categories.find(c => c.id === catId);
-                    return (
-                      <TableHead key={`${retailer.id}-${catId}`} className="text-center">
-                        {category?.name || catId}
-                      </TableHead>
-                    );
-                  })
                 ))}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {priceRanges.map(priceRange => (
-                <TableRow key={priceRange.id}>
-                  <TableCell className="sticky left-0 bg-white font-medium">
-                    {priceRange.name}
-                  </TableCell>
-                  {retailers.map(retailer => (
-                    selectedCategories.map(catId => {
-                      const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
-                      const value = displayType === 'percentage' ? data?.percentage || 0 : data?.count || 0;
-                      const displayValue = displayType === 'percentage' ? `${value}%` : value;
-                      
-                      return (
-                        <TableCell 
-                          key={`${retailer.id}-${catId}-${priceRange.id}`} 
-                          className="text-center p-4"
-                        >
-                          {value > 0 ? (
-                            <div className="flex justify-center items-center">
-                              <div 
-                                className={`${getBubbleSize(value)} ${getBubbleColor(value, catId)} rounded-full flex items-center justify-center text-xs font-medium`}
-                              >
-                                {displayValue}
-                              </div>
-                            </div>
-                          ) : null}
-                        </TableCell>
-                      );
-                    })
+              {categories.map((category, categoryIndex) => (
+                <React.Fragment key={category.id}>
+                  {retailers.map((retailer, retailerIndex) => (
+                    <TableRow 
+                      key={`${category.id}-${retailer.id}`}
+                      className={retailerIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                    >
+                      <TableCell className="font-medium border-r">
+                        {retailerIndex === 0 && (
+                          <div className="font-semibold text-gray-900 mb-2">{category.name}</div>
+                        )}
+                        <span className="text-gray-600">{retailer.name}</span>
+                      </TableCell>
+                      {priceRanges.map((priceRange) => {
+                        const data = assortmentData?.[retailer.id]?.[category.id]?.[priceRange.id];
+                        const value = displayType === 'percentage' ? data?.percentage || 0 : data?.count || 0;
+                        const displayValue = displayType === 'percentage' ? `${value}%` : value;
+                        
+                        return (
+                          <TableCell 
+                            key={`${retailer.id}-${category.id}-${priceRange.id}`} 
+                            className="text-center p-4"
+                          >
+                            {value > 0 && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div className="flex justify-center items-center">
+                                      <div className={`
+                                        ${getBubbleSize(value)} 
+                                        ${getBubbleColor(value)}
+                                        rounded-full flex items-center justify-center 
+                                        text-xs font-medium
+                                      `}>
+                                        {displayValue}
+                                      </div>
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent className="bg-white p-3 shadow-lg border">
+                                    <div className="space-y-2">
+                                      <div className="font-semibold">{category.name}</div>
+                                      <div className="text-sm text-gray-600">{retailer.name}</div>
+                                      <div className="text-sm">Price Range: {priceRange.name}</div>
+                                      <div className="font-medium">
+                                        {displayType === 'percentage' ? `${value}% Coverage` : `${value} SKUs`}
+                                      </div>
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
                   ))}
-                </TableRow>
+                </React.Fragment>
               ))}
             </TableBody>
           </Table>
