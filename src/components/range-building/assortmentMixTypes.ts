@@ -1,5 +1,10 @@
 
-import type { SkuData } from "./AssortmentMixExplorer";
+export interface SkuData {
+  count: number;
+  percentage: number;
+  pdvs: number;
+  pdvPercentage?: number;
+}
 
 export interface PriceRange {
   id: string;

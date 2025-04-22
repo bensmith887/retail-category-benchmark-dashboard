@@ -15,14 +15,6 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
 import { FileText, Filter, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -30,30 +22,22 @@ import { Switch } from "@/components/ui/switch";
 import AssortmentBubble from "./AssortmentBubble";
 import SizingCell from "./SizingCell";
 import AssortmentMixTable from "./AssortmentMixTable";
+import { 
+  SkuData, 
+  PriceRange, 
+  CategoryType, 
+  RetailerType 
+} from "./assortmentMixTypes";
 
 interface AssortmentMixExplorerProps {
-  retailers: { id: string; name: string }[];
-  categories: { id: string; name: string }[];
-  priceRanges: { id: string; name: string; min: number; max: number }[];
-}
-
-interface SkuData {
-  count: number;
-  percentage: number;
-  pdvs: number;
-  pdvPercentage?: number;
+  retailers: RetailerType[];
+  categories: CategoryType[];
+  priceRanges: PriceRange[];
 }
 
 type AssortmentData = Record<string, Record<string, Record<string, SkuData>>>;
 
 type DisplayMetric = 'range-percentage' | 'pdv-percentage';
-
-interface PriceRange {
-  id: string;
-  name: string;
-  min: number;
-  max: number;
-}
 
 export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   retailers,
