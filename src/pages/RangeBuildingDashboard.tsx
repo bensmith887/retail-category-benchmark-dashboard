@@ -18,6 +18,23 @@ const RangeBuildingDashboard = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Ensure we're passing required props to RangeBuildingTabs
+  const retailers = [
+    { id: 'h&m', name: 'H&M' },
+    { id: 'mango', name: 'Mango' },
+    { id: 'monki', name: 'Monki' },
+    { id: 'nakd', name: 'NA-KD' },
+    { id: 'weekday', name: 'Weekday' }
+  ];
+  
+  const categories = [
+    { id: 'tops', name: 'Tops' },
+    { id: 'bottoms', name: 'Bottoms' },
+    { id: 'dresses', name: 'Dresses' },
+    { id: 'outerwear', name: 'Outerwear' },
+    { id: 'accessories', name: 'Accessories' }
+  ];
+
   return (
     <div className="flex h-screen bg-dashboard-background overflow-hidden">
       <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -36,7 +53,7 @@ const RangeBuildingDashboard = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-dashboard-primary"></div>
             </div>
           ) : (
-            <RangeBuildingTabs />
+            <RangeBuildingTabs retailers={retailers} categories={categories} />
           )}
         </div>
       </div>
