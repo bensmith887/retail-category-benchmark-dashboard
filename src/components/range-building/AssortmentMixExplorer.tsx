@@ -30,6 +30,7 @@ import { Switch } from "@/components/ui/switch";
 import AssortmentBubble from "./AssortmentBubble";
 import SizingCell from "./SizingCell";
 import ProductDetailTable from "./ProductDetailTable";
+import CompetitorProductTables from "./CompetitorProductTables";
 
 interface AssortmentMixExplorerProps {
   retailers: { id: string; name: string }[];
@@ -618,16 +619,31 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
         </div>
         <div id="product-detail-table-anchor" />
         {selectedCell && (
-          <ProductDetailTable
-            retailer={retailers.find(r => r.id === selectedCell.retailerId)?.name || selectedCell.retailerId}
-            category={selectedCell.categoryId === "TOTAL" 
-              ? "Total Range"
-              : categories.find(c => c.id === selectedCell.categoryId)?.name || selectedCell.categoryId
-            }
-            priceRange={generatedPriceRanges.find(p => p.id === selectedCell.priceRangeId)?.name || selectedCell.priceRangeId}
-            products={getDemoProducts(selectedCell.retailerId, selectedCell.categoryId, selectedCell.priceRangeId)}
-            onClose={handleCloseProductTable}
-          />
+          <>
+            <ProductDetailTable
+              retailer={retailers.find(r => r.id === selectedCell.retailerId)?.name || selectedCell.retailerId}
+              category={selectedCell.categoryId === "TOTAL" 
+                ? "Total Range"
+                : categories.find(c => c.id === selectedCell.categoryId)?.name || selectedCell.categoryId
+              }
+              priceRange={generatedPriceRanges.find(p => p.id === selectedCell.priceRangeId)?.name || selectedCell.priceRangeId}
+              products={getDemoProducts(selectedCell.retailerId, selectedCell.categoryId, selectedCell.priceRangeId)}
+              onClose={handleCloseProductTable}
+            />
+            <CompetitorProductTables
+              allRetailers={retailers}
+              selectedRetailerId={selectedCell.retailerId}
+              selectedCategory={selectedCell.categoryId}
+              selectedCategoryName={
+                selectedCell.categoryId === "TOTAL"
+                  ? "Total Range"
+                  : categories.find(c => c.id === selectedCell.categoryId)?.name || selectedCell.categoryId
+              }
+              selectedPriceRange={selectedCell.priceRangeId}
+              selectedPriceRangeName={generatedPriceRanges.find(p => p.id === selectedCell.priceRangeId)?.name || selectedCell.priceRangeId}
+              onClose={() => {}}
+            />
+          </>
         )}
       </CardContent>
     </Card>

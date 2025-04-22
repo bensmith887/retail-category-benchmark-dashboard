@@ -36,15 +36,17 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
             ({retailer} / {category} / {priceRange})
           </span>
         </div>
-        <button
-          className="text-xs px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium ml-2"
-          onClick={onClose}
-          aria-label="Close product detail"
-        >
-          Close
-        </button>
+        {onClose && (
+          <button
+            className="text-xs px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium ml-2"
+            onClick={onClose}
+            aria-label="Close product detail"
+          >
+            Close
+          </button>
+        )}
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" style={{ maxHeight: 440 }}>
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-muted">
             <tr>
@@ -58,7 +60,7 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
             </tr>
           </thead>
           <tbody>
-            {products.map((p) => (
+            {products.slice(0, 20).map((p) => (
               <tr key={p.id} className="hover:bg-muted/50 transition">
                 <td className="px-4 py-1">
                   <img
@@ -97,6 +99,9 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
           </tbody>
         </table>
       </div>
+      {products.length > 20 && (
+        <div className="px-4 pb-3 text-xs text-muted-foreground">Showing top 20 of {products.length} products</div>
+      )}
     </div>
   );
 };
