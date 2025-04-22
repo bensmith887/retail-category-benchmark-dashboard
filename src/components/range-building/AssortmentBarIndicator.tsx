@@ -13,15 +13,17 @@ const getBarHeightPercent = (value: number) => {
   return 100;
 };
 
-// Linear interpolation between red and green, returns a CSS rgb() string.
+// Linear interpolation between green and red, returns a CSS rgb() string.
 const getGradientColor = (percent: number) => {
-  // Red: #ea384c (234,56,76) Green: #4ADE80 (74,222,128)
+  // Green: #4ADE80 (74,222,128) Red: #ea384c (234,56,76)
   const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
   const norm = clamp(percent, 0, 100) / 100;
+  
   // interpolation
-  const r = Math.round(234 + (74 - 234) * norm);      // r: high% gets greener
-  const g = Math.round(56 + (222 - 56) * norm);
-  const b = Math.round(76 + (128 - 76) * norm);
+  const r = Math.round(74 + (234 - 74) * norm);      // r: high% gets redder
+  const g = Math.round(222 + (56 - 222) * norm);     // g: high% gets less green
+  const b = Math.round(128 + (76 - 128) * norm);     // b: balanced interpolation
+  
   return `rgb(${r},${g},${b})`;
 };
 
