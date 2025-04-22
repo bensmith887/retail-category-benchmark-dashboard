@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -15,7 +16,15 @@ import { PriceArchitectureVisualizer } from './PriceArchitectureVisualizer';
 import { DiscountingAnalysis } from './DiscountingAnalysis';
 import { TrendDemandSignals } from './TrendDemandSignals';
 
-export const RangeBuildingTabs = () => {
+interface RangeBuildingTabsProps {
+  retailers: { id: string; name: string; }[];
+  categories: { id: string; name: string; }[];
+}
+
+export const RangeBuildingTabs: React.FC<RangeBuildingTabsProps> = ({ 
+  retailers, 
+  categories 
+}) => {
   const [activeTab, setActiveTab] = useState('assortment-mix');
 
   // Mock data for retailers and categories
