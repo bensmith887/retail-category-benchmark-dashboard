@@ -165,15 +165,24 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
 
   const getBubbleSize = (value: number): string => {
     if (value === 0) return 'hidden';
-    if (value < 2) return 'w-4 h-4';
-    if (value < 5) return 'w-5 h-5';
-    if (value < 10) return 'w-6 h-6';
-    if (value < 15) return 'w-7 h-7';
-    if (value < 25) return 'w-8 h-8';
-    if (value < 35) return 'w-9 h-9';
-    if (value < 45) return 'w-10 h-10';
-    if (value < 60) return 'w-11 h-11';
-    return 'w-12 h-12';
+    if (value < 2) return 'w-3 h-3';
+    if (value < 5) return 'w-4 h-4';
+    if (value < 10) return 'w-5 h-5';
+    if (value < 15) return 'w-6 h-6';
+    if (value < 25) return 'w-7 h-7';
+    if (value < 35) return 'w-8 h-8';
+    if (value < 45) return 'w-9 h-9';
+    if (value < 60) return 'w-10 h-10';
+    return 'w-11 h-11';
+  };
+
+  const getBarColor = (value: number) => {
+    if (value >= 15) return 'bg-blue-600';
+    if (value >= 10) return 'bg-blue-500';
+    if (value >= 6) return 'bg-blue-400';
+    if (value >= 3) return 'bg-blue-300';
+    if (value > 0) return 'bg-blue-200';
+    return 'bg-gray-100';
   };
 
   const getBubbleColor = (value: number, catId: string | null): string => {
@@ -452,22 +461,35 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                             ? data?.pdvs?.toLocaleString()
                             : data?.count?.toString()
                         };
-                        
-                        const bubbleSize = getBubbleSize(parseFloat(value.primary || '0'));
-                        
+                        const percent = parseFloat(value.primary);
+                        const barHeight = percent > 0 ? Math.min(percent, 100) : 0;
+
+                        const bubbleSize = getBubbleSize(percent);
+
                         return (
                           <TableCell 
                             key={`${retailer.id}-total-${priceRange.id}`} 
-                            className="text-center p-1"
+                            className="text-center p-1 align-bottom"
                           >
-                            {value.primary && (
-                              <div className="flex justify-center items-center">
-                                <div className={`${bubbleSize} bg-gray-100 text-gray-800 rounded-full flex flex-col items-center justify-center text-[10px] font-medium`}>
+                            <div className="flex flex-col justify-end items-center h-14 relative">
+                              <div className="w-4 bg-gray-100 rounded-sm absolute left-1/2 -translate-x-1/2 bottom-0 h-full" />
+                              <div
+                                className={`${getBarColor(barHeight)} absolute left-1/2 -translate-x-1/2 rounded-sm`}
+                                style={{
+                                  width: '16px',
+                                  height: `${barHeight}%`,
+                                  maxHeight: '100%',
+                                  bottom: 0,
+                                  transition: 'height 0.3s'
+                                }}
+                              />
+                              {value.primary && (
+                                <div className={`relative z-10 mt-0 mb-1 ${bubbleSize} bg-white text-blue-800 flex flex-col items-center justify-center border border-blue-200 shadow-sm rounded-full text-[10px] font-semibold`}>
                                   <span>{value.primary}</span>
-                                  <span className="text-[8px] opacity-75">{value.secondary}</span>
+                                  <span className="text-[8px] font-normal opacity-70">{value.secondary}</span>
                                 </div>
-                              </div>
-                            )}
+                              )}
+                            </div>
                           </TableCell>
                         );
                       })}
@@ -495,22 +517,36 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                         {generatedPriceRanges.map(priceRange => {
                           const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
                           const value = getDisplayValue(data);
-                          const bubbleSize = getBubbleSize(parseFloat(value.primary || '0'));
-                          const bubbleColor = getBubbleColor(parseFloat(value.primary || '0'), catId);
-                          
+                          const percent = parseFloat(value.primary);
+                          const barHeight = percent > 0 ? Math.min(percent, 100) : 0;
+
+                          const bubbleSize = getBubbleSize(percent);
+                          const bubbleColor = getBubbleColor(percent, catId);
+
                           return (
                             <TableCell 
                               key={`${retailer.id}-${catId}-${priceRange.id}`} 
-                              className="text-center p-1"
+                              className="text-center p-1 align-bottom"
                             >
-                              {value.primary && (
-                                <div className="flex justify-center items-center">
-                                  <div className={`${bubbleSize} ${bubbleColor} rounded-full flex flex-col items-center justify-center text-[10px] font-medium`}>
+                              <div className="flex flex-col justify-end items-center h-14 relative">
+                                <div className="w-4 bg-gray-100 rounded-sm absolute left-1/2 -translate-x-1/2 bottom-0 h-full" />
+                                <div
+                                  className={`${getBarColor(barHeight)} absolute left-1/2 -translate-x-1/2 rounded-sm`}
+                                  style={{
+                                    width: '16px',
+                                    height: `${barHeight}%`,
+                                    maxHeight: '100%',
+                                    bottom: 0,
+                                    transition: 'height 0.3s'
+                                  }}
+                                />
+                                {value.primary && (
+                                  <div className={`relative z-10 mt-0 mb-1 ${bubbleSize} ${bubbleColor} border shadow-sm rounded-full text-[10px] font-semibold`}>
                                     <span>{value.primary}</span>
-                                    <span className="text-[8px] opacity-75">{value.secondary}</span>
+                                    <span className="text-[8px] font-normal opacity-70">{value.secondary}</span>
                                   </div>
-                                </div>
-                              )}
+                                )}
+                              </div>
                             </TableCell>
                           );
                         })}
