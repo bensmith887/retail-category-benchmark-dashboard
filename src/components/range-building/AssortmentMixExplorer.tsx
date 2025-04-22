@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -37,6 +38,7 @@ interface SkuData {
   count: number;
   percentage: number;
   pdvs: number;
+  pdvPercentage?: number; // Added this property to fix the TypeScript error
 }
 
 type AssortmentData = Record<string, Record<string, Record<string, SkuData>>>;
