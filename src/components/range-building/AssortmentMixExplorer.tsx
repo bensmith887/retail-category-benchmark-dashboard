@@ -203,9 +203,27 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     return total;
   };
 
+  const calculateRetailerTotals = (retailerId: string) => {
+    const totals: Record<string, number> = {
+      count: 0,
+      percentage: 0,
+      pdvs: 0,
+      pdvPercentage: 0
+    };
+
+    selectedCategories.forEach(catId => {
+      Object.values(assortmentData[retailerId][catId]).forEach(data => {
+        totals.count += data.count;
+        totals.pdvs += data.pdvs;
+      });
+    });
+
+    return totals;
+  };
+
   return (
     <Card>
-      <CardHeader className="space-y-2">
+      <CardHeader>
         <CardTitle>Assortment Mix Explorer</CardTitle>
         <CardDescription>
           Compare SKU distribution across retailers, categories, and price points
@@ -304,13 +322,16 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="sticky left-0 bg-white font-medium w-[200px] border-r text-xs py-2">
-                  Retailer / Category
+                <TableHead className="sticky left-0 bg-white font-medium w-[120px] border-r text-xs py-1">
+                  Retailer
+                </TableHead>
+                <TableHead className="sticky left-[120px] bg-white font-medium w-[140px] border-r text-xs py-1">
+                  Category
                 </TableHead>
                 {priceRanges.map(priceRange => (
                   <TableHead 
                     key={priceRange.id} 
-                    className="text-center font-medium px-3 text-xs py-2"
+                    className="text-center font-medium px-2 text-xs py-1"
                   >
                     {priceRange.name}
                   </TableHead>
@@ -320,39 +341,76 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
             <TableBody>
               {retailers.map(retailer => (
                 <React.Fragment key={retailer.id}>
-                  {selectedCategories.map((catId, index) => {
+                  {[...selectedCategories, 'total'].map((catId, index) => {
+                    const isTotal = catId === 'total';
                     const category = categories.find(c => c.id === catId);
+                    const totals = isTotal ? calculateRetailerTotals(retailer.id) : null;
+                    
                     return (
-                      <TableRow key={`${retailer.id}-${catId}`} className={index === 0 ? 'border-t-2' : ''}>
-                        <TableCell className="sticky left-0 bg-white font-medium border-r py-2">
-                          {index === 0 && (
-                            <div className="font-bold mb-1 text-xs">{retailer.name}</div>
-                          )}
-                          <div className="pl-3 text-xs">{category?.name || catId}</div>
+                      <TableRow 
+                        key={`${retailer.id}-${catId}`} 
+                        className={`${index === 0 ? 'border-t-2' : ''} ${isTotal ? 'bg-muted/20 font-medium' : ''}`}
+                      >
+                        {index === 0 && (
+                          <TableCell 
+                            rowSpan={selectedCategories.length + 1} 
+                            className="sticky left-0 bg-white font-medium border-r py-1 align-top text-xs"
+                          >
+                            {retailer.name}
+                          </TableCell>
+                        )}
+                        <TableCell className="sticky left-[120px] bg-white border-r py-1 text-xs">
+                          {isTotal ? 'Total Range' : category?.name}
                         </TableCell>
                         {priceRanges.map(priceRange => {
-                          const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
-                          const value = getDisplayValue(data);
-                          const bubbleSize = getBubbleSize(parseFloat(value.primary));
-                          const bubbleColor = getBubbleColor(parseFloat(value.primary), catId);
-                          
-                          return (
-                            <TableCell 
-                              key={`${retailer.id}-${catId}-${priceRange.id}`} 
-                              className="text-center p-2"
-                            >
-                              {value.primary && (
+                          if (isTotal) {
+                            const value = {
+                              primary: displayMetric === 'pdv-percentage' 
+                                ? `${((totals?.pdvs || 0) / getTotalPDVs() * 100).toFixed(1)}%`
+                                : `${((totals?.count || 0) / Object.values(assortmentData[retailer.id]).reduce((acc, cat) => 
+                                    acc + Object.values(cat).reduce((sum, data) => sum + data.count, 0), 0) * 100).toFixed(1)}%`,
+                              secondary: displayMetric === 'pdv-percentage' 
+                                ? totals?.pdvs.toLocaleString()
+                                : totals?.count.toString()
+                            };
+                            const bubbleSize = getBubbleSize(parseFloat(value.primary));
+                            const bubbleColor = 'bg-gray-100 text-gray-800';
+                            
+                            return (
+                              <TableCell 
+                                key={`${retailer.id}-total-${priceRange.id}`} 
+                                className="text-center p-1"
+                              >
                                 <div className="flex justify-center items-center">
-                                  <div 
-                                    className={`${bubbleSize} ${bubbleColor} rounded-full flex flex-col items-center justify-center text-[10px] font-medium`}
-                                  >
+                                  <div className={`${bubbleSize} ${bubbleColor} rounded-full flex flex-col items-center justify-center text-[10px] font-medium`}>
                                     <span>{value.primary}</span>
                                     <span className="text-[8px] opacity-75">{value.secondary}</span>
                                   </div>
                                 </div>
-                              )}
-                            </TableCell>
-                          );
+                              </TableCell>
+                            );
+                          } else {
+                            const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
+                            const value = getDisplayValue(data);
+                            const bubbleSize = getBubbleSize(parseFloat(value.primary));
+                            const bubbleColor = getBubbleColor(catId);
+                            
+                            return (
+                              <TableCell 
+                                key={`${retailer.id}-${catId}-${priceRange.id}`} 
+                                className="text-center p-1"
+                              >
+                                {value.primary && (
+                                  <div className="flex justify-center items-center">
+                                    <div className={`${bubbleSize} ${bubbleColor} rounded-full flex flex-col items-center justify-center text-[10px] font-medium`}>
+                                      <span>{value.primary}</span>
+                                      <span className="text-[8px] opacity-75">{value.secondary}</span>
+                                    </div>
+                                  </div>
+                                )}
+                              </TableCell>
+                            );
+                          }
                         })}
                       </TableRow>
                     );
