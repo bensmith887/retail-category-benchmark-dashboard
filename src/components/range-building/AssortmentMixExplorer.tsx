@@ -57,6 +57,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   const [dateRange, setDateRange] = useState<string>('3');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [assortmentData, setAssortmentData] = useState<AssortmentData>({});
+  const [maxPriceFilter, setMaxPriceFilter] = useState<number>(300);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -121,6 +122,45 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   const filteredCategories = categories.filter(cat => 
     cat.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const filteredPriceRanges = [...priceRanges, {
+    id: 'above-max',
+    name: `£${maxPriceFilter}+`,
+    min: maxPriceFilter,
+    max: Infinity
+  }].filter(range => range.max <= maxPriceFilter || range.id === 'above-max');
+
+  const calculateRetailerTotals = (retailerId: string, selectedCats: string[]) => {
+    const totals: SkuData = {
+      count: 0,
+      percentage: 0,
+      pdvs: 0,
+      pdvPercentage: 0
+    };
+
+    selectedCats.forEach(catId => {
+      filteredPriceRanges.forEach(priceRange => {
+        const data = assortmentData?.[retailerId]?.[catId]?.[priceRange.id];
+        if (data) {
+          totals.count += data.count;
+          totals.pdvs += data.pdvs;
+        }
+      });
+    });
+
+    const totalPercentage = selectedCats.reduce((acc, catId) => 
+      acc + Object.values(assortmentData?.[retailerId]?.[catId] || {})
+        .reduce((sum, data) => sum + (data?.percentage || 0), 0), 0);
+    
+    const totalPDVPercentage = selectedCats.reduce((acc, catId) => 
+      acc + Object.values(assortmentData?.[retailerId]?.[catId] || {})
+        .reduce((sum, data) => sum + (data?.pdvPercentage || 0), 0), 0);
+
+    totals.percentage = totalPercentage;
+    totals.pdvPercentage = totalPDVPercentage;
+
+    return totals;
+  };
 
   const getBubbleSize = (value: number): string => {
     if (value === 0) return 'hidden';
@@ -274,6 +314,23 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
             />
           </div>
           
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium">Max Price</label>
+            <Select 
+              value={maxPriceFilter.toString()} 
+              onValueChange={(value) => setMaxPriceFilter(Number(value))}
+            >
+              <SelectTrigger className="w-36">
+                <SelectValue placeholder="£300+" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="300">£300+</SelectItem>
+                <SelectItem value="500">£500+</SelectItem>
+                <SelectItem value="1000">£1000+</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
           <Button 
             variant="outline" 
             size="icon" 
@@ -304,10 +361,13 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="sticky left-0 bg-white font-medium w-[200px] border-r text-xs py-2">
-                  Retailer / Category
+                <TableHead className="sticky left-0 bg-white font-medium w-[120px] border-r text-xs py-2">
+                  Retailer
                 </TableHead>
-                {priceRanges.map(priceRange => (
+                <TableHead className="sticky left-[120px] bg-white font-medium w-[160px] border-r text-xs py-2">
+                  Category
+                </TableHead>
+                {filteredPriceRanges.map(priceRange => (
                   <TableHead 
                     key={priceRange.id} 
                     className="text-center font-medium px-3 text-xs py-2"
@@ -323,14 +383,19 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                   {selectedCategories.map((catId, index) => {
                     const category = categories.find(c => c.id === catId);
                     return (
-                      <TableRow key={`${retailer.id}-${catId}`} className={index === 0 ? 'border-t-2' : ''}>
-                        <TableCell className="sticky left-0 bg-white font-medium border-r py-2">
-                          {index === 0 && (
-                            <div className="font-bold mb-1 text-xs">{retailer.name}</div>
-                          )}
-                          <div className="pl-3 text-xs">{category?.name || catId}</div>
+                      <TableRow key={`${retailer.id}-${catId}`}>
+                        {index === 0 && (
+                          <TableCell 
+                            className="sticky left-0 bg-white font-medium border-r py-2" 
+                            rowSpan={selectedCategories.length + 1}
+                          >
+                            <div className="font-bold text-xs">{retailer.name}</div>
+                          </TableCell>
+                        )}
+                        <TableCell className="sticky left-[120px] bg-white border-r py-2">
+                          <div className="text-xs">{category?.name || catId}</div>
                         </TableCell>
-                        {priceRanges.map(priceRange => {
+                        {filteredPriceRanges.map(priceRange => {
                           const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
                           const value = getDisplayValue(data);
                           const bubbleSize = getBubbleSize(parseFloat(value.primary));
@@ -357,6 +422,36 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                       </TableRow>
                     );
                   })}
+                  <TableRow className="border-t border-gray-300 bg-gray-50">
+                    {selectedCategories.length > 0 && (
+                      <TableCell className="sticky left-[120px] bg-gray-50 border-r py-2">
+                        <div className="font-medium text-xs">Total Range</div>
+                      </TableCell>
+                    )}
+                    {filteredPriceRanges.map(priceRange => {
+                      const totals = calculateRetailerTotals(retailer.id, selectedCategories);
+                      const value = getDisplayValue(totals);
+                      const bubbleSize = getBubbleSize(parseFloat(value.primary));
+                      
+                      return (
+                        <TableCell 
+                          key={`${retailer.id}-total-${priceRange.id}`} 
+                          className="text-center p-2 bg-gray-50"
+                        >
+                          {value.primary && (
+                            <div className="flex justify-center items-center">
+                              <div 
+                                className={`${bubbleSize} bg-gray-200 text-gray-800 rounded-full flex flex-col items-center justify-center text-[10px] font-medium`}
+                              >
+                                <span>{value.primary}</span>
+                                <span className="text-[8px] opacity-75">{value.secondary}</span>
+                              </div>
+                            </div>
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
                 </React.Fragment>
               ))}
             </TableBody>
