@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -8,15 +7,13 @@ import {
   Search, 
   LineChart,
   Filter,
-  Share2,
-  Clock
+  Share2  
 } from 'lucide-react';
 import { AssortmentMixExplorer } from './AssortmentMixExplorer';
 import { WhiteSpaceIdentifier } from './WhiteSpaceIdentifier';
 import { PriceArchitectureVisualizer } from './PriceArchitectureVisualizer';
 import { DiscountingAnalysis } from './DiscountingAnalysis';
 import { TrendDemandSignals } from './TrendDemandSignals';
-import { Badge } from '@/components/ui/badge';
 
 export const RangeBuildingTabs = () => {
   const [activeTab, setActiveTab] = useState('assortment-mix');
@@ -60,20 +57,6 @@ export const RangeBuildingTabs = () => {
     { id: '65-70', name: '£65-70', min: 65, max: 70 }
   ];
 
-  // Define the tabs that are coming soon
-  const comingSoonTabs = [
-    'white-space',
-    'price-architecture',
-    'discounting',
-    'trends'
-  ];
-
-  // Update the handler so that you can't activate disabled/coming soon tabs
-  const handleTabChange = (val: string) => {
-    if (comingSoonTabs.includes(val)) return;
-    setActiveTab(val);
-  };
-
   return (
     <div className="space-y-6">
       <div>
@@ -83,71 +66,27 @@ export const RangeBuildingTabs = () => {
         </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="grid grid-cols-5 w-full">
-          <TabsTrigger 
-            value="assortment-mix" 
-            className="flex items-center gap-2 data-[state=active]:bg-[#5840bb] data-[state=active]:text-white" 
-            disabled={false}
-          >
+          <TabsTrigger value="assortment-mix" className="flex items-center gap-2">
             <Grid2X2 size={16} />
             <span>Assortment Mix</span>
           </TabsTrigger>
-          <TabsTrigger 
-            value="white-space" 
-            className="flex items-center gap-2 relative cursor-not-allowed opacity-60" 
-            disabled
-          >
+          <TabsTrigger value="white-space" className="flex items-center gap-2">
             <Search size={16} />
             <span>White Space</span>
-            <Badge 
-              variant="secondary" 
-              className="ml-1 flex items-center gap-1 text-gray-500 bg-gray-100 text-xs py-0 h-5 px-1.5"
-            >
-              <Clock size={10} /> Coming soon
-            </Badge>
           </TabsTrigger>
-          <TabsTrigger 
-            value="price-architecture" 
-            className="flex items-center gap-2 relative cursor-not-allowed opacity-60" 
-            disabled
-          >
+          <TabsTrigger value="price-architecture" className="flex items-center gap-2">
             <BarChart3 size={16} />
             <span>Price Architecture</span>
-            <Badge 
-              variant="secondary" 
-              className="ml-1 flex items-center gap-1 text-gray-500 bg-gray-100 text-xs py-0 h-5 px-1.5"
-            >
-              <Clock size={10} /> Coming soon
-            </Badge>
           </TabsTrigger>
-          <TabsTrigger 
-            value="discounting" 
-            className="flex items-center gap-2 relative cursor-not-allowed opacity-60" 
-            disabled
-          >
+          <TabsTrigger value="discounting" className="flex items-center gap-2">
             <Share2 size={16} />
             <span>Discounting</span>
-            <Badge 
-              variant="secondary" 
-              className="ml-1 flex items-center gap-1 text-gray-500 bg-gray-100 text-xs py-0 h-5 px-1.5"
-            >
-              <Clock size={10} /> Coming soon
-            </Badge>
           </TabsTrigger>
-          <TabsTrigger 
-            value="trends" 
-            className="flex items-center gap-2 relative cursor-not-allowed opacity-60" 
-            disabled
-          >
+          <TabsTrigger value="trends" className="flex items-center gap-2">
             <TrendingUp size={16} />
             <span>Trends</span>
-            <Badge 
-              variant="secondary" 
-              className="ml-1 flex items-center gap-1 text-gray-500 bg-gray-100 text-xs py-0 h-5 px-1.5"
-            >
-              <Clock size={10} /> Coming soon
-            </Badge>
           </TabsTrigger>
         </TabsList>
 
@@ -159,7 +98,6 @@ export const RangeBuildingTabs = () => {
           />
         </TabsContent>
 
-        {/* The next tabs remain, but are visually disabled and not accessible via the UI */}
         <TabsContent value="white-space">
           <WhiteSpaceIdentifier 
             retailers={retailers} 
