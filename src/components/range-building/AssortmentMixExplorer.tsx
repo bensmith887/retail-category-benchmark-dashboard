@@ -66,6 +66,8 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
       
       selectedCategories.forEach(catId => {
         data[retailer.id][catId] = {};
+        let totalPercentage = 0;
+        const tempRangeData: Record<string, SkuData> = {};
         
         priceRanges.forEach(priceRange => {
           const isPricePointActive = Math.random() > 0.4 || 
@@ -76,16 +78,27 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
             const percentage = parseFloat((Math.random() * 25).toFixed(1));
             const pdvs = Math.floor(Math.random() * 10000) + 100;
             
-            data[retailer.id][catId][priceRange.id] = {
+            tempRangeData[priceRange.id] = {
               count: skuCount,
               percentage,
               pdvs
             };
+            totalPercentage += percentage;
           } else {
-            data[retailer.id][catId][priceRange.id] = {
+            tempRangeData[priceRange.id] = {
               count: 0,
               percentage: 0,
               pdvs: 0
+            };
+          }
+        });
+
+        const normalizationFactor = totalPercentage > 0 ? 100 / totalPercentage : 1;
+        priceRanges.forEach(priceRange => {
+          if (tempRangeData[priceRange.id]) {
+            data[retailer.id][catId][priceRange.id] = {
+              ...tempRangeData[priceRange.id],
+              percentage: parseFloat((tempRangeData[priceRange.id].percentage * normalizationFactor).toFixed(1))
             };
           }
         });
@@ -101,12 +114,13 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
 
   const getBubbleSize = (value: number): string => {
     if (value === 0) return 'hidden';
-    if (value < 1) return 'w-6 h-6';
-    if (value < 5) return 'w-8 h-8';
-    if (value < 10) return 'w-10 h-10';
-    if (value < 15) return 'w-12 h-12';
-    if (value < 20) return 'w-14 h-14';
-    return 'w-16 h-16';
+    if (value < 5) return 'w-6 h-6';
+    if (value < 10) return 'w-8 h-8';
+    if (value < 20) return 'w-10 h-10';
+    if (value < 30) return 'w-12 h-12';
+    if (value < 40) return 'w-14 h-14';
+    if (value < 50) return 'w-16 h-16';
+    return 'w-20 h-20';
   };
 
   const getBubbleColor = (value: number, catId: string): string => {
