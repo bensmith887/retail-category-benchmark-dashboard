@@ -320,7 +320,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
       "https://images.unsplash.com/photo-1501286353178-1ec881214838?auto=format&fit=facearea&w=64&h=64&q=80",
     ];
     const base = retailerId.length + categoryId.length + priceRangeId.length;
-    return Array.from({ length: 4 + (base % 3) }).map((_, ix) => ({
+    return Array.from({ length: 50 }).map((_, ix) => ({
       id: `p_${retailerId}_${categoryId}_${priceRangeId}_${ix}`,
       name: "Demo Product " + (ix + 1),
       image: demoImages[(ix + base) % demoImages.length],
