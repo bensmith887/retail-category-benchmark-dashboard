@@ -79,24 +79,23 @@ const Header = () => {
             </Popover>
 
             {/* Filters & Add Filter */}
-            <div className="flex flex-wrap flex-row gap-2 items-center ml-0 md:ml-4 w-full md:w-auto">
+            <div className="flex flex-wrap flex-row gap-1 items-center ml-0 md:ml-4 w-full md:w-auto">
               {filters.map((filter) => (
                 <span
                   key={filter.id}
                   className={cn(
-                    // Neutral monochrome glassy style:
-                    "px-4 py-2 rounded-full font-medium text-base shadow-sm flex items-center gap-2 cursor-pointer border border-dashboard-border bg-white/60 backdrop-blur-[2px] text-dashboard-text transition-all",
+                    "px-2 py-1 rounded-full text-xs font-medium shadow-sm flex items-center gap-1 cursor-pointer border border-dashboard-border bg-white/60 backdrop-blur-[2px] text-dashboard-text transition-all",
                     "hover:shadow-md hover:bg-white/80 hover:border-dashboard-primary active:scale-95"
                   )}
                   tabIndex={0}
                 >
-                  <span>{filter.label}</span>
+                  <span className="truncate max-w-[120px]">{filter.label}</span>
                   <button
-                    className="ml-1 text-dashboard-neutral hover:bg-white/70 rounded-full p-1 transition-all"
+                    className="ml-1 text-dashboard-neutral hover:bg-white/70 rounded-full p-0.5 transition-all"
                     onClick={() => removeFilter(filter.id)}
                     aria-label="Remove filter"
                   >
-                    <X size={15} />
+                    <X size={12} />
                   </button>
                 </span>
               ))}
@@ -104,10 +103,10 @@ const Header = () => {
               <Popover>
                 <PopoverTrigger asChild>
                   <button
-                    className="flex items-center gap-2 px-4 py-2 rounded-full border border-dashed border-dashboard-border text-dashboard-neutral font-semibold bg-white/60 backdrop-blur-[2px] hover:border-dashboard-primary hover:text-dashboard-text shadow-sm active:scale-95 transition-all"
+                    className="flex items-center gap-1 px-2 py-1 rounded-full border border-dashed border-dashboard-border text-xs text-dashboard-neutral font-medium bg-white/60 backdrop-blur-[2px] hover:border-dashboard-primary hover:text-dashboard-text shadow-sm active:scale-95 transition-all"
                   >
-                    <Filter size={15} />
-                    <span>Add Filter</span>
+                    <Filter size={12} />
+                    <span>Add</span>
                   </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-56 p-0 z-[80] bg-white rounded-xl shadow-2xl border-dashboard-border" align="end">
@@ -129,3 +128,4 @@ const Header = () => {
 };
 
 export default Header;
+
