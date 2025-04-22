@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -26,6 +25,7 @@ import {
 } from '@/components/ui/table';
 import { FileText, Filter, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface AssortmentMixExplorerProps {
   retailers: { id: string; name: string }[];
@@ -36,20 +36,22 @@ interface AssortmentMixExplorerProps {
 interface SkuData {
   count: number;
   percentage: number;
+  pdvs: number;
 }
 
 type AssortmentData = Record<string, Record<string, Record<string, SkuData>>>;
+
+type DisplayMetric = 'percentage' | 'pdvs' | 'count';
 
 export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({ 
   retailers, 
   categories, 
   priceRanges 
 }) => {
-  // Use the first 3 categories from the passed categories prop instead of hardcoded values
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     categories.slice(0, 3).map(cat => cat.id)
   );
-  const [displayType, setDisplayType] = useState<'percentage' | 'count'>('percentage');
+  const [displayMetric, setDisplayMetric] = useState<DisplayMetric>('percentage');
   const [priceInterval, setPriceInterval] = useState<string>('5');
   const [dateRange, setDateRange] = useState<string>('3');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -72,15 +74,18 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
           if (isPricePointActive) {
             const skuCount = Math.floor(Math.random() * 300) + 10;
             const percentage = parseFloat((Math.random() * 25).toFixed(1));
+            const pdvs = Math.floor(Math.random() * 10000) + 100;
             
             data[retailer.id][catId][priceRange.id] = {
               count: skuCount,
-              percentage
+              percentage,
+              pdvs
             };
           } else {
             data[retailer.id][catId][priceRange.id] = {
               count: 0,
-              percentage: 0
+              percentage: 0,
+              pdvs: 0
             };
           }
         });
@@ -105,7 +110,6 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   };
 
   const getBubbleColor = (value: number, catId: string): string => {
-    // Update color logic to work with the new category IDs
     if (catId.includes('mens_')) {
       return 'bg-blue-100 text-blue-800';
     } else if (catId.includes('womens_')) {
@@ -144,6 +148,29 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     });
   };
 
+  const getDisplayValue = (data: SkuData | undefined): number => {
+    if (!data) return 0;
+    switch (displayMetric) {
+      case 'pdvs':
+        return data.pdvs;
+      case 'count':
+        return data.count;
+      default:
+        return data.percentage;
+    }
+  };
+
+  const getDisplaySuffix = (metric: DisplayMetric): string => {
+    switch (metric) {
+      case 'pdvs':
+        return '';
+      case 'count':
+        return '';
+      default:
+        return '%';
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -154,19 +181,24 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
         
         <div className="flex flex-wrap items-end gap-4 mt-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Display</label>
-            <Select 
-              value={displayType} 
-              onValueChange={(val) => setDisplayType(val as 'percentage' | 'count')}
+            <label className="text-sm font-medium">Display Metric</label>
+            <ToggleGroup
+              type="single"
+              value={displayMetric}
+              onValueChange={(value) => {
+                if (value) setDisplayMetric(value as DisplayMetric);
+              }}
             >
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Percentage" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="percentage">Percentage</SelectItem>
-                <SelectItem value="count">SKU Count</SelectItem>
-              </SelectContent>
-            </Select>
+              <ToggleGroupItem value="percentage" aria-label="Show percentages">
+                % of Range
+              </ToggleGroupItem>
+              <ToggleGroupItem value="pdvs" aria-label="Show PDVs">
+                PDVs
+              </ToggleGroupItem>
+              <ToggleGroupItem value="count" aria-label="Show SKU count">
+                SKU Count
+              </ToggleGroupItem>
+            </ToggleGroup>
           </div>
           
           <div className="flex flex-col gap-1.5">
@@ -271,8 +303,8 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                         </TableCell>
                         {priceRanges.map(priceRange => {
                           const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
-                          const value = displayType === 'percentage' ? data?.percentage || 0 : data?.count || 0;
-                          const displayValue = displayType === 'percentage' ? `${value}%` : value;
+                          const value = getDisplayValue(data);
+                          const displayValue = `${value}${getDisplaySuffix(displayMetric)}`;
                           
                           return (
                             <TableCell 
