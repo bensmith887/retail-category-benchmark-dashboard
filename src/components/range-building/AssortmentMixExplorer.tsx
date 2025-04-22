@@ -67,6 +67,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
       selectedCategories.forEach(catId => {
         data[retailer.id][catId] = {};
         let totalPercentage = 0;
+        let totalPDVs = 0;
         const tempRangeData: Record<string, SkuData> = {};
         
         priceRanges.forEach(priceRange => {
@@ -84,6 +85,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
               pdvs
             };
             totalPercentage += percentage;
+            totalPDVs += pdvs;
           } else {
             tempRangeData[priceRange.id] = {
               count: 0,
@@ -93,12 +95,19 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
           }
         });
 
-        const normalizationFactor = totalPercentage > 0 ? 100 / totalPercentage : 1;
+        const rangeNormalizationFactor = totalPercentage > 0 ? 100 / totalPercentage : 1;
+        const pdvNormalizationFactor = totalPDVs > 0 ? 100 / totalPDVs : 1;
+
         priceRanges.forEach(priceRange => {
           if (tempRangeData[priceRange.id]) {
+            const normalizedRangePercentage = parseFloat((tempRangeData[priceRange.id].percentage * rangeNormalizationFactor).toFixed(1));
+            const normalizedPDVPercentage = parseFloat(((tempRangeData[priceRange.id].pdvs * pdvNormalizationFactor)).toFixed(1));
+            
             data[retailer.id][catId][priceRange.id] = {
               ...tempRangeData[priceRange.id],
-              percentage: parseFloat((tempRangeData[priceRange.id].percentage * normalizationFactor).toFixed(1))
+              percentage: normalizedRangePercentage,
+              pdvs: tempRangeData[priceRange.id].pdvs,
+              pdvPercentage: normalizedPDVPercentage
             };
           }
         });
@@ -114,12 +123,14 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
 
   const getBubbleSize = (value: number): string => {
     if (value === 0) return 'hidden';
+    if (value < 2) return 'w-5 h-5';
     if (value < 5) return 'w-6 h-6';
     if (value < 10) return 'w-8 h-8';
-    if (value < 20) return 'w-10 h-10';
-    if (value < 30) return 'w-12 h-12';
-    if (value < 40) return 'w-14 h-14';
-    if (value < 50) return 'w-16 h-16';
+    if (value < 15) return 'w-10 h-10';
+    if (value < 25) return 'w-12 h-12';
+    if (value < 35) return 'w-14 h-14';
+    if (value < 45) return 'w-16 h-16';
+    if (value < 60) return 'w-18 h-18';
     return 'w-20 h-20';
   };
 
@@ -167,9 +178,8 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     
     switch (displayMetric) {
       case 'pdv-percentage':
-        const pdvPercentage = ((data.pdvs / getTotalPDVs()) * 100).toFixed(1);
         return {
-          primary: `${pdvPercentage}%`,
+          primary: `${data.pdvPercentage?.toFixed(1)}%`,
           secondary: data.pdvs.toLocaleString()
         };
       default: // range-percentage
