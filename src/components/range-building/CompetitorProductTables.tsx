@@ -2,18 +2,21 @@
 import React from "react";
 import ProductDetailTable from "./ProductDetailTable";
 
-// Fashion-related demo product images (think H&M style)
+// Fashion-related demo product images (H&M style clothing and shoes)
 const demoImages = [
-  // Unsplash sample people/fashion photos, square crop, high contrast
-  "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=facearea&w=64&h=64&q=80", // woman with white shirt
-  "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=facearea&w=64&h=64&q=80", // man with jacket
-  "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=facearea&w=64&h=64&q=80", // young woman in turtleneck
-  "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=facearea&w=64&h=64&q=80", // woman in black
-  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&w=64&h=64&q=80", // woman with curly hair
-  "https://images.unsplash.com/photo-1524253482453-3fed8d2fe12b?auto=format&fit=facearea&w=64&h=64&q=80", // man with blue shirt
-  "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=facearea&w=64&h=64&q=80", // man with patterned shirt
-  "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=facearea&w=64&h=64&q=80", // woman fashion, white background
-  "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=facearea&w=64&h=64&q=80", // man portrait
+  // Clothing images
+  "https://images.unsplash.com/photo-1525850652251-22f861a5a34b?auto=format&fit=facearea&w=64&h=64&q=80", // white t-shirt
+  "https://images.unsplash.com/photo-1618932260643-f7051950ae26?auto=format&fit=facearea&w=64&h=64&q=80", // casual denim jacket
+  "https://images.unsplash.com/photo-1576566588001-990e4f085e1d?auto=format&fit=facearea&w=64&h=64&q=80", // stylish sweater
+  "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=facearea&w=64&h=64&q=80", // blue jeans
+  "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=facearea&w=64&h=64&q=80", // casual outfit
+  
+  // Shoe images
+  "https://images.unsplash.com/photo-1556048219-bb3dd1ae9c5a?auto=format&fit=facearea&w=64&h=64&q=80", // white sneakers
+  "https://images.unsplash.com/photo-1519415943487-7f1033a0e4f7?auto=format&fit=facearea&w=64&h=64&q=80", // running shoes
+  "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=facearea&w=64&h=64&q=80", // casual leather shoes
+  "https://images.unsplash.com/photo-1542291026-7eec264c27c4?auto=format&fit=facearea&w=64&h=64&q=80", // colorful athletic shoes
+  "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=facearea&w=64&h=64&q=80", // trendy sneakers
 ];
 
 const getDemoProducts = (retailer: string, category: string, priceRange: string) => {
