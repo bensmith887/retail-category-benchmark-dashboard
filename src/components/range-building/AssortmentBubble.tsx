@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { pickSize } from './bubbleSizing';
-import { pickColor } from './bubblePalette';
+import { pickColor, getHighValueColor } from './bubblePalette';
 
 interface AssortmentBubbleProps {
   value: number; // 0-100, main percentage value
@@ -10,30 +10,55 @@ interface AssortmentBubbleProps {
 }
 
 /**
- * Visually enhanced bubble to maximize perceived differences.
+ * Enhanced bubble component with better visual differentiation
+ * to match the desired design in the reference image.
  */
-export const AssortmentBubble: React.FC<AssortmentBubbleProps> = ({ value, secondary }) => {
+export const AssortmentBubble: React.FC<AssortmentBubbleProps> = ({ value, secondary, categoryId }) => {
   if (!value || value < 0.01) return null;
+  
   const size = pickSize(value);
-  const color = pickColor(value);
-
+  let color = pickColor(value);
+  
+  // Check if this is a high-value bubble that needs special treatment
+  const isHighValue = value > 20;
+  if (isHighValue) {
+    color = "bg-purple-300 text-purple-900 border-purple-400";
+  }
+  
+  // Determine font size based on bubble size for better proportions
+  const fontSize = size >= 100 ? 20 : size >= 70 ? 18 : size >= 50 ? 15 : 12;
+  const secondaryFontSize = fontSize * 0.7;
+  
   return (
     <div
       style={{
         width: size,
         height: size,
-        fontSize: size >= 70 ? 20 : size > 40 ? 15 : 12,
-        minWidth: 16,
-        minHeight: 16,
-        boxShadow: '0 2px 16px 4px rgba(120, 48, 210, 0.13)' // more "pop"
+        fontSize: fontSize,
+        minWidth: 20,
+        minHeight: 20,
+        boxShadow: isHighValue 
+          ? '0 4px 12px rgba(124, 58, 237, 0.3)' // purple shadow for high values
+          : '0 2px 8px rgba(59, 130, 246, 0.2)',  // blue shadow for normal values
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'all 0.3s ease'
       }}
-      className={`flex flex-col items-center justify-center rounded-full border-2 transition-all duration-200 ${color}
-        font-semibold relative z-10 select-none ring-2 ring-purple-200 ring-opacity-80`}
+      className={`flex flex-col items-center justify-center rounded-full border-2 ${color}
+        font-semibold relative select-none`}
     >
-      <span className="leading-none" style={{ letterSpacing: 0.5 }}>{value.toFixed(1)}%</span>
+      <span className="leading-none">{value.toFixed(1)}%</span>
       {secondary && (
-        <span className="text-[10px] leading-none opacity-90 font-normal mt-0.5">{secondary}</span>
+        <span 
+          className="opacity-80 font-normal mt-0.5" 
+          style={{ fontSize: `${secondaryFontSize}px`, lineHeight: '1' }}
+        >
+          {secondary}
+        </span>
       )}
+      {/* Small decorative element at bottom to match example */}
+      <div className="absolute -bottom-1 w-3 h-1.5 bg-blue-500 rounded-b-full" />
     </div>
   );
 };

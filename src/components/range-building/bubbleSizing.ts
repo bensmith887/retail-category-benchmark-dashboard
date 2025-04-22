@@ -10,15 +10,16 @@ export interface SizeStep {
 }
 
 export const sizeSteps: SizeStep[] = [
-  { limit: 1, size: 16 },
-  { limit: 2, size: 26 },
-  { limit: 5, size: 40 },
-  { limit: 10, size: 58 },
-  { limit: 15, size: 75 },
-  { limit: 30, size: 105 },
+  { limit: 1, size: 20 },
+  { limit: 2, size: 35 },
+  { limit: 5, size: 50 },
+  { limit: 10, size: 65 },
+  { limit: 15, size: 85 },
+  { limit: 20, size: 105 },
+  { limit: 25, size: 120 },
   { limit: 50, size: 140 },
-  { limit: 75, size: 185 },
-  { limit: 101, size: 240 }
+  { limit: 75, size: 160 },
+  { limit: 101, size: 180 }
 ];
 
 export const pickSize = (value: number): number => {
