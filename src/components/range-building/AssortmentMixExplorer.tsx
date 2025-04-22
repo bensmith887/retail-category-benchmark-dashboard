@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -213,11 +214,19 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
       pdvPercentage: 0
     };
 
+    // Check if retailer data exists
+    if (!assortmentData[retailerId]) {
+      return totals;
+    }
+
     selectedCategories.forEach(catId => {
-      Object.values(assortmentData[retailerId][catId]).forEach(data => {
-        totals.count += data.count;
-        totals.pdvs += data.pdvs;
-      });
+      // Check if category data exists for this retailer
+      if (assortmentData[retailerId] && assortmentData[retailerId][catId]) {
+        Object.values(assortmentData[retailerId][catId]).forEach(data => {
+          totals.count += data.count;
+          totals.pdvs += data.pdvs;
+        });
+      }
     });
 
     return totals;
@@ -366,15 +375,26 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                         </TableCell>
                         {priceRanges.map(priceRange => {
                           if (isTotal) {
+                            // Calculate and display totals for this retailer
+                            const totalCount = totals?.count || 0;
+                            const totalPDVs = totals?.pdvs || 0;
+                            const totalPDVPercentage = totalPDVs > 0 ? (totalPDVs / getTotalPDVs() * 100) : 0;
+                            
+                            // Calculate total SKU percentage
+                            const allRetailerSkus = Object.values(assortmentData[retailer.id] || {}).reduce((acc, cat) => 
+                              acc + Object.values(cat || {}).reduce((sum, data) => sum + data.count, 0), 0);
+                            
+                            const totalSkuPercentage = allRetailerSkus > 0 ? (totalCount / allRetailerSkus * 100) : 0;
+                            
                             const value = {
                               primary: displayMetric === 'pdv-percentage' 
-                                ? `${((totals?.pdvs || 0) / getTotalPDVs() * 100).toFixed(1)}%`
-                                : `${((totals?.count || 0) / Object.values(assortmentData[retailer.id]).reduce((acc, cat) => 
-                                    acc + Object.values(cat).reduce((sum, data) => sum + data.count, 0), 0) * 100).toFixed(1)}%`,
+                                ? `${totalPDVPercentage.toFixed(1)}%`
+                                : `${totalSkuPercentage.toFixed(1)}%`,
                               secondary: displayMetric === 'pdv-percentage' 
-                                ? totals?.pdvs.toLocaleString()
-                                : totals?.count.toString()
+                                ? totalPDVs.toLocaleString()
+                                : totalCount.toString()
                             };
+                            
                             const bubbleSize = getBubbleSize(parseFloat(value.primary));
                             const bubbleColor = 'bg-gray-100 text-gray-800';
                             
@@ -392,10 +412,11 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                               </TableCell>
                             );
                           } else {
+                            // Make sure this category and price range exist
                             const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
                             const value = getDisplayValue(data);
-                            const bubbleSize = getBubbleSize(parseFloat(value.primary));
-                            const bubbleColor = getBubbleColor(parseFloat(value.primary), catId);
+                            const bubbleSize = getBubbleSize(parseFloat(value.primary || '0'));
+                            const bubbleColor = getBubbleColor(parseFloat(value.primary || '0'), catId);
                             
                             return (
                               <TableCell 
