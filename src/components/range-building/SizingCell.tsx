@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import AssortmentBarIndicator from "./AssortmentBarIndicator";
 
 /**
- * Pure bar cell for sizing: one proportioned colored bar, % and number, no bubbles.
+ * This cell provides a dynamically sized bar chart indicator for percentage/cell value.
  */
 interface SizingCellProps {
   percent: number;
