@@ -45,21 +45,61 @@ type AssortmentData = Record<string, Record<string, Record<string, SkuData>>>;
 
 type DisplayMetric = 'range-percentage' | 'pdv-percentage';
 
+interface PriceRange {
+  id: string;
+  name: string;
+  min: number;
+  max: number;
+}
+
 export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({ 
   retailers, 
-  categories, 
-  priceRanges 
+  categories,
+  priceRanges: defaultPriceRanges 
 }) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     categories.slice(0, 3).map(cat => cat.id)
   );
   const [displayMetric, setDisplayMetric] = useState<DisplayMetric>('range-percentage');
-  const [priceInterval, setPriceInterval] = useState<string>('5');
+  const [minPrice, setMinPrice] = useState<string>("10");
+  const [maxPrice, setMaxPrice] = useState<string>("200");
+  const [priceInterval, setPriceInterval] = useState<string>("5");
+  const [generatedPriceRanges, setGeneratedPriceRanges] = useState<PriceRange[]>([]);
   const [dateRange, setDateRange] = useState<string>('3');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [assortmentData, setAssortmentData] = useState<AssortmentData>({});
   const [showTotalRange, setShowTotalRange] = useState(false);
   const { toast } = useToast();
+
+  const generatePriceRanges = () => {
+    const min = parseInt(minPrice);
+    const max = parseInt(maxPrice);
+    const interval = parseInt(priceInterval);
+    const ranges: PriceRange[] = [];
+    
+    for (let i = min; i < max; i += interval) {
+      ranges.push({
+        id: `${i}-${i + interval}`,
+        name: `£${i}-${i + interval}`,
+        min: i,
+        max: i + interval
+      });
+    }
+    
+    // Add the final "plus" range
+    ranges.push({
+      id: `${max}+`,
+      name: `£${max}+`,
+      min: max,
+      max: Infinity
+    });
+    
+    setGeneratedPriceRanges(ranges);
+  };
+
+  useEffect(() => {
+    generatePriceRanges();
+  }, [minPrice, maxPrice, priceInterval]);
 
   useEffect(() => {
     const data: AssortmentData = {};
@@ -73,7 +113,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
         let totalPDVs = 0;
         const tempRangeData: Record<string, SkuData> = {};
         
-        priceRanges.forEach(priceRange => {
+        generatedPriceRanges.forEach(priceRange => {
           const isPricePointActive = Math.random() > 0.4 || 
             (priceRange.min >= 15 && priceRange.max <= 50);
           
@@ -101,7 +141,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
         const rangeNormalizationFactor = totalPercentage > 0 ? 100 / totalPercentage : 1;
         const pdvNormalizationFactor = totalPDVs > 0 ? 100 / totalPDVs : 1;
 
-        priceRanges.forEach(priceRange => {
+        generatedPriceRanges.forEach(priceRange => {
           if (tempRangeData[priceRange.id]) {
             const normalizedRangePercentage = parseFloat((tempRangeData[priceRange.id].percentage * rangeNormalizationFactor).toFixed(1));
             const normalizedPDVPercentage = parseFloat(((tempRangeData[priceRange.id].pdvs * pdvNormalizationFactor)).toFixed(1));
@@ -118,7 +158,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     });
     
     setAssortmentData(data);
-  }, [retailers, selectedCategories, priceRanges]);
+  }, [retailers, selectedCategories, generatedPriceRanges]);
 
   const filteredCategories = categories.filter(cat => 
     cat.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -215,7 +255,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     
     const priceRangeTotals: Record<string, { count: number; pdvs: number }> = {};
     
-    priceRanges.forEach(range => {
+    generatedPriceRanges.forEach(range => {
       priceRangeTotals[range.id] = { count: 0, pdvs: 0 };
     });
 
@@ -273,18 +313,38 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
           </div>
           
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Price Interval</label>
-            <Select 
-              value={priceInterval} 
-              onValueChange={setPriceInterval}
-            >
-              <SelectTrigger className="w-36">
+            <label className="text-sm font-medium">Price Range (£)</label>
+            <div className="flex gap-2 items-center">
+              <Input
+                type="number"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+                className="w-20"
+                min="0"
+              />
+              <span>to</span>
+              <Input
+                type="number"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                className="w-20"
+                min="0"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium">Price Interval (£)</label>
+            <Select value={priceInterval} onValueChange={setPriceInterval}>
+              <SelectTrigger className="w-24">
                 <SelectValue placeholder="£5" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="5">£5</SelectItem>
                 <SelectItem value="10">£10</SelectItem>
                 <SelectItem value="15">£15</SelectItem>
+                <SelectItem value="20">£20</SelectItem>
+                <SelectItem value="25">£25</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -360,7 +420,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                 <TableHead className="sticky left-[120px] bg-white font-medium w-[140px] border-r text-xs py-1">
                   Category
                 </TableHead>
-                {priceRanges.map(priceRange => (
+                {generatedPriceRanges.map(priceRange => (
                   <TableHead 
                     key={priceRange.id} 
                     className="text-center font-medium px-2 text-xs py-1"
@@ -381,7 +441,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                       <TableCell className="sticky left-[120px] bg-muted/20 border-r py-1 text-xs">
                         Total Range
                       </TableCell>
-                      {priceRanges.map(priceRange => {
+                      {generatedPriceRanges.map(priceRange => {
                         const totals = calculateRetailerTotals(retailer.id);
                         const data = totals[priceRange.id];
                         const value = {
@@ -432,7 +492,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                         <TableCell className="sticky left-[120px] bg-white border-r py-1 text-xs">
                           {category?.name}
                         </TableCell>
-                        {priceRanges.map(priceRange => {
+                        {generatedPriceRanges.map(priceRange => {
                           const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
                           const value = getDisplayValue(data);
                           const bubbleSize = getBubbleSize(parseFloat(value.primary || '0'));
