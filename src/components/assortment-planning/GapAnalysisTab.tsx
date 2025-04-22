@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -12,7 +13,7 @@ import { CannibalizedProductsView } from './CannibalizedProductsView';
 import { ExclusivityTracker } from './ExclusivityTracker';
 import { AlertsPanel } from './AlertsPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Info, Filter, ArrowUpDown, Search, Bell } from 'lucide-react';
+import { Info, Filter, ArrowUpDown, Search, Bell, Download } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +27,9 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+
+// Import recommendation component
+import { GapRecommendations } from './GapRecommendations';
 
 const GapAnalysisTab = ({ 
   competitors, 
@@ -103,6 +107,54 @@ const GapAnalysisTab = ({
     setShowAlerts(!showAlerts);
   };
 
+  // Generate mock recommendations
+  const recommendations = [
+    {
+      id: 1,
+      category: 'Beauty',
+      subCategory: 'Haircare',
+      competitor: 'Amazon',
+      skuCount: 1200,
+      growthRate: 18,
+      opportunityScore: 92,
+      priority: 'high',
+      reasoning: 'High search volume and competitor success'
+    },
+    {
+      id: 2,
+      category: 'Electronics',
+      subCategory: 'Smart Home',
+      competitor: 'Best Buy',
+      skuCount: 850,
+      growthRate: 23,
+      opportunityScore: 87,
+      priority: 'high',
+      reasoning: 'Trending category with high margins'
+    },
+    {
+      id: 3,
+      category: 'Clothing',
+      subCategory: 'Activewear',
+      competitor: 'Target',
+      skuCount: 620,
+      growthRate: 15,
+      opportunityScore: 75,
+      priority: 'medium',
+      reasoning: 'Growing market segment'
+    },
+    {
+      id: 4,
+      category: 'Home & Kitchen',
+      subCategory: 'Coffee Makers',
+      competitor: 'Walmart',
+      skuCount: 320,
+      growthRate: 8,
+      opportunityScore: 65,
+      priority: 'medium',
+      reasoning: 'Stable market with repeat purchases'
+    }
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -112,16 +164,33 @@ const GapAnalysisTab = ({
             Identify product gaps and opportunities across categories and competitors
           </p>
         </div>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="flex items-center gap-2"
-          onClick={handleToggleAlerts}
-        >
-          <Bell size={16} />
-          <span>Alerts</span>
-          <Badge className="ml-1 bg-red-500">{alerts.length}</Badge>
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex items-center gap-2"
+            onClick={() => {
+              // Mock export functionality
+              toast({
+                title: "Dashboard exported",
+                description: "The Gap Analysis data has been exported to Excel",
+              });
+            }}
+          >
+            <Download size={16} />
+            <span>Export</span>
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex items-center gap-2"
+            onClick={handleToggleAlerts}
+          >
+            <Bell size={16} />
+            <span>Alerts</span>
+            <Badge className="ml-1 bg-red-500">{alerts.length}</Badge>
+          </Button>
+        </div>
       </div>
 
       {showAlerts && (
@@ -132,64 +201,8 @@ const GapAnalysisTab = ({
         </Card>
       )}
 
-      <Card className="mb-6">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Filter size={18} />
-              <span>Filters</span>
-            </CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <Label>Search Categories</Label>
-              <div className="flex w-full items-center space-x-2 mt-1.5">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    placeholder="Search..." 
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-8 w-full"
-                  />
-                </div>
-              </div>
-            </div>
-            <div>
-              <Label>Sort By</Label>
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="mt-1.5">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="score">Opportunity Score</SelectItem>
-                  <SelectItem value="market">Market Size</SelectItem>
-                  <SelectItem value="growth">Growth Potential</SelectItem>
-                  <SelectItem value="gaps">Number of Gaps</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Minimum Score</Label>
-              <div className="flex items-center space-x-2 mt-1.5">
-                <Input 
-                  type="number" 
-                  value={minScore.toString()} 
-                  onChange={(e) => setMinScore(parseInt(e.target.value) || 0)}
-                  className="w-full"
-                  min="0"
-                  max="100"
-                />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       <Tabs value={gapAnalysisView} onValueChange={setGapAnalysisView}>
-        <TabsList className="grid grid-cols-4 w-full">
+        <TabsList className="grid grid-cols-5 w-full">
           <TabsTrigger value="matrix" className="flex items-center gap-2">
             <Info size={16} />
             <span>Gap Matrix</span>
@@ -197,6 +210,10 @@ const GapAnalysisTab = ({
           <TabsTrigger value="opportunities" className="flex items-center gap-2">
             <ArrowUpDown size={16} />
             <span>Opportunities</span>
+          </TabsTrigger>
+          <TabsTrigger value="recommendations" className="flex items-center gap-2">
+            <Filter size={16} />
+            <span>Recommendations</span>
           </TabsTrigger>
           <TabsTrigger value="cannibalization" className="flex items-center gap-2">
             <Filter size={16} />
@@ -211,9 +228,10 @@ const GapAnalysisTab = ({
         <TabsContent value="matrix">
           <Card>
             <CardHeader>
-              <CardTitle>Product Gap Matrix</CardTitle>
+              <CardTitle>Enhanced Product Gap Matrix</CardTitle>
               <CardDescription>
-                Visual matrix showing categories where competitors have products but you don't
+                Interactive matrix showing categories where competitors have products but you don't,
+                with detailed metrics and actionable insights
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
@@ -240,6 +258,20 @@ const GapAnalysisTab = ({
                 sortBy={sortBy}
                 minScore={minScore}
               />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="recommendations">
+          <Card>
+            <CardHeader>
+              <CardTitle>Strategic Recommendations</CardTitle>
+              <CardDescription>
+                Data-driven suggestions to address gaps and optimize your product portfolio
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <GapRecommendations recommendations={recommendations} />
             </CardContent>
           </Card>
         </TabsContent>
