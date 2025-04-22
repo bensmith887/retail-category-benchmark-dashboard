@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -38,7 +37,7 @@ interface SkuData {
   count: number;
   percentage: number;
   pdvs: number;
-  pdvPercentage?: number; // Added this property to fix the TypeScript error
+  pdvPercentage?: number;
 }
 
 type AssortmentData = Record<string, Record<string, Record<string, SkuData>>>;
@@ -125,15 +124,15 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
 
   const getBubbleSize = (value: number): string => {
     if (value === 0) return 'hidden';
-    if (value < 2) return 'w-5 h-5';
-    if (value < 5) return 'w-6 h-6';
-    if (value < 10) return 'w-8 h-8';
-    if (value < 15) return 'w-10 h-10';
-    if (value < 25) return 'w-12 h-12';
-    if (value < 35) return 'w-14 h-14';
-    if (value < 45) return 'w-16 h-16';
-    if (value < 60) return 'w-18 h-18';
-    return 'w-20 h-20';
+    if (value < 2) return 'w-4 h-4';
+    if (value < 5) return 'w-5 h-5';
+    if (value < 10) return 'w-6 h-6';
+    if (value < 15) return 'w-7 h-7';
+    if (value < 25) return 'w-8 h-8';
+    if (value < 35) return 'w-9 h-9';
+    if (value < 45) return 'w-10 h-10';
+    if (value < 60) return 'w-11 h-11';
+    return 'w-12 h-12';
   };
 
   const getBubbleColor = (value: number, catId: string): string => {
@@ -184,7 +183,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
           primary: `${data.pdvPercentage?.toFixed(1)}%`,
           secondary: data.pdvs.toLocaleString()
         };
-      default: // range-percentage
+      default:
         return {
           primary: `${data.percentage.toFixed(1)}%`,
           secondary: data.count.toString()
@@ -206,7 +205,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="space-y-2">
         <CardTitle>Assortment Mix Explorer</CardTitle>
         <CardDescription>
           Compare SKU distribution across retailers, categories, and price points
@@ -305,13 +304,13 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="sticky left-0 bg-white font-medium w-[250px] border-r">
+                <TableHead className="sticky left-0 bg-white font-medium w-[200px] border-r text-xs py-2">
                   Retailer / Category
                 </TableHead>
                 {priceRanges.map(priceRange => (
                   <TableHead 
                     key={priceRange.id} 
-                    className="text-center font-medium px-6"
+                    className="text-center font-medium px-3 text-xs py-2"
                   >
                     {priceRange.name}
                   </TableHead>
@@ -325,11 +324,11 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                     const category = categories.find(c => c.id === catId);
                     return (
                       <TableRow key={`${retailer.id}-${catId}`} className={index === 0 ? 'border-t-2' : ''}>
-                        <TableCell className="sticky left-0 bg-white font-medium border-r">
+                        <TableCell className="sticky left-0 bg-white font-medium border-r py-2">
                           {index === 0 && (
-                            <div className="font-bold mb-2">{retailer.name}</div>
+                            <div className="font-bold mb-1 text-xs">{retailer.name}</div>
                           )}
-                          <div className="pl-4">{category?.name || catId}</div>
+                          <div className="pl-3 text-xs">{category?.name || catId}</div>
                         </TableCell>
                         {priceRanges.map(priceRange => {
                           const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
@@ -340,15 +339,15 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                           return (
                             <TableCell 
                               key={`${retailer.id}-${catId}-${priceRange.id}`} 
-                              className="text-center p-4"
+                              className="text-center p-2"
                             >
                               {value.primary && (
                                 <div className="flex justify-center items-center">
                                   <div 
-                                    className={`${bubbleSize} ${bubbleColor} rounded-full flex flex-col items-center justify-center text-xs font-medium`}
+                                    className={`${bubbleSize} ${bubbleColor} rounded-full flex flex-col items-center justify-center text-[10px] font-medium`}
                                   >
                                     <span>{value.primary}</span>
-                                    <span className="text-[10px] opacity-75">{value.secondary}</span>
+                                    <span className="text-[8px] opacity-75">{value.secondary}</span>
                                   </div>
                                 </div>
                               )}
