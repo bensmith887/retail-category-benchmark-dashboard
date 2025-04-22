@@ -135,7 +135,9 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     return 'w-12 h-12';
   };
 
-  const getBubbleColor = (value: number, catId: string): string => {
+  const getBubbleColor = (value: number, catId: string | null): string => {
+    if (!catId) return 'bg-gray-100 text-gray-800';
+    
     if (catId.includes('mens_')) {
       return 'bg-blue-100 text-blue-800';
     } else if (catId.includes('womens_')) {
@@ -393,7 +395,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                             const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
                             const value = getDisplayValue(data);
                             const bubbleSize = getBubbleSize(parseFloat(value.primary));
-                            const bubbleColor = getBubbleColor(catId);
+                            const bubbleColor = getBubbleColor(parseFloat(value.primary), catId);
                             
                             return (
                               <TableCell 
