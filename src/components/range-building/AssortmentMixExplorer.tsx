@@ -222,30 +222,39 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     }
   };
 
-  const BarCell = ({
+  const VerticalBarCell = ({
     value,
     colorClass,
-    secondary
+    secondary = "",
+    showValue = true,
   }: {
-    value: number,
-    colorClass: string,
-    secondary?: string
-  }) => (
-    <div className="flex items-center h-6 min-w-[40px] pr-1">
-      <div className="relative w-full bg-gray-100 h-3 rounded">
-        <div
-          className={`absolute top-0 left-0 h-3 rounded transition-all ${colorClass}`}
-          style={{
-            width: `${Math.min(Math.max(value, 0), 100)}%`
-          }}
-        />
+    value: number;
+    colorClass: string;
+    secondary?: string;
+    showValue?: boolean;
+  }) => {
+    return (
+      <div className="flex flex-col items-center justify-end min-w-[36px] py-1 h-[48px] relative">
+        <div className="relative h-full w-5 flex flex-col justify-end">
+          <div className="absolute bottom-0 left-0 w-full h-full rounded-full bg-gray-100" />
+          <div
+            className={`absolute left-0 w-full rounded-full transition-all duration-300 ${colorClass}`}
+            style={{
+              bottom: 0,
+              height: `${Math.min(Math.max(value, 0), 100)}%`,
+              maxHeight: '100%',
+            }}
+          />
+        </div>
+        {showValue && (
+          <div className="text-[10px] font-medium text-gray-900 mt-0.5 leading-tight">
+            {value > 0 ? `${value.toFixed(1)}%` : ""}
+            <div className="block text-[9px] text-gray-500 font-normal">{secondary}</div>
+          </div>
+        )}
       </div>
-      <div className="ml-1 text-xs font-medium text-gray-900 whitespace-nowrap" style={{ minWidth: 36 }}>
-        {value > 0 ? `${value.toFixed(1)}%` : ''}
-        <span className="block text-[9px] leading-none text-gray-500 font-normal">{secondary}</span>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const handleCategoryChange = (categoryIds: string[]) => {
     setSelectedCategories(categoryIds);
@@ -506,7 +515,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                             key={`${retailer.id}-total-${priceRange.id}`}
                             className="text-center p-1 align-middle"
                           >
-                            <BarCell
+                            <VerticalBarCell
                               value={valueNum}
                               colorClass="bg-gray-400"
                               secondary={secondary}
@@ -545,7 +554,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                               key={`${retailer.id}-${catId}-${priceRange.id}`}
                               className="text-center p-1 align-middle"
                             >
-                              <BarCell
+                              <VerticalBarCell
                                 value={valueNum}
                                 colorClass={barColor}
                                 secondary={valueObj.secondary}
