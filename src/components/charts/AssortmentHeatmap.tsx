@@ -84,8 +84,13 @@ export const AssortmentHeatmap: React.FC<AssortmentHeatmapProps> = ({ competitor
       
       // Get average value for the sort field
       const getAvgValue = (row: CoverageRowData) => {
-        const values = Object.values(row.data).map(d => d[sortBy as keyof CellData] || 0);
-        return values.reduce((sum, val) => sum + (typeof val === 'number' ? val : 0), 0) / values.length;
+        const values = Object.values(row.data).map(d => {
+          // Fixed: Explicitly handle non-numeric values
+          const value = d[sortBy as keyof CellData];
+          return typeof value === 'number' ? value : 0;
+        });
+        
+        return values.reduce((sum, val) => sum + val, 0) / values.length;
       };
       
       return getAvgValue(b) - getAvgValue(a); // Descending order

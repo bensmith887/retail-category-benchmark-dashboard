@@ -172,10 +172,15 @@ export const GapMatrix: React.FC<GapMatrixProps> = ({
       filteredData.sort((a, b) => {
         // Get average or max value for the sort option across all competitors
         const getRowValue = (row: MatrixRowData) => {
-          const values = Object.values(row.data).map(d => d[sortOption as keyof CellData] || 0);
+          const values = Object.values(row.data).map(d => {
+            // Fixed: Explicitly convert to number if needed
+            const value = d[sortOption as keyof CellData];
+            return typeof value === 'number' ? value : 0;
+          });
+          
           return sortOption === 'marketSize' || sortOption === 'opportunityScore' || sortOption === 'totalRevenuePotential'
             ? Math.max(...values)
-            : values.reduce((sum, v) => sum + (typeof v === 'number' ? v : 0), 0) / values.length;
+            : values.reduce((sum, v) => sum + v, 0) / values.length; // Fixed: Sum of numbers
         };
         
         return getRowValue(b) - getRowValue(a); // Descending order
