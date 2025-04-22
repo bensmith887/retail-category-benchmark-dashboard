@@ -13,17 +13,16 @@ const getBarHeightPercent = (value: number) => {
   return 100;
 };
 
-// Correct linear interpolation: 0% = red (#ea384c), 100% = green (#4ADE80)
+// Color gradient: low % = red (#ea384c), high % = green (#4ADE80)
 const getGradientColor = (percent: number) => {
   // Red: #ea384c (234,56,76), Green: #4ADE80 (74,222,128)
-  // so for percent in [0, 100], 0 is red, 1 is green
   const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
   const norm = clamp(percent, 0, 100) / 100; // 0=red, 1=green
 
   // Interpolate from red to green
-  const r = Math.round(234 + (74 - 234) * norm);      // down as percent increases
-  const g = Math.round(56 + (222 - 56) * norm);       // up as percent increases
-  const b = Math.round(76 + (128 - 76) * norm);       // up slightly as percent increases
+  const r = Math.round(234 - (234 - 74) * norm);  // red decreases as percentage increases
+  const g = Math.round(56 + (222 - 56) * norm);   // green increases as percentage increases
+  const b = Math.round(76 + (128 - 76) * norm);   // blue increases slightly
 
   return `rgb(${r},${g},${b})`;
 };
@@ -64,7 +63,6 @@ const AssortmentBarIndicator: React.FC<AssortmentBarIndicatorProps> = ({
           <span
             className="font-semibold"
             style={{
-              color: fillColor,
               fontSize: percent >= 10 ? 13 : percent >= 3 ? 12 : 11,
               lineHeight: 1,
               marginBottom: 2,
@@ -94,4 +92,3 @@ const AssortmentBarIndicator: React.FC<AssortmentBarIndicatorProps> = ({
 };
 
 export default AssortmentBarIndicator;
-
