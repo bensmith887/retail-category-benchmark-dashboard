@@ -1,6 +1,5 @@
 
 import React from "react";
-import { ScrollArea } from "../ui/scroll-area";
 
 interface ProductDetail {
   id: string;
@@ -28,9 +27,6 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
   category,
   priceRange,
 }) => {
-  // Only show the top 20 in the scrollable view, but pass all products for further logic if needed
-  const displayProducts = products.slice(0, 20);
-
   return (
     <div className="border rounded-lg bg-white mt-8 mb-4 shadow-md animate-fade-in">
       <div className="flex items-center justify-between px-4 py-2 border-b bg-muted-100 rounded-t-lg">
@@ -48,7 +44,7 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
           Close
         </button>
       </div>
-      <ScrollArea className="max-h-[480px]">
+      <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-muted">
             <tr>
@@ -62,7 +58,7 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
             </tr>
           </thead>
           <tbody>
-            {displayProducts.map((p) => (
+            {products.map((p) => (
               <tr key={p.id} className="hover:bg-muted/50 transition">
                 <td className="px-4 py-1">
                   <img
@@ -98,16 +94,9 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
                 <td colSpan={7} className="px-4 py-6 text-center text-gray-400 text-xs">No data</td>
               </tr>
             )}
-            {products.length > 20 && (
-              <tr>
-                <td colSpan={7} className="px-4 py-3 text-center text-xs text-muted-foreground">
-                  Showing top 20 of {products.length} products. Scroll to view.
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
-      </ScrollArea>
+      </div>
     </div>
   );
 };
