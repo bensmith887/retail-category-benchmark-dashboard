@@ -198,6 +198,55 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     }
   };
 
+  const getBarColor = (
+    value: number,
+    catId: string | null
+  ): string => {
+    if (!catId) return 'bg-gray-200';
+    if (catId.includes('mens_')) {
+      return 'bg-blue-100';
+    } else if (catId.includes('womens_')) {
+      return 'bg-green-100';
+    } else if (catId.includes('junior_')) {
+      return 'bg-pink-100';
+    } else if (catId.includes('replica_')) {
+      return 'bg-purple-100';
+    } else if (catId.includes('accessories')) {
+      return 'bg-orange-100';
+    } else if (catId.includes('infant_')) {
+      return 'bg-yellow-100';
+    } else if (catId.includes('childrens_')) {
+      return 'bg-indigo-100';
+    } else {
+      return 'bg-gray-200';
+    }
+  };
+
+  const BarCell = ({
+    value,
+    colorClass,
+    secondary
+  }: {
+    value: number,
+    colorClass: string,
+    secondary?: string
+  }) => (
+    <div className="flex items-center h-6 min-w-[40px] pr-1">
+      <div className="relative w-full bg-gray-100 h-3 rounded">
+        <div
+          className={`absolute top-0 left-0 h-3 rounded transition-all ${colorClass}`}
+          style={{
+            width: `${Math.min(Math.max(value, 0), 100)}%`
+          }}
+        />
+      </div>
+      <div className="ml-1 text-xs font-medium text-gray-900 whitespace-nowrap" style={{ minWidth: 36 }}>
+        {value > 0 ? `${value.toFixed(1)}%` : ''}
+        <span className="block text-[9px] leading-none text-gray-500 font-normal">{secondary}</span>
+      </div>
+    </div>
+  );
+
   const handleCategoryChange = (categoryIds: string[]) => {
     setSelectedCategories(categoryIds);
   };
@@ -444,30 +493,24 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                       {generatedPriceRanges.map(priceRange => {
                         const totals = calculateRetailerTotals(retailer.id);
                         const data = totals[priceRange.id];
-                        const value = {
-                          primary: displayMetric === 'pdv-percentage' 
-                            ? `${data?.pdvPercentage?.toFixed(1)}%` 
-                            : `${data?.percentage?.toFixed(1)}%`,
-                          secondary: displayMetric === 'pdv-percentage'
+                        const valueNum =
+                          displayMetric === 'pdv-percentage'
+                            ? data?.pdvPercentage ?? 0
+                            : data?.percentage ?? 0;
+                        const secondary =
+                          displayMetric === 'pdv-percentage'
                             ? data?.pdvs?.toLocaleString()
-                            : data?.count?.toString()
-                        };
-                        
-                        const bubbleSize = getBubbleSize(parseFloat(value.primary || '0'));
-                        
+                            : data?.count?.toString();
                         return (
-                          <TableCell 
-                            key={`${retailer.id}-total-${priceRange.id}`} 
-                            className="text-center p-1"
+                          <TableCell
+                            key={`${retailer.id}-total-${priceRange.id}`}
+                            className="text-center p-1 align-middle"
                           >
-                            {value.primary && (
-                              <div className="flex justify-center items-center">
-                                <div className={`${bubbleSize} bg-gray-100 text-gray-800 rounded-full flex flex-col items-center justify-center text-[10px] font-medium`}>
-                                  <span>{value.primary}</span>
-                                  <span className="text-[8px] opacity-75">{value.secondary}</span>
-                                </div>
-                              </div>
-                            )}
+                            <BarCell
+                              value={valueNum}
+                              colorClass="bg-gray-400"
+                              secondary={secondary}
+                            />
                           </TableCell>
                         );
                       })}
@@ -475,15 +518,14 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                   )}
                   {selectedCategories.map((catId, index) => {
                     const category = categories.find(c => c.id === catId);
-                    
                     return (
-                      <TableRow 
-                        key={`${retailer.id}-${catId}`} 
+                      <TableRow
+                        key={`${retailer.id}-${catId}`}
                         className={index === 0 ? 'border-t-2' : ''}
                       >
                         {index === 0 && (
-                          <TableCell 
-                            rowSpan={selectedCategories.length + (showTotalRange ? 1 : 0)} 
+                          <TableCell
+                            rowSpan={selectedCategories.length + (showTotalRange ? 1 : 0)}
                             className="sticky left-0 bg-white font-medium border-r py-1 align-top text-xs"
                           >
                             {retailer.name}
@@ -494,23 +536,20 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                         </TableCell>
                         {generatedPriceRanges.map(priceRange => {
                           const data = assortmentData?.[retailer.id]?.[catId]?.[priceRange.id];
-                          const value = getDisplayValue(data);
-                          const bubbleSize = getBubbleSize(parseFloat(value.primary || '0'));
-                          const bubbleColor = getBubbleColor(parseFloat(value.primary || '0'), catId);
-                          
+                          const valueObj = getDisplayValue(data);
+                          const valueNum = parseFloat(valueObj.primary.replace('%', '')) || 0;
+                          const barColor = getBarColor(valueNum, catId);
+
                           return (
-                            <TableCell 
-                              key={`${retailer.id}-${catId}-${priceRange.id}`} 
-                              className="text-center p-1"
+                            <TableCell
+                              key={`${retailer.id}-${catId}-${priceRange.id}`}
+                              className="text-center p-1 align-middle"
                             >
-                              {value.primary && (
-                                <div className="flex justify-center items-center">
-                                  <div className={`${bubbleSize} ${bubbleColor} rounded-full flex flex-col items-center justify-center text-[10px] font-medium`}>
-                                    <span>{value.primary}</span>
-                                    <span className="text-[8px] opacity-75">{value.secondary}</span>
-                                  </div>
-                                </div>
-                              )}
+                              <BarCell
+                                value={valueNum}
+                                colorClass={barColor}
+                                secondary={valueObj.secondary}
+                              />
                             </TableCell>
                           );
                         })}
