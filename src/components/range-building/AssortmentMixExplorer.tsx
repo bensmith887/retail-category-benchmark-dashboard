@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Card, 
   CardContent, 
@@ -63,13 +63,16 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
   );
   const [displayMetric, setDisplayMetric] = useState<DisplayMetric>('range-percentage');
   const [minPrice, setMinPrice] = useState<string>("10");
-  const [maxPrice, setMaxPrice] = useState<string>("200");
+  const [maxPrice, setMaxPrice] = useState<string>("100");
   const [priceInterval, setPriceInterval] = useState<string>("5");
   const [generatedPriceRanges, setGeneratedPriceRanges] = useState<PriceRange[]>([]);
   const [dateRange, setDateRange] = useState<string>('3');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [assortmentData, setAssortmentData] = useState<AssortmentData>({});
   const [showTotalRange, setShowTotalRange] = useState(false);
+  const [selectedRetailers, setSelectedRetailers] = useState<string[]>(
+    retailers.map(r => r.id)
+  );
   const { toast } = useToast();
 
   const generatePriceRanges = () => {
@@ -281,6 +284,78 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     return normalizedTotals;
   };
 
+  const toggleRetailerSelection = (retailerId: string) => {
+    setSelectedRetailers(prev =>
+      prev.includes(retailerId)
+        ? prev.filter(id => id !== retailerId)
+        : [...prev, retailerId]
+    );
+  };
+
+  const toggleAllRetailers = () => {
+    if (selectedRetailers.length === retailers.length) {
+      setSelectedRetailers([]);
+    } else {
+      setSelectedRetailers(retailers.map(r => r.id));
+    }
+  };
+
+  const SizingCell = ({ 
+    percent, 
+    secondary, 
+    categoryId
+  }: { 
+    percent: number, 
+    secondary: string, 
+    categoryId?: string 
+  }) => {
+    const cellRef = useRef<HTMLDivElement>(null);
+    const [cellSize, setCellSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
+
+    useEffect(() => {
+      if (!cellRef.current) return;
+      const handleResize = () => {
+        if (!cellRef.current) return;
+        const rect = cellRef.current.getBoundingClientRect();
+        setCellSize({ width: rect.width, height: rect.height });
+      };
+
+      handleResize();
+
+      const resizeObserver = new window.ResizeObserver(() => {
+        handleResize();
+      });
+      resizeObserver.observe(cellRef.current);
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }, []);
+
+    if (!percent || percent < 0.01) {
+      return <div ref={cellRef} className="w-full h-full" />;
+    }
+
+    const bubbleContainerSize = Math.min(cellSize.width, cellSize.height);
+
+    return (
+      <div ref={cellRef} className="flex items-center justify-center w-full h-full relative min-h-[50px] min-w-[40px]">
+        {bubbleContainerSize > 0 && (
+          <div style={{ width: bubbleContainerSize, height: bubbleContainerSize, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <AssortmentBubble
+              value={percent}
+              secondary={secondary}
+              categoryId={categoryId}
+              containerClassName=""
+            />
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const filteredRetailers = retailers.filter(r => selectedRetailers.includes(r.id));
+
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -288,6 +363,29 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
         <CardDescription className="text-xs">
           Compare SKU distribution across retailers, categories, and price points
         </CardDescription>
+        
+        <div className="flex flex-wrap gap-1 mb-2">
+          <label className="text-xs font-medium mr-2">Select Retailers:</label>
+          <Button
+            size="sm"
+            variant={selectedRetailers.length === retailers.length ? "default" : "outline"}
+            className="text-xs px-2 h-6"
+            onClick={toggleAllRetailers}
+          >
+            {selectedRetailers.length === retailers.length ? "Unselect All" : "Select All"}
+          </Button>
+          {retailers.map(retailer => (
+            <Button
+              key={retailer.id}
+              size="sm"
+              variant={selectedRetailers.includes(retailer.id) ? "default" : "outline"}
+              className="text-xs px-2 h-6"
+              onClick={() => toggleRetailerSelection(retailer.id)}
+            >
+              {retailer.name}
+            </Button>
+          ))}
+        </div>
         
         <div className="flex flex-wrap items-end gap-2 mt-2">
           <div className="flex flex-col gap-1">
@@ -428,7 +526,7 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {retailers.map(retailer => (
+              {filteredRetailers.map(retailer => (
                 <React.Fragment key={retailer.id}>
                   {showTotalRange && (
                     <TableRow className="bg-muted/20 font-medium border-t-2">
@@ -470,8 +568,8 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                                 }}
                               />
                               {percent > 0 && (
-                                <div className="absolute bottom-1 flex items-center justify-center w-full">
-                                  <AssortmentBubble value={percent} secondary={value.secondary} />
+                                <div className="absolute bottom-1 flex items-center justify-center w-full h-[48px]">
+                                  <SizingCell percent={percent} secondary={value.secondary} />
                                 </div>
                               )}
                             </div>
@@ -524,8 +622,8 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
                                   }}
                                 />
                                 {percent > 0 && (
-                                  <div className="absolute bottom-1 flex items-center justify-center w-full">
-                                    <AssortmentBubble value={percent} secondary={display.secondary} categoryId={catId} />
+                                  <div className="absolute bottom-1 flex items-center justify-center w-full h-[48px]">
+                                    <SizingCell percent={percent} secondary={display.secondary} categoryId={catId} />
                                   </div>
                                 )}
                               </div>
