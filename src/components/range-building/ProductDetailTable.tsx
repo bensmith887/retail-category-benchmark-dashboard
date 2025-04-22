@@ -1,5 +1,7 @@
 
-import React from "react";
+import React, { useState } from "react";
+import { Plus } from "lucide-react";
+import { Button } from "../ui/button";
 
 interface ProductDetail {
   id: string;
@@ -27,6 +29,11 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
   category,
   priceRange,
 }) => {
+  const [expanded, setExpanded] = useState(false);
+  const shownProducts = expanded
+    ? products.slice(0, 50)
+    : products.slice(0, 10);
+
   return (
     <div className="border rounded-lg bg-white mt-8 mb-4 shadow-md animate-fade-in">
       <div className="flex items-center justify-between px-4 py-2 border-b bg-muted-100 rounded-t-lg">
@@ -60,7 +67,7 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
             </tr>
           </thead>
           <tbody>
-            {products.slice(0, 20).map((p) => (
+            {shownProducts.map((p) => (
               <tr key={p.id} className="hover:bg-muted/50 transition">
                 <td className="px-4 py-1">
                   <img
@@ -99,11 +106,23 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({
           </tbody>
         </table>
       </div>
-      {products.length > 20 && (
-        <div className="px-4 pb-3 text-xs text-muted-foreground">Showing top 20 of {products.length} products</div>
+      {products.length > 10 && !expanded && (
+        <div className="flex items-center justify-center gap-2 px-4 py-2">
+          <Button variant="outline" size="sm" onClick={() => setExpanded(true)}>
+            <Plus className="w-4 h-4 mr-1" />
+            Show top 50
+          </Button>
+        </div>
+      )}
+      {products.length > 10 && expanded && (
+        <div className="px-4 pb-3 text-xs text-muted-foreground text-center">Showing top {Math.min(50, products.length)} of {products.length} products</div>
+      )}
+      {products.length > 10 && !expanded && (
+        <div className="px-4 pb-3 text-xs text-muted-foreground text-center">Showing top 10 of {products.length} products</div>
       )}
     </div>
   );
 };
 
 export default ProductDetailTable;
+
