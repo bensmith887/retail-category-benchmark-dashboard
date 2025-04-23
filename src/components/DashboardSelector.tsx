@@ -39,6 +39,8 @@ const DashboardSelector: React.FC<DashboardSelectorProps> = ({ currentPath }) =>
         return 'Assortment Planning';
       case '/range-building':
         return 'Range Building';
+      case '/search-to-sales-funnel':
+        return 'Search to Sales Funnel';
       default:
         return 'Overview';
     }
@@ -61,6 +63,7 @@ const DashboardSelector: React.FC<DashboardSelectorProps> = ({ currentPath }) =>
           )}
           <SelectItem value="/assortment-planning">Assortment Planning</SelectItem>
           <SelectItem value="/range-building">Range Building</SelectItem>
+          <SelectItem value="/search-to-sales-funnel">Search to Sales Funnel</SelectItem>
         </SelectContent>
       </Select>
     </div>
