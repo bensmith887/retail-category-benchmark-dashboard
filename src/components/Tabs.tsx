@@ -83,7 +83,9 @@ const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
                           ? '/assortment-planning'
                           : tab.id === 'range-building'
                             ? '/range-building'
-                            : '/'
+                            : tab.id === 'search-to-sales-funnel'
+                              ? '/search-to-sales-funnel'
+                              : '/'
               }
               className={cn(
                 "flex items-center py-2 px-4 text-dashboard-secondaryText hover:bg-dashboard-hover rounded-md transition-colors group",
