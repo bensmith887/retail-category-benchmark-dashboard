@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { 
   Card, 
@@ -34,6 +33,14 @@ import {
 import { Download, Filter, TrendingUp, Store, ChartScatter } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PriceProductDrilldown } from './PriceProductDrilldown';
+import { Input } from '@/components/ui/input';
+
+interface PriceTier {
+  id: string;
+  name: string;
+  min: number;
+  max: number;
+}
 
 interface PriceArchitectureVisualizerProps {
   retailers: { id: string; name: string }[];
@@ -55,62 +62,64 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
   const { toast } = useToast();
   
-  // Customizable price tiers with default values
-  const [customPriceTiers, setCustomPriceTiers] = useState([
-    { id: 'budget', name: 'Budget', min: 0, max: 20 },
-    { id: 'value', name: 'Value', min: 20, max: 35 },
-    { id: 'mid', name: 'Mid-Range', min: 35, max: 50 },
-    { id: 'premium', name: 'Premium', min: 50, max: 65 },
-    { id: 'luxury', name: 'Luxury', min: 65, max: 150 }
+  const [customPriceTiers, setCustomPriceTiers] = useState<PriceTier[]>([
+    { id: 'tier1', name: 'Tier 1', min: 0, max: 20 },
+    { id: 'tier2', name: 'Tier 2', min: 20, max: 35 },
+    { id: 'tier3', name: 'Tier 3', min: 35, max: 50 },
+    { id: 'tier4', name: 'Tier 4', min: 50, max: 65 },
+    { id: 'tier5', name: 'Tier 5', min: 65, max: 150 }
   ]);
   
-  // Track if price tiers have been modified from defaults
   const [tiersModified, setTiersModified] = useState<boolean>(false);
 
-  // Handler for updating price tier ranges
-  const handlePriceRangeChange = useCallback((index: number, values: number[]) => {
+  const handleTierNameChange = (index: number, newName: string) => {
     setCustomPriceTiers(prevTiers => {
       const newTiers = [...prevTiers];
-      // Ensure we don't overlap with adjacent tiers
-      if (index > 0) {
-        values[0] = Math.max(values[0], prevTiers[index-1].min);
+      newTiers[index] = {
+        ...newTiers[index],
+        name: newName
+      };
+      return newTiers;
+    });
+    setTiersModified(true);
+  };
+
+  const handlePriceRangeChange = useCallback((index: number, field: 'min' | 'max', value: number) => {
+    setCustomPriceTiers(prevTiers => {
+      const newTiers = [...prevTiers];
+      
+      if (field === 'min' && value >= newTiers[index].max) {
+        return prevTiers;
       }
-      if (index < prevTiers.length - 1) {
-        values[1] = Math.min(values[1], prevTiers[index+1].max);
+      
+      if (field === 'max' && value <= newTiers[index].min) {
+        return prevTiers;
       }
       
       newTiers[index] = {
         ...newTiers[index],
-        min: values[0],
-        max: values[1]
+        [field]: value
       };
       
-      // Update adjacent tiers to ensure no gaps
-      if (index > 0) {
-        newTiers[index-1] = {
-          ...newTiers[index-1],
-          max: values[0]
-        };
+      if (index > 0 && field === 'min') {
+        newTiers[index - 1].max = value;
       }
-      if (index < newTiers.length - 1) {
-        newTiers[index+1] = {
-          ...newTiers[index+1],
-          min: values[1]
-        };
+      if (index < newTiers.length - 1 && field === 'max') {
+        newTiers[index + 1].min = value;
       }
       
       setTiersModified(true);
       return newTiers;
     });
   }, []);
-  
+
   const resetPriceTiers = () => {
     setCustomPriceTiers([
-      { id: 'budget', name: 'Budget', min: 0, max: 20 },
-      { id: 'value', name: 'Value', min: 20, max: 35 },
-      { id: 'mid', name: 'Mid-Range', min: 35, max: 50 },
-      { id: 'premium', name: 'Premium', min: 50, max: 65 },
-      { id: 'luxury', name: 'Luxury', min: 65, max: 150 }
+      { id: 'tier1', name: 'Tier 1', min: 0, max: 20 },
+      { id: 'tier2', name: 'Tier 2', min: 20, max: 35 },
+      { id: 'tier3', name: 'Tier 3', min: 35, max: 50 },
+      { id: 'tier4', name: 'Tier 4', min: 50, max: 65 },
+      { id: 'tier5', name: 'Tier 5', min: 65, max: 150 }
     ]);
     setTiersModified(false);
     
@@ -119,13 +128,11 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
       description: "Price tiers have been reset to default values",
     });
   };
-  
-  // Generate mock price architecture data
+
   const generatePriceData = () => {
     return retailers.map(retailer => {
       const result: any = { name: retailer.name };
       
-      // Generate random distribution ensuring sum = 100%
       let remaining = 100;
       customPriceTiers.slice(0, -1).forEach(tier => {
         const max = remaining - 5 * (customPriceTiers.length - customPriceTiers.indexOf(tier) - 1);
@@ -135,10 +142,8 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
         remaining -= value;
       });
       
-      // Assign remaining to last tier
       result[customPriceTiers[customPriceTiers.length - 1].id] = remaining;
       
-      // Add historical data
       result.history = {
         '1m': customPriceTiers.reduce((acc, tier) => {
           acc[tier.id] = result[tier.id] + Math.floor(Math.random() * 10 - 5);
@@ -154,7 +159,6 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
         }, {})
       };
       
-      // Add PDP view data
       result.pdpViews = customPriceTiers.reduce((acc, tier) => {
         acc[tier.id] = Math.floor(Math.random() * 10000) + 500;
         return acc;
@@ -166,7 +170,6 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
   
   const priceData = generatePriceData();
   
-  // Generate trend data over time
   const generateTrendData = () => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
     return months.map(month => {
@@ -185,7 +188,6 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
   
   const trendData = generateTrendData();
   
-  // Generate market share data
   const generateMarketShareData = () => {
     return customPriceTiers.map(tier => {
       const result: any = { name: tier.name, range: `£${tier.min}-${tier.max}` };
@@ -199,7 +201,6 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
       
       result[retailers[retailers.length - 1].id] = remainingShare;
       
-      // Add total market value in £
       result.marketValue = (Math.random() * 5000000 + 1000000).toFixed(0);
       
       return result;
@@ -208,7 +209,6 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
   
   const marketShareData = generateMarketShareData();
   
-  // Generate PDP view correlation data
   const generatePdpCorrelationData = () => {
     return customPriceTiers.map(tier => {
       const result: any = {
@@ -218,8 +218,6 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
         pdpViews: Math.floor(Math.random() * 50000) + 5000,
       };
       
-      // Create correlation between price and views
-      // Mid-range tends to have highest views
       if (tier.id === 'mid' || tier.id === 'value') {
         result.pdpViews = Math.floor(Math.random() * 30000) + 70000;
       } else if (tier.id === 'luxury') {
@@ -361,24 +359,41 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Price Tier Customization</CardTitle>
             <CardDescription>
-              Adjust price bands to match your specific market segments
+              Customize tier names and price ranges to match your market segments
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {customPriceTiers.map((tier, index) => (
-                <div key={tier.id} className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="font-medium">{tier.name}</span>
-                    <span className="text-sm text-gray-500">£{tier.min} - £{tier.max}</span>
+                <div key={tier.id} className="space-y-2 p-4 border rounded-lg">
+                  <div className="flex items-center gap-4">
+                    <Input
+                      className="w-[200px]"
+                      value={tier.name}
+                      onChange={(e) => handleTierNameChange(index, e.target.value)}
+                      placeholder={`Tier ${index + 1}`}
+                    />
+                    <div className="flex items-center gap-2 flex-1">
+                      <Input
+                        type="number"
+                        value={tier.min}
+                        onChange={(e) => handlePriceRangeChange(index, 'min', Number(e.target.value))}
+                        className="w-24"
+                        min={0}
+                        max={tier.max - 1}
+                      />
+                      <span>to</span>
+                      <Input
+                        type="number"
+                        value={tier.max}
+                        onChange={(e) => handlePriceRangeChange(index, 'max', Number(e.target.value))}
+                        className="w-24"
+                        min={tier.min + 1}
+                        max={150}
+                      />
+                      <span className="text-sm text-muted-foreground ml-2">£</span>
+                    </div>
                   </div>
-                  <Slider
-                    defaultValue={[tier.min, tier.max]}
-                    min={0}
-                    max={150}
-                    step={1}
-                    onValueChange={(values) => handlePriceRangeChange(index, values)}
-                  />
                 </div>
               ))}
               
