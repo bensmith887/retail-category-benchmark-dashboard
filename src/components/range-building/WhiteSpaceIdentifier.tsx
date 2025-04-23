@@ -26,7 +26,7 @@ interface WhiteSpaceIdentifierProps {
   priceRanges: { id: string; name: string; min: number; max: number }[];
 }
 
-// Dynamic Percentage Bar Component
+// Dynamic Percentage Bar Component - Fixed to display exact percentages
 const PercentageBar = ({ 
   percentage, 
   backgroundColor = '#F1F1F1', 
@@ -43,7 +43,7 @@ const PercentageBar = ({
     <div 
       className="absolute top-0 left-0 h-full rounded-full" 
       style={{ 
-        width: `${percentage}%`, // This ensures the width is exactly the percentage value
+        width: `${percentage}%`, // Width is exactly equal to the percentage
         backgroundColor: fillColor,
         transition: 'width 0.3s ease-in-out'
       }}
@@ -65,21 +65,24 @@ export const WhiteSpaceIdentifier: React.FC<WhiteSpaceIdentifierProps> = ({
   const [selectedRetailer, setSelectedRetailer] = useState<string>(retailers[0]?.id || '');
   const { toast } = useToast();
   
-  // Generate mock white space data
+  // Generate mock white space data without any scaling modifications
   const generateWhiteSpaceData = () => {
     const data = categories.map(category => {
+      // Generate actual percentages without any exaggeration
       const marketPresence = Math.random() * 100;
+      const pdpViewRate = Math.random() * 100;
       const competitorCount = Math.floor(Math.random() * 5);
       const potentialSize = Math.random() * 1000000 + 100000;
       
       return {
         category: category.name,
         marketPresence,
+        pdpViewRate,
         competitorCount,
         potentialSize,
-        x: marketPresence, // X-axis: Market presence
-        y: competitorCount, // Y-axis: Number of competitors
-        z: potentialSize / 100000, // Z-axis (bubble size): Potential market size
+        x: marketPresence,
+        y: competitorCount,
+        z: potentialSize / 100000,
         underplayed: marketPresence < 30 && competitorCount < 2
       };
     });
@@ -141,14 +144,14 @@ export const WhiteSpaceIdentifier: React.FC<WhiteSpaceIdentifierProps> = ({
       
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {categories.map((category, index) => (
+          {whiteSpaceData.map((item, index) => (
             <div key={index} className="border p-4 rounded-md">
               <div className="flex justify-between mb-2">
-                <span className="font-medium">{category.name}</span>
+                <span className="font-medium">{item.category}</span>
                 <span className="text-sm text-gray-500">Market Presence</span>
               </div>
               <PercentageBar 
-                percentage={Math.random() * 100} 
+                percentage={item.marketPresence} 
                 backgroundColor="#F1F1F1" 
                 fillColor="#9b87f5" 
               />
@@ -156,7 +159,7 @@ export const WhiteSpaceIdentifier: React.FC<WhiteSpaceIdentifierProps> = ({
                 <span className="text-sm text-gray-500">PDP View Rate</span>
               </div>
               <PercentageBar 
-                percentage={Math.random() * 100} 
+                percentage={item.pdpViewRate} 
                 backgroundColor="#F1F1F1" 
                 fillColor="#7E69AB" 
               />
