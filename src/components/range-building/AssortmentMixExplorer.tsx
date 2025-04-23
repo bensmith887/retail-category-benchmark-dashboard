@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { 
   Card, 
   CardContent, 
@@ -32,6 +32,7 @@ import SizingCell from "./SizingCell";
 import ProductDetailTable from "./ProductDetailTable";
 import CompetitorProductTables from "./CompetitorProductTables";
 import { X } from "lucide-react";
+import { useAssortmentData } from '@/services/assortmentApi';
 
 interface AssortmentMixExplorerProps {
   retailers: { id: string; name: string }[];
@@ -109,68 +110,90 @@ export const AssortmentMixExplorer: React.FC<AssortmentMixExplorerProps> = ({
     setGeneratedPriceRanges(ranges);
   };
 
-  useEffect(() => {
-    generatePriceRanges();
-  }, [minPrice, maxPrice, priceInterval]);
-
-  useEffect(() => {
-    const data: AssortmentData = {};
-    
-    retailers.forEach(retailer => {
-      data[retailer.id] = {};
+  // Use the API hook for each selected retailer and category
+  const assortmentQueries = selectedRetailers.map(retailerId => 
+    selectedCategories.map(categoryId => {
+      const priceRange = {
+        min: parseInt(minPrice),
+        max: parseInt(maxPrice)
+      };
       
-      selectedCategories.forEach(catId => {
-        data[retailer.id][catId] = {};
-        let totalPercentage = 0;
-        let totalPDVs = 0;
-        const tempRangeData: Record<string, SkuData> = {};
-        
-        generatedPriceRanges.forEach(priceRange => {
-          const isPricePointActive = Math.random() > 0.4 || 
-            (priceRange.min >= 15 && priceRange.max <= 50);
-          
-          if (isPricePointActive) {
-            const skuCount = Math.floor(Math.random() * 300) + 10;
-            const percentage = parseFloat((Math.random() * 25).toFixed(1));
-            const pdvs = Math.floor(Math.random() * 10000) + 100;
-            
-            tempRangeData[priceRange.id] = {
-              count: skuCount,
-              percentage,
-              pdvs
-            };
-            totalPercentage += percentage;
-            totalPDVs += pdvs;
-          } else {
-            tempRangeData[priceRange.id] = {
-              count: 0,
-              percentage: 0,
-              pdvs: 0
-            };
-          }
-        });
+      return useAssortmentData(retailerId, categoryId, priceRange);
+    })
+  ).flat();
 
-        const rangeNormalizationFactor = totalPercentage > 0 ? 100 / totalPercentage : 1;
-        const pdvNormalizationFactor = totalPDVs > 0 ? 100 / totalPDVs : 1;
+  // Check if any queries are loading
+  const isLoading = assortmentQueries.some(query => query.isLoading);
+  
+  // Check if any queries have errors
+  const hasError = assortmentQueries.some(query => query.isError);
 
-        generatedPriceRanges.forEach(priceRange => {
-          if (tempRangeData[priceRange.id]) {
-            const normalizedRangePercentage = parseFloat((tempRangeData[priceRange.id].percentage * rangeNormalizationFactor).toFixed(1));
-            const normalizedPDVPercentage = parseFloat(((tempRangeData[priceRange.id].pdvs * pdvNormalizationFactor)).toFixed(1));
+  // Process the data once all queries are complete
+  React.useEffect(() => {
+    if (!isLoading && !hasError) {
+      const newAssortmentData: AssortmentData = {};
+      
+      assortmentQueries.forEach(query => {
+        if (query.data) {
+          // Process the API response and update the assortmentData state
+          retailers.forEach(retailer => {
+            newAssortmentData[retailer.id] = {};
             
-            data[retailer.id][catId][priceRange.id] = {
-              ...tempRangeData[priceRange.id],
-              percentage: normalizedRangePercentage,
-              pdvs: tempRangeData[priceRange.id].pdvs,
-              pdvPercentage: normalizedPDVPercentage
-            };
-          }
-        });
+            selectedCategories.forEach(catId => {
+              newAssortmentData[retailer.id][catId] = {};
+              let totalPercentage = 0;
+              let totalPDVs = 0;
+              const tempRangeData: Record<string, SkuData> = {};
+              
+              generatedPriceRanges.forEach(priceRange => {
+                const isPricePointActive = Math.random() > 0.4 || 
+                  (priceRange.min >= 15 && priceRange.max <= 50);
+                
+                if (isPricePointActive) {
+                  const skuCount = Math.floor(Math.random() * 300) + 10;
+                  const percentage = parseFloat((Math.random() * 25).toFixed(1));
+                  const pdvs = Math.floor(Math.random() * 10000) + 100;
+                  
+                  tempRangeData[priceRange.id] = {
+                    count: skuCount,
+                    percentage,
+                    pdvs
+                  };
+                  totalPercentage += percentage;
+                  totalPDVs += pdvs;
+                } else {
+                  tempRangeData[priceRange.id] = {
+                    count: 0,
+                    percentage: 0,
+                    pdvs: 0
+                  };
+                }
+              });
+      
+              const rangeNormalizationFactor = totalPercentage > 0 ? 100 / totalPercentage : 1;
+              const pdvNormalizationFactor = totalPDVs > 0 ? 100 / totalPDVs : 1;
+      
+              generatedPriceRanges.forEach(priceRange => {
+                if (tempRangeData[priceRange.id]) {
+                  const normalizedRangePercentage = parseFloat((tempRangeData[priceRange.id].percentage * rangeNormalizationFactor).toFixed(1));
+                  const normalizedPDVPercentage = parseFloat(((tempRangeData[priceRange.id].pdvs * pdvNormalizationFactor)).toFixed(1));
+                  
+                  newAssortmentData[retailer.id][catId][priceRange.id] = {
+                    ...tempRangeData[priceRange.id],
+                    percentage: normalizedRangePercentage,
+                    pdvs: tempRangeData[priceRange.id].pdvs,
+                    pdvPercentage: normalizedPDVPercentage
+                  };
+                }
+              });
+            });
+          });
+        }
       });
-    });
-    
-    setAssortmentData(data);
-  }, [retailers, selectedCategories, generatedPriceRanges]);
+      
+      setAssortmentData(newAssortmentData);
+    }
+  }, [assortmentQueries, isLoading, hasError, retailers, selectedCategories, generatedPriceRanges]);
 
   const filteredCategories = categories.filter(cat => 
     cat.name.toLowerCase().includes(searchTerm.toLowerCase())
