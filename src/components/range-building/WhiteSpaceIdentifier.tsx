@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Card, 
@@ -42,7 +43,7 @@ const PercentageBar = ({
     <div 
       className="absolute top-0 left-0 h-full rounded-full" 
       style={{ 
-        width: `${percentage}%`, 
+        width: `${percentage}%`, // This ensures the width is exactly the percentage value
         backgroundColor: fillColor,
         transition: 'width 0.3s ease-in-out'
       }}
