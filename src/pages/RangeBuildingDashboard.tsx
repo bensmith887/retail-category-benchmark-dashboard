@@ -1,10 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
 import DashboardSelector from '@/components/DashboardSelector';
 import { TabIcon } from '@/components/TabIcon';
 import { RangeBuildingTabs } from '@/components/range-building/RangeBuildingTabs';
+import ApiKeyInput from '@/components/range-building/ApiKeyInput';
+import { setApiKey } from '@/services/assortmentApi';
 
 const RangeBuildingDashboard = () => {
   const [activeTab, setActiveTab] = useState('range-building');
@@ -18,7 +19,6 @@ const RangeBuildingDashboard = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Ensure we're passing required props to RangeBuildingTabs
   const retailers = [
     { id: 'h&m', name: 'H&M' },
     { id: 'mango', name: 'Mango' },
@@ -35,6 +35,10 @@ const RangeBuildingDashboard = () => {
     { id: 'accessories', name: 'Accessories' }
   ];
 
+  const handleApiKeySubmit = (apiKey: string) => {
+    setApiKey(apiKey);
+  };
+
   return (
     <div className="flex h-screen bg-dashboard-background overflow-hidden">
       <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -48,6 +52,9 @@ const RangeBuildingDashboard = () => {
               <DashboardSelector currentPath="/range-building" />
             </div>
           </div>
+          
+          <ApiKeyInput onApiKeySubmit={handleApiKeySubmit} />
+          
           {loading ? (
             <div className="w-full h-full flex items-center justify-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-dashboard-primary"></div>

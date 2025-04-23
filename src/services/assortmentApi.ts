@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 
 // Types for the API response
@@ -25,14 +24,24 @@ export interface AssortmentApiResponse {
   };
 }
 
-const API_KEY = 'your_publishable_api_key'; // Replace with your API key
-const API_BASE_URL = 'https://your-api-endpoint.com'; // Replace with your API endpoint
+let currentApiKey = '';
+
+export const setApiKey = (apiKey: string) => {
+  currentApiKey = apiKey;
+};
 
 export const fetchAssortmentData = async (
   retailerId: string,
   categoryId: string,
   priceRange?: { min: number; max: number }
 ): Promise<AssortmentApiResponse> => {
+  if (!currentApiKey) {
+    throw new Error('API key not set');
+  }
+
+  const API_KEY = 'your_publishable_api_key'; // Replace with your API key
+  const API_BASE_URL = 'https://your-api-endpoint.com'; // Replace with your API endpoint
+
   const queryParams = new URLSearchParams({
     retailerId,
     categoryId,
@@ -44,7 +53,7 @@ export const fetchAssortmentData = async (
 
   const response = await fetch(`${API_BASE_URL}/assortment?${queryParams}`, {
     headers: {
-      'Authorization': `Bearer ${API_KEY}`,
+      'Authorization': `Bearer ${currentApiKey}`,
       'Content-Type': 'application/json',
     },
   });
