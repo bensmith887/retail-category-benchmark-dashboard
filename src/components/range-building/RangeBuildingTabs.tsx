@@ -1,19 +1,16 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Grid2X2,
   BarChart3, 
   TrendingUp, 
-  Search, 
+  Search,
   LineChart,
-  Filter,
-  Share2  
+  Filter
 } from 'lucide-react';
 import { AssortmentMixExplorer } from './AssortmentMixExplorer';
 import { WhiteSpaceIdentifier } from './WhiteSpaceIdentifier';
 import { PriceArchitectureVisualizer } from './PriceArchitectureVisualizer';
-import { DiscountingAnalysis } from './DiscountingAnalysis';
 import { TrendDemandSignals } from './TrendDemandSignals';
 
 interface RangeBuildingTabsProps {
@@ -54,7 +51,7 @@ export const RangeBuildingTabs: React.FC<RangeBuildingTabsProps> = ({
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid grid-cols-5 w-full">
+        <TabsList className="grid grid-cols-4 w-full">
           <TabsTrigger value="assortment-mix" className="flex items-center gap-2">
             <Grid2X2 size={16} />
             <span>Assortment Mix</span>
@@ -66,10 +63,6 @@ export const RangeBuildingTabs: React.FC<RangeBuildingTabsProps> = ({
           <TabsTrigger value="price-architecture" className="flex items-center gap-2">
             <BarChart3 size={16} />
             <span>Price Architecture</span>
-          </TabsTrigger>
-          <TabsTrigger value="discounting" className="flex items-center gap-2">
-            <Share2 size={16} />
-            <span>Discounting</span>
           </TabsTrigger>
           <TabsTrigger value="trends" className="flex items-center gap-2">
             <TrendingUp size={16} />
@@ -98,13 +91,6 @@ export const RangeBuildingTabs: React.FC<RangeBuildingTabsProps> = ({
             retailers={retailers} 
             categories={categories} 
             priceRanges={priceRanges} 
-          />
-        </TabsContent>
-
-        <TabsContent value="discounting">
-          <DiscountingAnalysis 
-            retailers={retailers} 
-            categories={categories} 
           />
         </TabsContent>
 
