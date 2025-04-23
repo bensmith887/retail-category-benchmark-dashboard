@@ -57,5 +57,3 @@ const SizingCell: React.FC<SizingCellProps> = ({
 };
 
 export default SizingCell;
-// Also add a named export for backward compatibility
-export { SizingCell };
