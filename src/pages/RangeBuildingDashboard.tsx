@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Tabs from '@/components/Tabs';
@@ -5,11 +6,14 @@ import DashboardSelector from '@/components/DashboardSelector';
 import { TabIcon } from '@/components/TabIcon';
 import { RangeBuildingTabs } from '@/components/range-building/RangeBuildingTabs';
 import ApiKeyInput from '@/components/range-building/ApiKeyInput';
-import { setApiKey } from '@/services/assortmentApi';
+import { setApiKey, getApiKeyStatus } from '@/services/assortmentApi';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { InfoIcon } from 'lucide-react';
 
 const RangeBuildingDashboard = () => {
   const [activeTab, setActiveTab] = useState('range-building');
   const [loading, setLoading] = useState(true);
+  const [apiKeySet, setApiKeySet] = useState(getApiKeyStatus().isSet);
 
   useEffect(() => {
     // Simulate data loading
@@ -37,6 +41,7 @@ const RangeBuildingDashboard = () => {
 
   const handleApiKeySubmit = (apiKey: string) => {
     setApiKey(apiKey);
+    setApiKeySet(true);
   };
 
   return (
@@ -54,6 +59,16 @@ const RangeBuildingDashboard = () => {
           </div>
           
           <ApiKeyInput onApiKeySubmit={handleApiKeySubmit} />
+          
+          {!apiKeySet && !loading && (
+            <Alert className="mb-4 bg-blue-50 border-blue-200">
+              <InfoIcon className="h-4 w-4" />
+              <AlertTitle>API Key Required</AlertTitle>
+              <AlertDescription>
+                Please enter your API key above to fetch assortment data. Without an API key, the table will display mock data.
+              </AlertDescription>
+            </Alert>
+          )}
           
           {loading ? (
             <div className="w-full h-full flex items-center justify-center">

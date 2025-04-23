@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useAssortmentData } from '@/services/assortmentApi';
+import { useAssortmentData, getApiKeyStatus } from '@/services/assortmentApi';
 
 interface PriceRange {
   id: string;
@@ -30,101 +30,133 @@ export const useAssortmentAnalysis = (
   minPrice: string,
   maxPrice: string,
 ) => {
+  const [assortmentData, setAssortmentData] = React.useState<AssortmentDataStructure>({});
+  const apiKeyStatus = getApiKeyStatus();
+
+  // Create a price range object based on inputs
+  const priceRange = React.useMemo(() => ({
+    min: parseInt(minPrice) || 0,
+    max: parseInt(maxPrice) || 100
+  }), [minPrice, maxPrice]);
+
+  // Generate price ranges based on intervals
+  const generatePriceRanges = (min: number, max: number, interval: number): PriceRange[] => {
+    const ranges: PriceRange[] = [];
+    let currentMin = min;
+    
+    while (currentMin < max) {
+      const currentMax = currentMin + interval - 1;
+      ranges.push({
+        id: `${currentMin}-${currentMax}`,
+        name: `£${currentMin}-${currentMax}`,
+        min: currentMin,
+        max: currentMax
+      });
+      currentMin = currentMax + 1;
+    }
+    
+    ranges.push({
+      id: `${currentMin}+`,
+      name: `£${currentMin}+`,
+      min: currentMin,
+      max: Infinity
+    });
+    
+    return ranges;
+  };
+
+  // Create individual queries for each retailer/category combination
   const assortmentQueries = selectedRetailers.map(retailerId => 
     selectedCategories.map(categoryId => {
-      const priceRange = {
-        min: parseInt(minPrice),
-        max: parseInt(maxPrice)
-      };
-      
       return useAssortmentData(retailerId, categoryId, priceRange);
     })
   ).flat();
 
   const isLoading = assortmentQueries.some(query => query.isLoading);
   const hasError = assortmentQueries.some(query => query.isError);
-  const [assortmentData, setAssortmentData] = React.useState<AssortmentDataStructure>({});
+  const apiNotSet = !apiKeyStatus.isSet;
 
+  // Process API responses into the format expected by the table
   React.useEffect(() => {
-    if (!isLoading && !hasError) {
+    if (!isLoading && !hasError && !apiNotSet) {
       const newAssortmentData: AssortmentDataStructure = {};
       
-      assortmentQueries.forEach(query => {
+      // Process each query result
+      assortmentQueries.forEach((query, index) => {
         if (query.data) {
-          // Process the API response and update the assortmentData state
-          selectedRetailers.forEach(retailerId => {
-            if (!newAssortmentData[retailerId]) {
-              newAssortmentData[retailerId] = {};
-            }
-            
-            selectedCategories.forEach(catId => {
-              if (!newAssortmentData[retailerId][catId]) {
-                newAssortmentData[retailerId][catId] = {};
-              }
-              let totalPercentage = 0;
-              let totalPDVs = 0;
-              const tempRangeData: Record<string, RangeData> = {};
-              
-              // Assuming you have a way to generate or access price ranges
-              const generatedPriceRanges: PriceRange[] = [
-                { id: '10-20', name: '£10-20', min: 10, max: 20 },
-                { id: '20-30', name: '£20-30', min: 20, max: 30 },
-                { id: '30+', name: '£30+', min: 30, max: Infinity }
-              ];
-              
-              generatedPriceRanges.forEach(priceRange => {
-                const isPricePointActive = Math.random() > 0.4 || 
-                  (priceRange.min >= 15 && priceRange.max <= 50);
-                
-                if (isPricePointActive) {
-                  const skuCount = Math.floor(Math.random() * 300) + 10;
-                  const percentage = parseFloat((Math.random() * 25).toFixed(1));
-                  const pdvs = Math.floor(Math.random() * 10000) + 100;
-                  
-                  tempRangeData[priceRange.id] = {
-                    count: skuCount,
-                    percentage,
-                    pdvs
-                  };
-                  totalPercentage += percentage;
-                  totalPDVs += pdvs;
-                } else {
-                  tempRangeData[priceRange.id] = {
-                    count: 0,
-                    percentage: 0,
-                    pdvs: 0
-                  };
-                }
-              });
-      
-              const rangeNormalizationFactor = totalPercentage > 0 ? 100 / totalPercentage : 1;
-              const pdvNormalizationFactor = totalPDVs > 0 ? 100 / totalPDVs : 1;
-      
-              generatedPriceRanges.forEach(priceRange => {
-                if (tempRangeData[priceRange.id]) {
-                  const normalizedRangePercentage = parseFloat((tempRangeData[priceRange.id].percentage * rangeNormalizationFactor).toFixed(1));
-                  const normalizedPDVPercentage = parseFloat(((tempRangeData[priceRange.id].pdvs * pdvNormalizationFactor)).toFixed(1));
-                  
-                  newAssortmentData[retailerId][catId][priceRange.id] = {
-                    ...tempRangeData[priceRange.id],
-                    percentage: normalizedRangePercentage,
-                    pdvs: tempRangeData[priceRange.id].pdvs,
-                    pdvPercentage: normalizedPDVPercentage
-                  };
-                }
-              });
+          const retailerIndex = Math.floor(index / selectedCategories.length);
+          const categoryIndex = index % selectedCategories.length;
+          const retailerId = selectedRetailers[retailerIndex];
+          const categoryId = selectedCategories[categoryIndex];
+          
+          if (!newAssortmentData[retailerId]) {
+            newAssortmentData[retailerId] = {};
+          }
+          
+          if (!newAssortmentData[retailerId][categoryId]) {
+            newAssortmentData[retailerId][categoryId] = {};
+          }
+          
+          // Map API price ranges to our data structure
+          if (query.data.priceRanges) {
+            Object.entries(query.data.priceRanges).forEach(([priceRangeId, data]) => {
+              newAssortmentData[retailerId][categoryId][priceRangeId] = {
+                count: data.count,
+                percentage: data.percentage,
+                pdvs: data.pdvs,
+                pdvPercentage: data.pdvPercentage
+              };
             });
-          });
+          } else {
+            // Fallback if API doesn't provide structured price ranges
+            // This code path handles mock/development data
+            const generatedPriceRanges = generatePriceRanges(
+              parseInt(minPrice) || 0,
+              parseInt(maxPrice) || 100,
+              10 // Default interval
+            );
+            
+            // Group products by price range
+            const productsByPriceRange: Record<string, AssortmentProduct[]> = {};
+            const products = query.data.products || [];
+            
+            generatedPriceRanges.forEach(range => {
+              productsByPriceRange[range.id] = products.filter(
+                p => p.price >= range.min && p.price <= range.max
+              );
+            });
+            
+            const totalCount = products.length;
+            const totalPdvs = products.reduce((sum, p) => sum + p.pdpViews, 0);
+            
+            // Calculate metrics for each price range
+            generatedPriceRanges.forEach(range => {
+              const rangeProducts = productsByPriceRange[range.id] || [];
+              const count = rangeProducts.length;
+              const pdvs = rangeProducts.reduce((sum, p) => sum + p.pdpViews, 0);
+              
+              newAssortmentData[retailerId][categoryId][range.id] = {
+                count,
+                percentage: totalCount > 0 ? (count / totalCount) * 100 : 0,
+                pdvs,
+                pdvPercentage: totalPdvs > 0 ? (pdvs / totalPdvs) * 100 : 0
+              };
+            });
+          }
         }
       });
       
       setAssortmentData(newAssortmentData);
+    } else if (apiNotSet) {
+      // Clear data if API key is not set
+      setAssortmentData({});
     }
-  }, [assortmentQueries, isLoading, hasError, selectedRetailers, selectedCategories]);
+  }, [assortmentQueries, isLoading, hasError, apiNotSet, selectedRetailers, selectedCategories, minPrice, maxPrice]);
 
   return {
     assortmentData,
     isLoading,
-    hasError
+    hasError,
+    apiNotSet
   };
 };
