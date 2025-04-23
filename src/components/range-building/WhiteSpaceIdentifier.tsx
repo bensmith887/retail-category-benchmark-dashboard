@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Card, 
@@ -25,6 +24,37 @@ interface WhiteSpaceIdentifierProps {
   categories: { id: string; name: string }[];
   priceRanges: { id: string; name: string; min: number; max: number }[];
 }
+
+// Dynamic Percentage Bar Component
+const PercentageBar = ({ 
+  percentage, 
+  backgroundColor = '#F1F1F1', 
+  fillColor = '#9b87f5' 
+}: { 
+  percentage: number; 
+  backgroundColor?: string; 
+  fillColor?: string; 
+}) => (
+  <div 
+    className="w-full h-4 rounded-full overflow-hidden relative" 
+    style={{ backgroundColor }}
+  >
+    <div 
+      className="absolute top-0 left-0 h-full rounded-full" 
+      style={{ 
+        width: `${percentage}%`, 
+        backgroundColor: fillColor,
+        transition: 'width 0.3s ease-in-out'
+      }}
+    />
+    <span 
+      className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs font-medium z-10"
+      style={{ color: percentage > 70 ? 'white' : 'black' }}
+    >
+      {percentage.toFixed(1)}%
+    </span>
+  </div>
+);
 
 export const WhiteSpaceIdentifier: React.FC<WhiteSpaceIdentifierProps> = ({ 
   retailers, 
@@ -109,108 +139,28 @@ export const WhiteSpaceIdentifier: React.FC<WhiteSpaceIdentifierProps> = ({
       </CardHeader>
       
       <CardContent>
-        <div className="grid md:grid-cols-5 gap-6">
-          <div className="md:col-span-3">
-            <div className="h-[500px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <ScatterChart
-                  margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    type="number" 
-                    dataKey="x" 
-                    name="Market Presence" 
-                    unit="%" 
-                    domain={[0, 100]}
-                    label={{ value: 'Market Presence (%)', position: 'bottom', offset: 0 }}
-                  />
-                  <YAxis 
-                    type="number" 
-                    dataKey="y" 
-                    name="Competitors" 
-                    domain={[0, 5]}
-                    label={{ value: 'Number of Competitors', angle: -90, position: 'insideLeft' }}
-                  />
-                  <ZAxis 
-                    type="number" 
-                    dataKey="z" 
-                    range={[50, 400]} 
-                    name="Potential Size" 
-                    unit="K"
-                  />
-                  <Tooltip 
-                    cursor={{ strokeDasharray: '3 3' }}
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        const data = payload[0].payload;
-                        return (
-                          <div className="bg-white border rounded-md p-3 shadow-md">
-                            <p className="font-medium">{data.category}</p>
-                            <p>Market Presence: {data.marketPresence.toFixed(1)}%</p>
-                            <p>Competitors: {data.competitorCount}</p>
-                            <p>Potential Size: £{(data.potentialSize/1000).toFixed(0)}K</p>
-                            {data.underplayed && (
-                              <p className="font-medium text-green-600 mt-1">
-                                ★ Underplayed Opportunity
-                              </p>
-                            )}
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Scatter 
-                    name="Categories" 
-                    data={whiteSpaceData} 
-                    fill="#8884d8"
-                    fillOpacity={0.8}
-                  />
-                </ScatterChart>
-              </ResponsiveContainer>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {categories.map((category, index) => (
+            <div key={index} className="border p-4 rounded-md">
+              <div className="flex justify-between mb-2">
+                <span className="font-medium">{category.name}</span>
+                <span className="text-sm text-gray-500">Market Presence</span>
+              </div>
+              <PercentageBar 
+                percentage={Math.random() * 100} 
+                backgroundColor="#F1F1F1" 
+                fillColor="#9b87f5" 
+              />
+              <div className="flex justify-between mt-2">
+                <span className="text-sm text-gray-500">PDP View Rate</span>
+              </div>
+              <PercentageBar 
+                percentage={Math.random() * 100} 
+                backgroundColor="#F1F1F1" 
+                fillColor="#7E69AB" 
+              />
             </div>
-          </div>
-          
-          <div className="md:col-span-2">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center">
-                  <Search className="w-4 h-4 mr-2 text-green-600" />
-                  <CardTitle className="text-lg">Top Underplayed Categories</CardTitle>
-                </div>
-                <CardDescription>
-                  Categories with high potential and low competition
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {underplayedCategories.map((category, index) => (
-                    <div key={index} className="border rounded-md p-3">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-medium text-base">{category.category}</h3>
-                        <span className="text-green-600 font-medium">★ {index + 1}</span>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2 mt-2 text-sm">
-                        <div>
-                          <p className="text-gray-500">Market Presence</p>
-                          <p className="font-medium">{category.marketPresence.toFixed(1)}%</p>
-                        </div>
-                        <div>
-                          <p className="text-gray-500">Competitors</p>
-                          <p className="font-medium">{category.competitorCount}</p>
-                        </div>
-                        <div>
-                          <p className="text-gray-500">Potential</p>
-                          <p className="font-medium">£{(category.potentialSize/1000).toFixed(0)}K</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          ))}
         </div>
       </CardContent>
     </Card>
