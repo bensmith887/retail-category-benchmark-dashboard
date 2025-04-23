@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { ChevronDown, ArrowUp, ArrowDown, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import MetricsCard from '@/components/MetricsCard';
+import { FunnelChart, Funnel, LabelList, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface CategoryFunnelProps {
   retailers: { id: string; name: string; }[];
@@ -20,12 +21,41 @@ export const CategoryFunnel: React.FC<CategoryFunnelProps> = ({ retailers, categ
 
   // Mock data for funnel stages
   const funnelData = {
-    search_clicks: { value: '47.8K', change: '+12.5%', isPositive: true },
-    category_views: { value: '31.2K', change: '+8.3%', isPositive: true },
-    pdp_views: { value: '18.5K', change: '-3.2%', isPositive: false },
-    add_to_cart: { value: '4.2K', change: '+5.1%', isPositive: true },
-    purchases: { value: '2.1K', change: '+2.7%', isPositive: true },
+    search_clicks: { value: 47800, label: 'Search Clicks', change: '+12.5%', isPositive: true },
+    category_views: { value: 31200, label: 'Category Views', change: '+8.3%', isPositive: true },
+    pdp_views: { value: 18500, label: 'PDP Views', change: '-3.2%', isPositive: false },
+    add_to_cart: { value: 4200, label: 'Add to Cart', change: '+5.1%', isPositive: true },
+    purchases: { value: 2100, label: 'Purchases', change: '+2.7%', isPositive: true },
   };
+
+  // Create dynamic funnel data for chart
+  const funnelChartData = [
+    {
+      stage: 'Search Clicks',
+      value: funnelData.search_clicks.value,
+      color: '#8B5CF6',
+    },
+    {
+      stage: 'Category Views',
+      value: funnelData.category_views.value,
+      color: '#33C3F0',
+    },
+    {
+      stage: 'PDP Views',
+      value: funnelData.pdp_views.value,
+      color: '#F97316',
+    },
+    {
+      stage: 'Add to Cart',
+      value: funnelData.add_to_cart.value,
+      color: '#22C55E',
+    },
+    {
+      stage: 'Purchases',
+      value: funnelData.purchases.value,
+      color: '#1E293B',
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -43,7 +73,6 @@ export const CategoryFunnel: React.FC<CategoryFunnelProps> = ({ retailers, categ
               ))}
             </SelectContent>
           </Select>
-          
           <Select>
             <SelectTrigger className="w-[180px] bg-white">
               <SelectValue placeholder="All Categories" />
@@ -57,14 +86,14 @@ export const CategoryFunnel: React.FC<CategoryFunnelProps> = ({ retailers, categ
               ))}
             </SelectContent>
           </Select>
-          
+
           <button className="flex items-center gap-2 px-3 py-2 rounded-md border border-dashboard-border bg-white">
             <Filter size={16} />
             <span>Filters</span>
             <Badge className="ml-1 bg-dashboard-primary text-white">3</Badge>
           </button>
         </div>
-        
+
         <div className="flex gap-2">
           <Tabs value={timeframe} onValueChange={setTimeframe}>
             <TabsList>
@@ -72,7 +101,6 @@ export const CategoryFunnel: React.FC<CategoryFunnelProps> = ({ retailers, categ
               <TabsTrigger value="monthly">Monthly</TabsTrigger>
             </TabsList>
           </Tabs>
-          
           <Tabs value={trafficSource} onValueChange={setTrafficSource}>
             <TabsList>
               <TabsTrigger value="all">All Traffic</TabsTrigger>
@@ -82,7 +110,7 @@ export const CategoryFunnel: React.FC<CategoryFunnelProps> = ({ retailers, categ
           </Tabs>
         </div>
       </div>
-      
+
       {/* Funnel Visualization */}
       <Card>
         <CardHeader className="pb-0">
@@ -93,87 +121,125 @@ export const CategoryFunnel: React.FC<CategoryFunnelProps> = ({ retailers, categ
         </CardHeader>
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-            <MetricsCard 
-              label="Search Clicks" 
-              value={funnelData.search_clicks.value} 
-              change={funnelData.search_clicks.change} 
+            <MetricsCard
+              label="Search Clicks"
+              value={funnelData.search_clicks.value.toLocaleString()}
+              change={funnelData.search_clicks.change}
               isPositive={funnelData.search_clicks.isPositive}
             />
-            <MetricsCard 
-              label="Category Views" 
-              value={funnelData.category_views.value} 
-              change={funnelData.category_views.change} 
+            <MetricsCard
+              label="Category Views"
+              value={funnelData.category_views.value.toLocaleString()}
+              change={funnelData.category_views.change}
               isPositive={funnelData.category_views.isPositive}
             />
-            <MetricsCard 
-              label="PDP Views" 
-              value={funnelData.pdp_views.value} 
-              change={funnelData.pdp_views.change} 
+            <MetricsCard
+              label="PDP Views"
+              value={funnelData.pdp_views.value.toLocaleString()}
+              change={funnelData.pdp_views.change}
               isPositive={funnelData.pdp_views.isPositive}
             />
-            <MetricsCard 
-              label="Add to Cart" 
-              value={funnelData.add_to_cart.value} 
-              change={funnelData.add_to_cart.change} 
+            <MetricsCard
+              label="Add to Cart"
+              value={funnelData.add_to_cart.value.toLocaleString()}
+              change={funnelData.add_to_cart.change}
               isPositive={funnelData.add_to_cart.isPositive}
             />
-            <MetricsCard 
-              label="Purchases" 
-              value={funnelData.purchases.value} 
-              change={funnelData.purchases.change} 
+            <MetricsCard
+              label="Purchases"
+              value={funnelData.purchases.value.toLocaleString()}
+              change={funnelData.purchases.change}
               isPositive={funnelData.purchases.isPositive}
             />
           </div>
-          
-          {/* Funnel Chart - Mocked up visualization */}
-          <div className="h-80 relative w-full border border-dashed border-dashboard-border rounded-md bg-gray-50 flex items-center justify-center">
-            <div className="text-center text-muted-foreground">
-              <p className="mb-2">Funnel Visualization</p>
-              <p className="text-sm">Shows the flow from search clicks to category views to PDP views</p>
-            </div>
+
+          {/* Dynamic Funnel Chart */}
+          <div className="h-80 w-full border border-dashed border-dashboard-border rounded-md bg-gray-50 flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <FunnelChart
+                margin={{ top: 30, right: 40, left: 40, bottom: 30 }}
+              >
+                <Tooltip
+                  formatter={(value: number, name, props) => [
+                    value.toLocaleString(),
+                    props && props.payload && props.payload.stage,
+                  ]}
+                  contentStyle={{
+                    borderRadius: 10,
+                    background: "#fff",
+                    border: "1px solid #ececec",
+                    fontSize: 14,
+                  }}
+                />
+                <Funnel
+                  dataKey="value"
+                  data={funnelChartData}
+                  isAnimationActive
+                  stroke="#ccc"
+                >
+                  <LabelList
+                    dataKey="stage"
+                    position="left"
+                    fill="#333"
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 15,
+                    }}
+                  />
+                </Funnel>
+              </FunnelChart>
+            </ResponsiveContainer>
           </div>
-          
+
           {/* Conversion Rates Below Chart */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
             <div className="p-4 border border-dashboard-border rounded-md bg-white">
               <div className="text-sm text-muted-foreground mb-1">Search to Category View Rate</div>
-              <div className="text-2xl font-bold">65.3%</div>
+              <div className="text-2xl font-bold">
+                {((funnelData.category_views.value / funnelData.search_clicks.value) * 100).toFixed(1)}%
+              </div>
               <div className="flex items-center text-sm mt-1">
-                <ArrowUp className="text-green-500 w-4 h-4 mr-1" /> 
+                <ArrowUp className="text-green-500 w-4 h-4 mr-1" />
                 <span className="text-green-600">+2.1% vs. last period</span>
               </div>
             </div>
-            
+
             <div className="p-4 border border-dashboard-border rounded-md bg-white">
               <div className="text-sm text-muted-foreground mb-1">Category to PDP View Rate</div>
-              <div className="text-2xl font-bold">59.3%</div>
+              <div className="text-2xl font-bold">
+                {((funnelData.pdp_views.value / funnelData.category_views.value) * 100).toFixed(1)}%
+              </div>
               <div className="flex items-center text-sm mt-1">
-                <ArrowDown className="text-red-500 w-4 h-4 mr-1" /> 
+                <ArrowDown className="text-red-500 w-4 h-4 mr-1" />
                 <span className="text-red-600">-3.5% vs. last period</span>
               </div>
             </div>
-            
+
             <div className="p-4 border border-dashboard-border rounded-md bg-white">
               <div className="text-sm text-muted-foreground mb-1">PDP to Add-to-Cart Rate</div>
-              <div className="text-2xl font-bold">22.7%</div>
+              <div className="text-2xl font-bold">
+                {((funnelData.add_to_cart.value / funnelData.pdp_views.value) * 100).toFixed(1)}%
+              </div>
               <div className="flex items-center text-sm mt-1">
-                <ArrowUp className="text-green-500 w-4 h-4 mr-1" /> 
+                <ArrowUp className="text-green-500 w-4 h-4 mr-1" />
                 <span className="text-green-600">+1.5% vs. last period</span>
               </div>
             </div>
-            
+
             <div className="p-4 border border-dashboard-border rounded-md bg-white">
               <div className="text-sm text-muted-foreground mb-1">Add-to-Cart to Purchase Rate</div>
-              <div className="text-2xl font-bold">50.0%</div>
+              <div className="text-2xl font-bold">
+                {((funnelData.purchases.value / funnelData.add_to_cart.value) * 100).toFixed(1)}%
+              </div>
               <div className="flex items-center text-sm mt-1">
-                <ArrowDown className="text-red-500 w-4 h-4 mr-1" /> 
+                <ArrowDown className="text-red-500 w-4 h-4 mr-1" />
                 <span className="text-red-600">-0.8% vs. last period</span>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
-      
+
       {/* Category Breakdown */}
       <Card>
         <CardHeader>
