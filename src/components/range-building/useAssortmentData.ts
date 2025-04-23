@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useAssortmentData, getApiKeyStatus } from '@/services/assortmentApi';
+import { useAssortmentData, getApiKeyStatus, AssortmentProduct } from '@/services/assortmentApi';
 
 interface PriceRange {
   id: string;
