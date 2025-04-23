@@ -84,6 +84,12 @@ export const tabsData = [
     name: 'Range Building',
     icon: 'LayoutDashboard',
     hidden: false
+  },
+  {
+    id: 'search-to-sales-funnel',
+    name: 'Search to Sales Funnel',
+    icon: 'Search',
+    hidden: false
   }
 ];
 
