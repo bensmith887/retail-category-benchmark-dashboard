@@ -354,53 +354,53 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
       </CardHeader>
       
       <CardContent>
-        {/* Price Tier Customization */}
         <Card className="mb-6">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Price Tier Customization</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-sm font-medium">Price Tier Customization</CardTitle>
+            <CardDescription className="text-xs">
               Customize tier names and price ranges to match your market segments
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-2">
               {customPriceTiers.map((tier, index) => (
-                <div key={tier.id} className="space-y-2 p-4 border rounded-lg">
-                  <div className="flex items-center gap-4">
+                <div key={tier.id} className="space-y-1 p-2 border rounded-lg">
+                  <div className="flex items-center gap-2">
                     <Input
-                      className="w-[200px]"
+                      className="w-[150px] text-xs h-8"
                       value={tier.name}
                       onChange={(e) => handleTierNameChange(index, e.target.value)}
                       placeholder={`Tier ${index + 1}`}
                     />
-                    <div className="flex items-center gap-2 flex-1">
+                    <div className="flex items-center gap-1 flex-1">
                       <Input
                         type="number"
                         value={tier.min}
                         onChange={(e) => handlePriceRangeChange(index, 'min', Number(e.target.value))}
-                        className="w-24"
+                        className="w-16 text-xs h-8"
                         min={0}
                         max={tier.max - 1}
                       />
-                      <span>to</span>
+                      <span className="text-xs">to</span>
                       <Input
                         type="number"
                         value={tier.max}
                         onChange={(e) => handlePriceRangeChange(index, 'max', Number(e.target.value))}
-                        className="w-24"
+                        className="w-16 text-xs h-8"
                         min={tier.min + 1}
                         max={150}
                       />
-                      <span className="text-sm text-muted-foreground ml-2">£</span>
+                      <span className="text-xs text-muted-foreground ml-1">£</span>
                     </div>
                   </div>
                 </div>
               ))}
               
-              <div className="flex justify-end">
+              <div className="flex justify-end mt-2">
                 <Button 
                   variant="outline" 
                   size="sm" 
+                  className="text-xs h-8"
                   onClick={resetPriceTiers}
                   disabled={!tiersModified}
                 >
@@ -411,7 +411,6 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
           </CardContent>
         </Card>
         
-        {/* Main Content Tabs */}
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-4">
           <TabsList>
             <TabsTrigger value="distribution" className="flex items-center gap-2">
@@ -432,7 +431,6 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
             </TabsTrigger>
           </TabsList>
           
-          {/* Price Distribution Tab */}
           <TabsContent value="distribution">
             <div className="grid md:grid-cols-3 gap-6">
               <div className="md:col-span-2">
@@ -530,7 +528,6 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
             </div>
           </TabsContent>
           
-          {/* Benchmarking and Trend Analysis Tab */}
           <TabsContent value="benchmarking">
             <div className="grid md:grid-cols-2 gap-6">
               <Card>
@@ -635,7 +632,6 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
             </div>
           </TabsContent>
           
-          {/* Market Share Tab */}
           <TabsContent value="marketshare">
             <div className="grid md:grid-cols-2 gap-6">
               <Card>
@@ -722,7 +718,6 @@ export const PriceArchitectureVisualizer: React.FC<PriceArchitectureVisualizerPr
             </div>
           </TabsContent>
           
-          {/* PDP Metrics Tab */}
           <TabsContent value="pdpmetrics">
             <div className="grid md:grid-cols-2 gap-6">
               <Card>
