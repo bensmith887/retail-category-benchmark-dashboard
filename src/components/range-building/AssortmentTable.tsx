@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { SizingCell } from './SizingCell';
+import SizingCell from './SizingCell';
 
 interface PriceRange {
   id: string;

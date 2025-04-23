@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useAssortmentData } from '@/services/assortmentApi';
 
@@ -6,6 +7,21 @@ interface PriceRange {
   name: string;
   min: number;
   max: number;
+}
+
+interface RangeData {
+  count: number;
+  percentage: number;
+  pdvs: number;
+  pdvPercentage?: number;
+}
+
+interface AssortmentDataStructure {
+  [retailerId: string]: {
+    [categoryId: string]: {
+      [priceRangeId: string]: RangeData;
+    };
+  };
 }
 
 export const useAssortmentAnalysis = (
@@ -27,11 +43,11 @@ export const useAssortmentAnalysis = (
 
   const isLoading = assortmentQueries.some(query => query.isLoading);
   const hasError = assortmentQueries.some(query => query.isError);
-  const [assortmentData, setAssortmentData] = React.useState<any>({});
+  const [assortmentData, setAssortmentData] = React.useState<AssortmentDataStructure>({});
 
   React.useEffect(() => {
     if (!isLoading && !hasError) {
-      const newAssortmentData: any = {};
+      const newAssortmentData: AssortmentDataStructure = {};
       
       assortmentQueries.forEach(query => {
         if (query.data) {
@@ -47,7 +63,7 @@ export const useAssortmentAnalysis = (
               }
               let totalPercentage = 0;
               let totalPDVs = 0;
-              const tempRangeData: Record<string, any> = {};
+              const tempRangeData: Record<string, RangeData> = {};
               
               // Assuming you have a way to generate or access price ranges
               const generatedPriceRanges: PriceRange[] = [
